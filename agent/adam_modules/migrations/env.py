@@ -19,6 +19,10 @@ from adam_modules.scheduler import models as _scheduler  # noqa: E402,F401
 from adam_modules.semaphore import models as _semaphore  # noqa: E402,F401
 from adam_modules.medication import models as _medication  # noqa: E402,F401
 from adam_modules.memory import models as _memory  # noqa: E402,F401
+from adam_modules.family import models as _family  # noqa: E402,F401
+from adam_modules.wearables import models as _wearables  # noqa: E402,F401
+from adam_modules.marketplace import models as _marketplace  # noqa: E402,F401
+from adam_modules.rodo import models as _rodo  # noqa: E402,F401
 
 config = context.config
 

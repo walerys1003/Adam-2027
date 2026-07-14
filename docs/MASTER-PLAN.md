@@ -195,21 +195,21 @@ Struktura: `agent/adam_modules/` (nowy pakiet obok AVA src/), FastAPI-style rout
 - [x] E8.6.1 CrisisDetector: 15 triggerów z fraz PL + vitals (HR/SpO2/BP) → mapowanie na semafor + to_classification (przez Guardrails)
 - [x] E8.6.2 Testy scenariuszy kryzysowych (12 testów, integracja z Guardrails)
 
-### 8.7 F9 — Dashboard rodzinny + notyfikacje
-- [ ] E8.7.1 SSE endpoint /api/events + SMS/email adapters (interfejsy)
-- [ ] E8.7.2 Digest yellow / immediate red / bypass-DND purple + testy
+### 8.7 F9 — Dashboard rodzinny + notyfikacje ✅
+- [x] E8.7.1 FamilyMember + adaptery SMS/email/push (pluggable) + feed() dla SSE /api/events
+- [x] E8.7.2 Digest yellow / immediate red / bypass-DND purple + logika DND (role krytyczne) + 9 testów
 
-### 8.8 F10 — Wearables
-- [ ] E8.8.1 Adaptery: Xiaomi Zepp / Apple HealthKit / Garmin / Fitbit (interfejsy REST)
-- [ ] E8.8.2 Threshold engine (auto vs manual override + audit SHA-256) + WS vitals + testy
+### 8.8 F10 — Wearables ✅
+- [x] E8.8.1 Adaptery: Xiaomi Zepp / Apple HealthKit / Garmin / Fitbit (normalizacja do wspólnego formatu)
+- [x] E8.8.2 Threshold engine (auto DEFAULT + manual override) + audit SHA-256 (verify_integrity) + 9 testów
 
-### 8.9 F11 — Marketplace
-- [ ] E8.9.1 Modele partners/orders + 10 kategorii + wykluczenia (anty-fraud)
-- [ ] E8.9.2 API orders + okno anulowania 30min + weryfikacja NIP/OC + testy
+### 8.9 F11 — Marketplace ✅
+- [x] E8.9.1 Partner/Service/Order + 10 kategorii + OC_REQUIRED (anty-fraud) + fraud_flags→suspend
+- [x] E8.9.2 Zamówienia + okno anulowania 30min + weryfikacja NIP (suma kontrolna)/OC + 15 testów
 
-### 8.10 F12 — RODO
-- [ ] E8.10.1 Retencja (nagrania 30d/transkrypty 12m/raporty 24m) + soft-delete
-- [ ] E8.10.2 Export danych + prawo do zapomnienia + audit log + testy
+### 8.10 F12 — RODO ✅
+- [x] E8.10.1 Retencja (nagrania 30d/transkrypty 365d/raporty 730d) + soft-delete + DataProcessingLog (art.30)
+- [x] E8.10.2 Export danych (art.15/20) + prawo do zapomnienia (art.17, erase cross-module + anonimizacja) + 8 testów
 
 ### 8.11 F13–F18
 - [ ] E8.11.1 F13 AI Act compliance (rejestr, disclosure log)

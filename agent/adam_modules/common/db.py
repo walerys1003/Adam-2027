@@ -68,5 +68,9 @@ def create_all():
     from adam_modules.semaphore import models as _sem_models  # noqa: F401
     from adam_modules.medication import models as _med_models  # noqa: F401
     from adam_modules.memory import models as _memory_models  # noqa: F401
+    from adam_modules.family import models as _family_models  # noqa: F401
+    from adam_modules.wearables import models as _wear_models  # noqa: F401
+    from adam_modules.marketplace import models as _market_models  # noqa: F401
+    from adam_modules.rodo import models as _rodo_models  # noqa: F401
 
     Base.metadata.create_all(_engine)

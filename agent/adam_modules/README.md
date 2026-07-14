@@ -59,8 +59,8 @@ python3 -m pytest adam_modules/tests/ -q
 | F6 | Medication tracker | ✅ leki + harmonogram (days_mask) + dose_logs + adherence (F6.2) + MedGuard flag (F6.3) + migracja 0004 + 11 testów |
 | F7 | Pamięć semantyczna (RAG) | ✅ MemoryChunk + pluggable Embedder (HashingEmbedder offline) + retrieve cosine top-k + build_context (inject do promptu F5) + forget_senior (RODO) + migracja 0005 + 13 testów |
 | F8 | Crisis detection | ✅ CrisisDetector (15 triggerów z fraz PL + vitals HR/SpO2/BP) → Classification przez Guardrails + 12 testów |
-| F9 | Dashboard rodzinny + notyfikacje | ⏳ |
-| F10 | Wearables | ⏳ |
-| F11 | Marketplace | ⏳ |
-| F12 | RODO (retencja, prawo do zapomnienia) | ⏳ |
+| F9 | Dashboard rodzinny + notyfikacje | ✅ FamilyMember + adaptery SMS/email/push + dispatch wg poziomu (digest/immediate/bypass-DND) + DND + feed (SSE) + migracja 0006 + 9 testów |
+| F10 | Wearables | ✅ adaptery Xiaomi/Apple/Garmin/Fitbit + threshold engine (auto+override) + audyt SHA-256 + migracja 0006 + 9 testów |
+| F11 | Marketplace | ✅ Partner/Service/Order + 10 kategorii + weryfikacja NIP/OC + anty-fraud (suspend) + okno anulowania 30min + migracja 0006 + 15 testów |
+| F12 | RODO (retencja, prawo do zapomnienia) | ✅ retencja + soft-delete + export (art.15/20) + erase cross-module (art.17) + DataProcessingLog (art.30) + migracja 0006 + 8 testów |
 | F13–F18 | AI Act / mowa / QA / consensus / 112 / E2E | ⏳ |
