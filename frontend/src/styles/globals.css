@@ -41,6 +41,13 @@
 }
 
 @layer components {
+  /* Editorial narrow container (landing) */
+  .container-tight {
+    max-width: 1180px;
+    margin-inline: auto;
+    padding-inline: clamp(20px, 5vw, 56px);
+  }
+
   /* Eyebrow — uppercase label above headings */
   .eyebrow {
     font-family: var(--font-mono);
