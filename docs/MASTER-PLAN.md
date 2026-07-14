@@ -385,6 +385,41 @@ Adam API jako **osobny** deploy od agenta głosowego AVA (`agent/adam_modules/de
 ### 15.3 Runbook ✅
 - [x] E15.3.1 `docs/DEPLOY-ADAM.md` (Frankfurt DC): sekrety, migracje, smoke test, skalowanie gunicorn, monitoring `/metrics`, backup PG, checklista bezpieczeństwa — komplementarny do `BACKEND-DEPLOY.md`
 
+## ETAP 16 — Audyt bezpieczeństwa + hardening v2 ✅
+
+Rozszerza `api/observability.py` o nagłówki bezpieczeństwa i rozproszony rate-limit.
+
+### 16.1 Nagłówki bezpieczeństwa ✅
+- [x] E16.1.1 `SecurityHeadersMiddleware`: `nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy`, restrykcyjny CSP, `Cache-Control: no-store`; HSTS za `ADAM_HSTS=1`
+- [x] E16.1.2 wpięty jako najbardziej zewnętrzny (obejmuje 4xx/5xx); wyłącznik `ADAM_SECURITY_HEADERS=0`
+
+### 16.2 Rate-limit rozproszony (Redis, fail-open) ✅
+- [x] E16.2.1 pluggable backend: `InMemoryRateBackend` (per-worker) + `RedisRateBackend` (fixed-window `INCR`/`EXPIRE`, globalny)
+- [x] E16.2.2 selektor `_build_rate_backend()` wg `ADAM_REDIS_URL`; **fail-open** przy awarii Redisa (dopuść + log)
+
+### 16.3 Testy bezpieczeństwa ✅
+- [x] E16.3.1 `test_security.py` — **12 testów** (nagłówki na 200/404, HSTS on/off, in-memory izolacja+refill, Redis happy-path+fail-open, fallback, 429+Retry-After)
+
+## ETAP 17 — Produkcyjny tor głosowy (konsensus LLM + Asterisk ARI) ✅
+
+Warstwa `voice/` zyskuje fail-safe konsensus kryzysowy i realny adapter kanału.
+
+### 17.1 Konsensus kryzysowy ✅
+- [x] E17.1.1 `voice/consensus.py` — `CrisisConsensus`: głos detektora F3 + głos LLM → `ConsensusEngine` (F16)
+- [x] E17.1.2 fail-safe: rozbieżność → wyższy poziom + `needs_review`; awaria LLM → degradacja do detektora
+
+### 17.2 Głos klasyfikacyjny LLM + integracja z silnikiem ✅
+- [x] E17.2.1 `LLMPort.classify` + `LLMClassification`; `RuleLLM.classify` (heurystyki NIEZALEŻNE od słownika F3)
+- [x] E17.2.2 `DialogEngine` używa konsensusu na turach (flaga `use_consensus`, domyślnie wł.); `CallOutcome.needs_review`
+- [x] E17.2.3 efekt: fraza pominięta przez detektor (np. „krwawię/tracę przytomność") → eskalacja PURPLE przez głos LLM
+
+### 17.3 Adapter Asterisk ARI ✅
+- [x] E17.3.1 `voice/asterisk.py` — `AsteriskAriChannel` (play/record/hangup przez ARI REST, httpx wstrzykiwany)
+- [x] E17.3.2 fail-safe: błąd HTTP nie przerywa rozmowy; no-op bez `ASTERISK_ARI_URL`; mapowanie `tts:`/`say:` → `sound:`
+
+### 17.4 Testy ✅
+- [x] E17.4.1 `test_voice_prod.py` — **15 testów** (RuleLLM.classify, konsensus zgodność/alarm/degradacja/błąd, silnik+konsensus, ARI mapping/no-op/akcje/fail-safe) → **256 testów total**
+
 ---
 
 ## Zasada realizacji

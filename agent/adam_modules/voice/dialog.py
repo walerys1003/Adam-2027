@@ -23,6 +23,7 @@ from adam_modules.speech.profile import (
     build_speech_profile, HearingLevel, CognitivePace,
 )
 from .ports import LLMPort, LLMReply
+from .consensus import CrisisConsensus
 
 
 class DialogState(str, Enum):
@@ -57,6 +58,7 @@ class CallOutcome:
     top_trigger: str | None = None
     escalated: bool = False
     disclosure_said: bool = False
+    needs_review: bool = False          # konsensus F16 zgłosił rozbieżność/braki (ETAP 17)
 
     def transcript(self) -> str:
         return "\n".join(f"{t.speaker.value}: {t.text}" for t in self.turns)
@@ -84,11 +86,18 @@ class DialogEngine:
         hearing: HearingLevel = HearingLevel.mild_loss,
         pace: CognitivePace = CognitivePace.normal,
         detector: CrisisDetector | None = None,
+        use_consensus: bool = True,
     ):
         self.llm = llm
         self.senior_name = senior_name
         self.senior_age = senior_age
         self._detector = detector or CrisisDetector()
+        # Konsensus kryzysowy (ETAP 17): detektor regułowy + głos LLM → fail-safe.
+        # Gdy wyłączony, spadamy do samego detektora (zachowanie z ETAP 12).
+        self._use_consensus = use_consensus
+        self._consensus = CrisisConsensus(
+            llm, detector=self._detector, use_llm=use_consensus,
+        )
         self.state = DialogState.INIT
 
         # profil mowy (F14) → parametry TTS
@@ -139,15 +148,20 @@ class DialogEngine:
         if self.state == DialogState.CLOSED:
             raise ValueError("Rozmowa zakończona.")
 
-        # zapisz turę seniora + detekcja
-        detections = self._detector.detect(text=text)
-        classification = self._detector.to_classification(detections)
-        level = classification.level
+        # zapisz turę seniora + ocena kryzysu
+        if self._use_consensus:
+            assessment = self._consensus.assess(text)
+            level = assessment.level
+            trigger_enum = assessment.trigger
+            if assessment.needs_review:
+                self.outcome.needs_review = True
+        else:
+            detections = self._detector.detect(text=text)
+            classification = self._detector.to_classification(detections)
+            level = classification.level
+            trigger_enum = classification.trigger
         # trigger istotny tylko poza zielonym (zielony = routine_ok)
-        trigger = (
-            classification.trigger.value
-            if level != SemaphoreLevel.green else None
-        )
+        trigger = trigger_enum.value if level != SemaphoreLevel.green else None
         self._history.append({"role": "user", "content": text})
         self.outcome.turns.append(DialogTurn(
             speaker=Speaker.SENIOR, text=text, state=self.state,

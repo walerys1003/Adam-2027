@@ -12,6 +12,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Protocol
 
+from adam_modules.semaphore.models import SemaphoreLevel, Trigger
+
 
 # ------------------------------------------------------------------ typy danych
 
@@ -27,6 +29,14 @@ class LLMReply:
     text: str
     finished: bool = False          # czy Adam uznaje rozmowę za zakończoną
     meta: dict = field(default_factory=dict)
+
+
+@dataclass
+class LLMClassification:
+    """Głos klasyfikacyjny LLM dla konsensusu kryzysowego (ETAP 17)."""
+    level: SemaphoreLevel
+    trigger: Trigger
+    confidence: float = 0.7
 
 
 @dataclass
@@ -46,6 +56,9 @@ class ASRPort(Protocol):
 
 class LLMPort(Protocol):
     def reply(self, *, system_prompt: str, history: list[dict], user_text: str) -> LLMReply: ...  # pragma: no cover
+    # opcjonalny głos klasyfikacyjny do konsensusu kryzysowego (ETAP 17);
+    # implementacje bez tej metody degradują konsensus do samego detektora.
+    def classify(self, *, text: str) -> LLMClassification | None: ...  # pragma: no cover
 
 
 class TTSPort(Protocol):
@@ -77,6 +90,16 @@ class RuleLLM:
     _GOOD = ("dobrze", "w porządku", "świetnie", "czuję się dobrze", "wszystko ok")
     _MEDS = ("lek", "tabletk", "leki", "lekarstw")
 
+    # Heurystyki klasyfikacyjne LLM — CELOWO niezależne od słownika detektora F3,
+    # by konsensus miał realną wartość (dwa różne spojrzenia). LLM potrafi
+    # „podnieść" czujność na niuanse opisowe, których reguła nie łapie dosłownie.
+    _LLM_PURPLE = ("nie chcę żyć", "chcę umrzeć", "tracę przytomność", "zasłabł",
+                   "krew leci", "krwawię", "nie oddycha", "zawał")
+    _LLM_RED = ("okropnie boli", "przewróciłam", "przewróciłem", "upadłam", "upadłem",
+                "gorączka", "zawroty głowy", "nie mam siły wstać")
+    _LLM_YELLOW = ("smutno", "samotn", "nie spałam", "nie spałem", "zapomniałam wziąć",
+                   "zapomniałem wziąć", "gorszy dzień", "martwię się")
+
     def reply(self, *, system_prompt: str, history: list[dict], user_text: str) -> LLMReply:
         t = (user_text or "").lower()
         if any(b in t for b in self._BYE):
@@ -96,6 +119,23 @@ class RuleLLM:
         # domyślna, empatyczna kontynuacja
         return LLMReply(text="Rozumiem. Proszę mi powiedzieć, jak Pan/Pani się dziś czuje?",
                         meta={"intent": "followup"})
+
+    def classify(self, *, text: str) -> LLMClassification | None:
+        """Niezależny głos klasyfikacyjny do konsensusu (ETAP 17).
+
+        Zwraca poziom + trigger na podstawie własnych heurystyk. Zielony
+        oznacza „brak sygnału" — konsensus i tak zabezpiecza fail-safe.
+        """
+        t = (text or "").lower()
+        if any(p in t for p in self._LLM_PURPLE):
+            return LLMClassification(SemaphoreLevel.purple, Trigger.suicide_ideation
+                                     if ("żyć" in t or "umrzeć" in t) else Trigger.unconscious,
+                                     confidence=0.6)
+        if any(p in t for p in self._LLM_RED):
+            return LLMClassification(SemaphoreLevel.red, Trigger.persistent_pain, confidence=0.6)
+        if any(p in t for p in self._LLM_YELLOW):
+            return LLMClassification(SemaphoreLevel.yellow, Trigger.mood_low, confidence=0.6)
+        return LLMClassification(SemaphoreLevel.green, Trigger.routine_ok, confidence=0.8)
 
 
 class TextTTS:

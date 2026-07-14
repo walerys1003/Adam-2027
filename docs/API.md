@@ -129,6 +129,16 @@ ADAM_API_KEY="$API_KEY" ADAM_CORS_ORIGINS="https://panel.adam.silvertech.pl" \
 > (Frankfurt DC) podmieniane na realne (Whisper/GPT/ElevenLabs + Asterisk ARI).
 > `POST /simulate-call` pozwala panelowi/testom przejść cały tor bez telefonii.
 
+> **Konsensus kryzysowy (ETAP 17, F16 w torze głosowym):** dla każdej wypowiedzi
+> `DialogEngine` łączy dwa niezależne głosy — detektor regułowy (F3, deterministyczny,
+> audytowalny) + klasyfikator LLM (`LLMPort.classify`) — przez `ConsensusEngine`.
+> Reguła fail-safe: przy rozbieżności wybierany jest **wyższy** poziom i ustawiane
+> `needs_review`. LLM może *podnieść* czujność (złapać niuans, którego reguła nie ma
+> dosłownie w słowniku), ale nie *obniży* twardego sygnału detektora. Awaria LLM →
+> zostaje sam detektor (nadal fail-safe). Wyłącznik: `DialogEngine(..., use_consensus=False)`.
+> Adapter produkcyjny `AsteriskAriChannel` (httpx, fail-safe, no-op bez `ASTERISK_ARI_URL`)
+> implementuje `AriChannel` przez Asterisk REST Interface.
+
 ## Bezpieczeństwo
 
 - **PII maskowane** w odpowiedziach (`SeniorOut.from_model`): PESEL/telefon nigdy nie wracają jawnie.
@@ -160,8 +170,25 @@ ADAM_API_KEY="$API_KEY" ADAM_CORS_ORIGINS="https://panel.adam.silvertech.pl" \
 - **Request-ID** (`X-Request-ID`, propagowany z żądania lub generowany) + **czas odpowiedzi** (`X-Response-Time-ms`).
 - **Log strukturalny** (`adam.api`): metoda, ścieżka, status, req_id, czas.
 - **Rate-limit** token-bucket per-klient (`ADAM_RATE_LIMIT`/`WINDOW`) → `429` + `Retry-After`;
-  `/health`, `/metrics`, `/` wyłączone. Prod: przenieść do Redis.
+  `/health`, `/metrics`, `/` wyłączone.
 - **`GET /metrics`** — ekspozycja w formacie Prometheus (liczniki wg metody/kodu, średnia latencja, odrzucenia rate-limit).
+
+### Bezpieczeństwo i rate-limit rozproszony (ETAP 16)
+
+- **Nagłówki bezpieczeństwa** (`SecurityHeadersMiddleware`, najbardziej zewnętrzny — także na 4xx/5xx):
+  `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`,
+  `Content-Security-Policy: default-src 'none'; frame-ancestors 'none'; base-uri 'none'`, `Cache-Control: no-store`.
+  `HSTS` włączany dopiero za TLS przez `ADAM_HSTS=1`; wyłącznik całości: `ADAM_SECURITY_HEADERS=0`.
+- **Rate-limit z pluggable backendem**: domyślnie in-memory (per-worker); gdy ustawiono `ADAM_REDIS_URL` —
+  globalny limit w Redis (fixed-window `INCR`/`EXPIRE`, współdzielony przez workery gunicorn).
+- **Fail-open**: każdy błąd Redisa (brak połączenia/timeout) → żądanie dopuszczone + log ostrzeżenia.
+  Dostępność > twardy limit; awaria cache nigdy nie blokuje ruchu.
+
+| Zmienna | Opis | Domyślnie |
+|---|---|---|
+| `ADAM_REDIS_URL` | globalny rate-limit w Redis (pusty = in-memory) | — |
+| `ADAM_HSTS` | `1` → dołącz `Strict-Transport-Security` (za TLS) | `0` |
+| `ADAM_SECURITY_HEADERS` | `0` → wyłącz nagłówki bezpieczeństwa | `1` |
 
 ## Testy
 
@@ -172,7 +199,9 @@ python3 -m pytest adam_modules/tests/test_auth.py -q         # 19 testów auth/R
 python3 -m pytest adam_modules/tests/test_notify_adapters.py -q  # 7 testów adapterów (ETAP 13)
 python3 -m pytest adam_modules/tests/test_middleware.py -q   # 7 testów obserwowalności (ETAP 14)
 python3 -m pytest adam_modules/tests/test_voice.py -q        # 19 testów warstwy głosowej (ETAP 12)
-python3 -m pytest adam_modules/tests/ -q                     # 229 testów (F1–F18 + API + 11/12/13/14)
+python3 -m pytest adam_modules/tests/test_security.py -q     # 12 testów bezpieczeństwa/rate-limit (ETAP 16)
+python3 -m pytest adam_modules/tests/test_voice_prod.py -q   # 15 testów konsensusu + ARI (ETAP 17)
+python3 -m pytest adam_modules/tests/ -q                     # 256 testów (F1–F18 + API + 11/12/13/14/16/17)
 ```
 
 ## Integracja z frontendem (ETAP 10)

@@ -13,16 +13,20 @@ from __future__ import annotations
 
 from .ports import (
     ASRPort, LLMPort, TTSPort,
-    Transcript, LLMReply, Utterance,
+    Transcript, LLMReply, LLMClassification, Utterance,
     EchoASR, RuleLLM, TextTTS,
 )
 from .dialog import DialogEngine, DialogState, DialogTurn, CallOutcome, Speaker
 from .ari import AriChannel, FakeChannel, CallSession
+from .consensus import CrisisConsensus, CrisisVoteResult
+from .asterisk import AsteriskAriChannel
 
 __all__ = [
     "ASRPort", "LLMPort", "TTSPort",
-    "Transcript", "LLMReply", "Utterance",
+    "Transcript", "LLMReply", "LLMClassification", "Utterance",
     "EchoASR", "RuleLLM", "TextTTS",
     "DialogEngine", "DialogState", "DialogTurn", "CallOutcome", "Speaker",
     "AriChannel", "FakeChannel", "CallSession",
+    "CrisisConsensus", "CrisisVoteResult",
+    "AsteriskAriChannel",
 ]

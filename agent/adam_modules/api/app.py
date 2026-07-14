@@ -30,10 +30,12 @@ def create_app(*, init_db: bool = True) -> FastAPI:
         ),
     )
 
-    # --- middleware obserwowalności + hardening (ETAP 14) ---
+    # --- middleware obserwowalności + hardening (ETAP 14 + 16) ---
     # Kolejność dodawania: ostatnio dodany = najbardziej zewnętrzny.
-    # Chcemy: [CORS] -> [RequestContext (log/metryki)] -> [RateLimit] -> app.
-    from .observability import RateLimitMiddleware, RequestContextMiddleware
+    # Chcemy (od zewnątrz): [SecurityHeaders] -> [CORS] -> [RequestContext] -> [RateLimit] -> app.
+    from .observability import (
+        RateLimitMiddleware, RequestContextMiddleware, SecurityHeadersMiddleware,
+    )
 
     app.add_middleware(RateLimitMiddleware)
     app.add_middleware(RequestContextMiddleware)
@@ -50,6 +52,9 @@ def create_app(*, init_db: bool = True) -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    # Nagłówki bezpieczeństwa (ETAP 16.1) — najbardziej zewnętrzny, obejmuje wszystkie odpowiedzi.
+    app.add_middleware(SecurityHeadersMiddleware)
 
     if init_db:
         from adam_modules.common import db as db_mod
