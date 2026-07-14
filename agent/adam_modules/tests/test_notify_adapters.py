@@ -28,7 +28,15 @@ def test_build_null(monkeypatch):
 
 
 def test_build_live_types(monkeypatch):
+    # ETAP 32: provider=live buduje realne adaptery tylko gdy komplet sekretów
+    # jest obecny (fail-safe per kanał). Ustawiamy sekrety, by zobaczyć typy realne.
     monkeypatch.setenv("ADAM_NOTIFY_PROVIDER", "live")
+    monkeypatch.setenv("ADAM_TWILIO_SID", "AC_test")
+    monkeypatch.setenv("ADAM_TWILIO_TOKEN", "tok_test")
+    monkeypatch.setenv("ADAM_TWILIO_FROM", "+48500000000")
+    monkeypatch.setenv("ADAM_SENDGRID_KEY", "SG.test")
+    monkeypatch.setenv("ADAM_SENDGRID_FROM", "adam@example.org")
+    monkeypatch.setenv("ADAM_FCM_KEY", "fcm_test")
     adapters = build_adapters()
     assert isinstance(adapters["sms"], TwilioSmsAdapter)
     assert isinstance(adapters["email"], SendGridEmailAdapter)

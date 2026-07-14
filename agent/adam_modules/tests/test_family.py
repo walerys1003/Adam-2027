@@ -105,3 +105,85 @@ def test_acknowledge_and_feed(session):
     assert out[0].status == NotificationStatus.acknowledged
     feed = svc.feed(s.id)
     assert len(feed) == 1
+
+
+# ==================================================================
+# ETAP 32 — Realne integracje: fabryka build_adapters (fail-safe)
+# Twilio/SendGrid/FCM już istnieją (ETAP 13). Tu weryfikujemy, że
+# fabryka degraduje PER KANAŁ do NullAdapter przy braku sekretów,
+# i buduje realne adaptery gdy komplet sekretów jest obecny.
+# ==================================================================
+import pytest
+from adam_modules.family import (
+    build_adapters, NullAdapter, MemoryAdapter,
+    TwilioSmsAdapter, SendGridEmailAdapter, FcmPushAdapter,
+)
+
+_LIVE_SECRETS = (
+    "ADAM_TWILIO_SID", "ADAM_TWILIO_TOKEN", "ADAM_TWILIO_FROM",
+    "ADAM_SENDGRID_KEY", "ADAM_SENDGRID_FROM", "ADAM_FCM_KEY",
+)
+
+
+def _clear_live_secrets(monkeypatch):
+    for k in _LIVE_SECRETS:
+        monkeypatch.delenv(k, raising=False)
+
+
+def test_build_adapters_default_is_memory(monkeypatch):
+    monkeypatch.delenv("ADAM_NOTIFY_PROVIDER", raising=False)
+    adapters = build_adapters()
+    assert set(adapters) == {"sms", "email", "push", "call"}
+    assert all(isinstance(a, MemoryAdapter) for a in adapters.values())
+
+
+def test_build_adapters_null_provider(monkeypatch):
+    monkeypatch.setenv("ADAM_NOTIFY_PROVIDER", "null")
+    adapters = build_adapters()
+    assert all(isinstance(a, NullAdapter) for a in adapters.values())
+
+
+def test_build_adapters_live_without_secrets_degrades_to_null(monkeypatch):
+    """Fail-safe: provider=live bez sekretów → NullAdapter na każdym kanale."""
+    monkeypatch.setenv("ADAM_NOTIFY_PROVIDER", "live")
+    _clear_live_secrets(monkeypatch)
+    adapters = build_adapters()
+    assert isinstance(adapters["sms"], NullAdapter)
+    assert isinstance(adapters["email"], NullAdapter)
+    assert isinstance(adapters["push"], NullAdapter)
+    assert isinstance(adapters["call"], NullAdapter)
+
+
+def test_build_adapters_live_partial_secrets_degrades_per_channel(monkeypatch):
+    """Tylko SMS ma komplet sekretów → SMS realny, reszta NullAdapter."""
+    monkeypatch.setenv("ADAM_NOTIFY_PROVIDER", "live")
+    _clear_live_secrets(monkeypatch)
+    monkeypatch.setenv("ADAM_TWILIO_SID", "AC_test")
+    monkeypatch.setenv("ADAM_TWILIO_TOKEN", "tok_test")
+    monkeypatch.setenv("ADAM_TWILIO_FROM", "+48500000000")
+    adapters = build_adapters()
+    assert isinstance(adapters["sms"], TwilioSmsAdapter)
+    assert isinstance(adapters["email"], NullAdapter)  # brak SendGrid
+    assert isinstance(adapters["push"], NullAdapter)   # brak FCM
+
+
+def test_build_adapters_live_full_secrets_builds_real_adapters(monkeypatch):
+    monkeypatch.setenv("ADAM_NOTIFY_PROVIDER", "live")
+    monkeypatch.setenv("ADAM_TWILIO_SID", "AC_test")
+    monkeypatch.setenv("ADAM_TWILIO_TOKEN", "tok_test")
+    monkeypatch.setenv("ADAM_TWILIO_FROM", "+48500000000")
+    monkeypatch.setenv("ADAM_SENDGRID_KEY", "SG.test")
+    monkeypatch.setenv("ADAM_SENDGRID_FROM", "adam@example.org")
+    monkeypatch.setenv("ADAM_FCM_KEY", "fcm_test")
+    adapters = build_adapters()
+    assert isinstance(adapters["sms"], TwilioSmsAdapter)
+    assert isinstance(adapters["email"], SendGridEmailAdapter)
+    assert isinstance(adapters["push"], FcmPushAdapter)
+    # kanał call zawsze poza tym pakietem (warstwa ARI)
+    assert isinstance(adapters["call"], NullAdapter)
+
+
+def test_null_adapter_send_is_safe_noop():
+    res = NullAdapter().send(to="+48500000000", title="x", body="y")
+    assert res.ok is True
+    assert res.provider_id == "null"

@@ -179,16 +179,25 @@ def build_adapters() -> dict[str, "NotificationAdapter"]:
     if provider == "null":
         return {c: NullAdapter() for c in ("sms", "email", "push", "call")}
     if provider == "live":
-        sms = TwilioSmsAdapter(
-            account_sid=os.getenv("ADAM_TWILIO_SID", ""),
-            auth_token=os.getenv("ADAM_TWILIO_TOKEN", ""),
-            from_number=os.getenv("ADAM_TWILIO_FROM", ""),
+        # Fail-safe per kanał: brak kompletu sekretów → NullAdapter (nie ryzykujemy
+        # połączeń, które i tak zwrócą błąd; degradacja jest jawna i bezpieczna).
+        sid = os.getenv("ADAM_TWILIO_SID", "")
+        tok = os.getenv("ADAM_TWILIO_TOKEN", "")
+        frm = os.getenv("ADAM_TWILIO_FROM", "")
+        sms: NotificationAdapter = (
+            TwilioSmsAdapter(account_sid=sid, auth_token=tok, from_number=frm)
+            if (sid and tok and frm) else NullAdapter()
         )
-        email = SendGridEmailAdapter(
-            api_key=os.getenv("ADAM_SENDGRID_KEY", ""),
-            from_email=os.getenv("ADAM_SENDGRID_FROM", ""),
+        sg_key = os.getenv("ADAM_SENDGRID_KEY", "")
+        sg_from = os.getenv("ADAM_SENDGRID_FROM", "")
+        email: NotificationAdapter = (
+            SendGridEmailAdapter(api_key=sg_key, from_email=sg_from)
+            if (sg_key and sg_from) else NullAdapter()
         )
-        push = FcmPushAdapter(server_key=os.getenv("ADAM_FCM_KEY", ""))
+        fcm_key = os.getenv("ADAM_FCM_KEY", "")
+        push: NotificationAdapter = (
+            FcmPushAdapter(server_key=fcm_key) if fcm_key else NullAdapter()
+        )
         return {"sms": sms, "email": email, "push": push, "call": NullAdapter()}
     # domyślnie: memory (spójne z dotychczasowymi testami)
     return {c: MemoryAdapter(channel=c) for c in ("sms", "email", "push", "call")}
