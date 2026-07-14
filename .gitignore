@@ -58,3 +58,7 @@ android/build/
 frontend/node_modules/
 frontend/dist/
 frontend/.vite/
+
+# Adam backend dev DB
+agent/adam_modules/migrations/adam_dev.db
+*.db

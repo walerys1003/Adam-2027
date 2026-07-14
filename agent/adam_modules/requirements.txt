@@ -1,0 +1,11 @@
+# Backend Adam (adam_modules) — zależności F1+
+# Uruchomienie docelowe: Frankfurt DC (patrz docs/BACKEND-DEPLOY.md)
+
+SQLAlchemy>=2.0,<2.1
+alembic>=1.13
+cryptography>=42.0
+pydantic>=2.5,<3.0
+APScheduler>=3.10
+
+# Dev / test
+pytest>=8.0

@@ -165,11 +165,11 @@
 
 Struktura: `agent/adam_modules/` (nowy pakiet obok AVA src/), FastAPI-style routery + SQLAlchemy modele + serwisy + Alembic migracje + testy pytest.
 
-### 8.1 F1 — Profile seniorów (fundament)
-- [ ] E8.1.1 Model Senior (SQLAlchemy) + PII szyfrowane (PESEL/telefon AES-256)
-- [ ] E8.1.2 Migracja Alembic 0001_seniors
-- [ ] E8.1.3 API CRUD /api/seniors (Pydantic schemas)
-- [ ] E8.1.4 Serwis szyfrowania (Fernet/AES) + testy
+### 8.1 F1 — Profile seniorów (fundament) ✅
+- [x] E8.1.1 Model Senior (SQLAlchemy 2.0) + PII szyfrowane (PESEL/telefon Fernet AES + blind index)
+- [x] E8.1.2 Migracja Alembic 0001_seniors (autogen + upgrade zweryfikowany)
+- [x] E8.1.3 SeniorService CRUD + Pydantic schemas (walidacja PESEL/telefon, maskowanie PII w SeniorOut)
+- [x] E8.1.4 FieldCipher (Fernet + blind index) + 13 testów pytest (100% pass)
 
 ### 8.2 F2 — Scheduler welfare-check
 - [ ] E8.2.1 Model call_attempts + campaigns
