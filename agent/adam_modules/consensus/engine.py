@@ -12,6 +12,7 @@ regułowy F8 + model LLM A + model LLM B) i podejmuje decyzję fail-safe:
 """
 from __future__ import annotations
 
+import enum
 from dataclasses import dataclass, field
 
 from adam_modules.seniors.models import SemaphoreLevel
@@ -19,6 +20,25 @@ from adam_modules.semaphore.engine import Classification, level_rank, max_level
 from adam_modules.semaphore.models import Trigger
 
 MIN_SOURCES_FOR_CRITICAL = 2
+# Próg pewności, poniżej którego odkładamy decyzję (DEFER) zamiast EXECUTE.
+DEFER_CONFIDENCE = 0.5
+
+
+class VoterRole(str, enum.Enum):
+    """Role głosujących wg specyfikacji F14 (multi-model consensus)."""
+    stt_primary = "stt_primary"       # główny STT (np. whisper) + detektor regułowy
+    stt_secondary = "stt_secondary"   # drugi, niezależny STT (np. deepgram) — dual-STT
+    llm_safety = "llm_safety"         # LLM oceniający bezpieczeństwo/kryzys
+    sentiment = "sentiment"           # analiza emocji/nastroju
+    wearable = "wearable"             # sygnał z urządzeń (HR/SpO2)
+
+
+class ConsensusDecision(str, enum.Enum):
+    """Macierz decyzyjna 4-stanowa (F14)."""
+    EXECUTE = "execute"     # działaj wg wyniku (zgodność, wystarczające źródła)
+    DEFER = "defer"         # odłóż/poproś o potwierdzenie (niska pewność, brak krytyku)
+    ESCALATE = "escalate"   # eskaluj do człowieka/służb (kryzys lub sporna sytuacja krytyczna)
+    ABSTAIN = "abstain"     # wstrzymaj się (brak danych/za mało źródeł, bez sygnału krytycznego)
 
 
 @dataclass
@@ -27,6 +47,7 @@ class ModelVote:
     level: SemaphoreLevel
     trigger: Trigger
     confidence: float = 1.0
+    role: VoterRole | None = None
 
 
 @dataclass
@@ -38,6 +59,7 @@ class ConsensusResult:
     needs_review: bool = False
     votes: list[ModelVote] = field(default_factory=list)
     notes: list[str] = field(default_factory=list)
+    decision: ConsensusDecision = ConsensusDecision.EXECUTE
 
     def to_classification(self) -> Classification:
         return Classification(
@@ -53,7 +75,7 @@ class ConsensusEngine:
             return ConsensusResult(
                 level=SemaphoreLevel.green, trigger=Trigger.routine_ok,
                 confidence=0.0, agreement=0.0, needs_review=True,
-                notes=["brak głosów"],
+                notes=["brak głosów"], decision=ConsensusDecision.ABSTAIN,
             )
 
         notes: list[str] = []
@@ -84,8 +106,40 @@ class ConsensusEngine:
         # pewność skorygowana o zgodność
         confidence = round(avg_conf * (0.5 + 0.5 * agreement), 4)
 
+        decision = self._decide_action(
+            level=top_level, confidence=confidence, agreement=agreement,
+            n_votes=len(votes), is_critical=is_critical, needs_review=needs_review,
+        )
+
         return ConsensusResult(
             level=top_level, trigger=trigger, confidence=confidence,
             agreement=round(agreement, 3), needs_review=needs_review,
-            votes=votes, notes=notes,
+            votes=votes, notes=notes, decision=decision,
         )
+
+    @staticmethod
+    def _decide_action(*, level: SemaphoreLevel, confidence: float, agreement: float,
+                       n_votes: int, is_critical: bool,
+                       needs_review: bool) -> ConsensusDecision:
+        """Macierz decyzyjna 4-stanowa (F14).
+
+        - ESCALATE: sytuacja krytyczna (RED/PURPLE) LUB krytyczna sporna/niepewna
+          (needs_review) — bezpieczeństwo ponad wszystko.
+        - ABSTAIN: brak sygnału (zielony) przy zbyt małej liczbie źródeł.
+        - DEFER: niekrytyczne, ale niska pewność / rozbieżność → poproś o potwierdzenie.
+        - EXECUTE: pozostałe (pewny, zgodny wynik niekrytyczny).
+        """
+        if is_critical:
+            # kryzys zawsze eskaluje (nawet przy pełnej zgodności — to jego cel)
+            return ConsensusDecision.ESCALATE
+        if needs_review:
+            # sporna sytuacja niekrytyczna, ale zgłoszona do przeglądu → odłóż
+            return ConsensusDecision.DEFER
+        if level == SemaphoreLevel.green:
+            if n_votes < MIN_SOURCES_FOR_CRITICAL:
+                return ConsensusDecision.ABSTAIN
+            return ConsensusDecision.EXECUTE
+        # YELLOW: działaj, chyba że niska pewność/rozbieżność
+        if confidence < DEFER_CONFIDENCE or agreement < 1.0:
+            return ConsensusDecision.DEFER
+        return ConsensusDecision.EXECUTE

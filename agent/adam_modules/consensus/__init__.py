@@ -6,8 +6,10 @@ przy rozbieżności wybiera wyższy poziom i oznacza needs_review.
 """
 from .engine import (
     ModelVote, ConsensusResult, ConsensusEngine, MIN_SOURCES_FOR_CRITICAL,
+    VoterRole, ConsensusDecision, DEFER_CONFIDENCE,
 )
 
 __all__ = [
     "ModelVote", "ConsensusResult", "ConsensusEngine", "MIN_SOURCES_FOR_CRITICAL",
+    "VoterRole", "ConsensusDecision", "DEFER_CONFIDENCE",
 ]

@@ -62,3 +62,66 @@ def test_to_classification():
     cls = eng.decide(votes).to_classification()
     assert cls.level == SemaphoreLevel.purple
     assert "consensus_agreement" in cls.signals
+
+
+# ---- F14 (ETAP 27): macierz decyzyjna 4-stanowa + 5 głosujących ----
+def test_decision_escalate_on_critical():
+    from adam_modules.consensus import ConsensusEngine, ModelVote, ConsensusDecision, VoterRole
+    from adam_modules.semaphore.models import SemaphoreLevel, Trigger
+    votes = [
+        ModelVote("rule", SemaphoreLevel.purple, Trigger.suicide_ideation, 0.9, VoterRole.stt_primary),
+        ModelVote("llm", SemaphoreLevel.purple, Trigger.suicide_ideation, 0.8, VoterRole.llm_safety),
+    ]
+    r = ConsensusEngine().decide(votes)
+    assert r.decision == ConsensusDecision.ESCALATE
+
+
+def test_decision_abstain_on_no_signal_few_sources():
+    from adam_modules.consensus import ConsensusEngine, ModelVote, ConsensusDecision
+    from adam_modules.semaphore.models import SemaphoreLevel, Trigger
+    r = ConsensusEngine().decide([ModelVote("rule", SemaphoreLevel.green, Trigger.routine_ok, 0.9)])
+    assert r.decision == ConsensusDecision.ABSTAIN
+
+
+def test_decision_execute_on_agreement_green():
+    from adam_modules.consensus import ConsensusEngine, ModelVote, ConsensusDecision
+    from adam_modules.semaphore.models import SemaphoreLevel, Trigger
+    votes = [
+        ModelVote("rule", SemaphoreLevel.green, Trigger.routine_ok, 0.9),
+        ModelVote("llm", SemaphoreLevel.green, Trigger.routine_ok, 0.9),
+    ]
+    r = ConsensusEngine().decide(votes)
+    assert r.decision == ConsensusDecision.EXECUTE
+
+
+def test_decision_defer_on_yellow_disagreement():
+    from adam_modules.consensus import ConsensusEngine, ModelVote, ConsensusDecision
+    from adam_modules.semaphore.models import SemaphoreLevel, Trigger
+    votes = [
+        ModelVote("rule", SemaphoreLevel.yellow, Trigger.mood_low, 0.5),
+        ModelVote("llm", SemaphoreLevel.green, Trigger.routine_ok, 0.6),
+    ]
+    r = ConsensusEngine().decide(votes)
+    assert r.decision == ConsensusDecision.DEFER
+
+
+def test_crisis_consensus_five_voters():
+    from adam_modules.voice.consensus import CrisisConsensus
+    from adam_modules.consensus import ModelVote, VoterRole
+    from adam_modules.semaphore.models import SemaphoreLevel, Trigger
+    from adam_modules.voice.ports import RuleLLM
+
+    def sentiment_voter(text):
+        return ModelVote("sentiment", SemaphoreLevel.yellow, Trigger.mood_low, 0.5, VoterRole.sentiment)
+
+    def wearable_voter(text):
+        return ModelVote("wearable", SemaphoreLevel.green, Trigger.routine_ok, 0.7, VoterRole.wearable)
+
+    def stt2_voter(text):
+        return ModelVote("stt2", SemaphoreLevel.green, Trigger.routine_ok, 0.8, VoterRole.stt_secondary)
+
+    cc = CrisisConsensus(RuleLLM(), extra_voters=[sentiment_voter, wearable_voter, stt2_voter])
+    res = cc.assess("czuję się trochę smutno dzisiaj")
+    # 5 źródeł: rule_detector + llm + sentiment + wearable + stt2
+    assert len(res.sources) == 5
+    assert res.decision is not None
