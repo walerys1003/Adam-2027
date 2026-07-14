@@ -69,5 +69,19 @@ python3 -m pytest adam_modules/tests/ -q
 | F16 | Multi-model consensus | ✅ ConsensusEngine (≥2 źródła, fail-safe wyższy poziom przy rozbieżności, needs_review) + 6 testów |
 | F17 | Integracja 112 | ✅ EmergencyService (payload: adres/wiek/leki/vitals + dispatch_summary) + 5 testów |
 | F18 | Testy E2E + CI | ✅ pełny przepływ PURPLE (detekcja→consensus→guardrails→semafor→eskalacja→rodzina→112→disclosure→RODO) + scenariusze GREEN/state-machine + GitHub Actions CI (`.github/workflows/backend-ci.yml`) + 6 testów E2E |
+| **API** | Warstwa REST (FastAPI) — ETAP 9 | ✅ `adam_modules/api` — 33 endpointy F1–F18 (seniorzy/safety/leki/wearables/rodzina+SSE/marketplace/RODO/compliance) + OpenAPI `/docs` + maskowanie PII + guardrails + 23 testy (TestClient). Szczegóły: `docs/API.md` |
 
-**Łącznie: 154 testy, 7 migracji (0001–0007), CI (pytest + Alembic upgrade/downgrade). Backend F1–F18 kompletny.**
+**Łącznie: 177 testów (154 backend + 23 API), 7 migracji (0001–0007), CI (pytest + Alembic upgrade/downgrade). Backend F1–F18 + warstwa API kompletne.**
+
+## API (ETAP 9)
+
+Warstwa `adam_modules/api` (FastAPI) wystawia funkcje F1–F18 przez REST/JSON.
+
+```bash
+cd agent
+ADAM_PII_KEY=dev ADAM_PII_PEPPER=dev \
+  uvicorn adam_modules.api.app:app --reload --port 8787
+# → http://localhost:8787/docs (Swagger), /health
+```
+
+Pełna mapa endpointów, zmienne środowiskowe i uwagi bezpieczeństwa: **`docs/API.md`**.

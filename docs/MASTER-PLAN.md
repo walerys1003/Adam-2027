@@ -42,7 +42,7 @@
 
 ---
 
-## ETAP 4 — Panel Opiekuna (8 ekranów) 🟢
+## ETAP 4 — Panel Opiekuna (8 ekranów) ✅ (commit 22e3636)
 
 ### 4.1 Fundament panelu (✅ część 1, commit 979ab3c)
 - [x] E4.1.1 PanelLayout (sidebar 240px + topbar + mobile bottom nav + drawer)
@@ -222,6 +222,45 @@ Struktura: `agent/adam_modules/` (nowy pakiet obok AVA src/), FastAPI-style rout
 ### 8.12 Domknięcie backendu ✅
 - [x] E8.12.1 requirements.txt modułów (F1–F18: rdzeń + prod PG/Redis + adaptery opcjonalne)
 - [x] E8.12.2 docs/BACKEND-DEPLOY.md (Frankfurt DC, Asterisk ARI, PostgreSQL, Redis, docker-compose, adaptery prod)
+
+---
+
+## ETAP 9 — Warstwa API (FastAPI) ✅ (kod tu, uruchomienie = Frankfurt DC)
+
+Warstwa `adam_modules/api` wystawia funkcje F1–F18 przez REST/JSON, by frontend
+(panel opiekuna/admina) mógł połączyć się z prawdziwym backendem zamiast mocka.
+
+### 9.1 Szkielet aplikacji ✅
+- [x] E9.1.1 Fabryka `create_app()` + `app` (FastAPI, tytuł/opis/wersja, OpenAPI `/docs`)
+- [x] E9.1.2 DI sesji per-request (`deps.get_db`, commit/rollback) + guard `X-API-Key` (`require_api_key`)
+- [x] E9.1.3 CORS (ADAM_CORS_ORIGINS) + handler `ValueError`→422 + `/health`, `/`
+- [x] E9.1.4 SQLite in-memory: `StaticPool` w `common/db.py` (współdzielone połączenie dla wielu sesji)
+
+### 9.2 Router seniorów (F1) ✅
+- [x] E9.2.1 CRUD (`GET/POST/PATCH/DELETE`) + lista/paginacja + by-external + maskowanie PII
+
+### 9.3 Router bezpieczeństwa (F3/F4/F8) ✅
+- [x] E9.3.1 `/analyze` (detekcja tekst+vitals → klasyfikacja → guardrails → plan eskalacji, opcj. apply)
+- [x] E9.3.2 `/resolve` + `/history`
+
+### 9.4 Routery leki (F6) + wearables (F10) ✅
+- [x] E9.4.1 Leki: lista/dodawanie + adherence
+- [x] E9.4.2 Wearables: urządzenia + ingest (audyt SHA-256) + latest + breaches
+
+### 9.5 Router rodzina/notyfikacje (F9) ✅
+- [x] E9.5.1 Opiekunowie + dispatch wg poziomu + feed + **SSE `/events`**
+
+### 9.6 Routery marketplace (F11) + RODO (F12) ✅
+- [x] E9.6.1 Marketplace: katalog + zamówienia + anulowanie (okno 30 min → 422 poza oknem)
+- [x] E9.6.2 RODO: export (art.15/20) + soft-delete + erase (art.17) + audit (art.30)
+
+### 9.7 Router compliance (F13/F14/F15/F16/F17) ✅
+- [x] E9.7.1 System register + disclosures (AI Act) + QA + consensus + payload 112 + profil mowy
+
+### 9.8 Domknięcie API ✅
+- [x] E9.8.1 33 endpointy, OpenAPI zweryfikowany (uvicorn boot + curl /health,/docs)
+- [x] E9.8.2 docs/API.md (mapa endpointów, env, bezpieczeństwo) + requirements (fastapi/uvicorn/httpx)
+- [x] E9.8.3 23 testy API (TestClient) — **177 testów total** — build/commit/push
 
 ---
 

@@ -12,6 +12,7 @@ from typing import Iterator
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
+from sqlalchemy.pool import StaticPool
 
 
 class Base(DeclarativeBase):
@@ -27,7 +28,13 @@ def init_engine(url: str | None = None, echo: bool = False):
     global _engine, _SessionFactory
     url = url or os.getenv("ADAM_DATABASE_URL", "sqlite:///:memory:")
     connect_args = {"check_same_thread": False} if url.startswith("sqlite") else {}
-    _engine = create_engine(url, echo=echo, future=True, connect_args=connect_args)
+    engine_kwargs: dict = {"echo": echo, "future": True, "connect_args": connect_args}
+    # SQLite in-memory: wszystkie sesje muszą współdzielić JEDNO połączenie,
+    # inaczej każda sesja dostaje pustą bazę (brak tabel). Wymagane dla API,
+    # które otwiera nową sesję per-request.
+    if url.startswith("sqlite") and (":memory:" in url or url == "sqlite://"):
+        engine_kwargs["poolclass"] = StaticPool
+    _engine = create_engine(url, **engine_kwargs)
     _SessionFactory = sessionmaker(bind=_engine, expire_on_commit=False, class_=Session)
     return _engine
 
