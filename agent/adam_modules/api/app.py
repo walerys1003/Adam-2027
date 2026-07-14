@@ -152,6 +152,7 @@ def create_app(*, init_db: bool = True) -> FastAPI:
         voice as voice_router,
         account as account_router,
         consents as consents_router,
+        emergency as emergency_router,
     )
 
     app.include_router(auth_router.router)
@@ -166,6 +167,7 @@ def create_app(*, init_db: bool = True) -> FastAPI:
     app.include_router(voice_router.router)
     app.include_router(account_router.router)
     app.include_router(consents_router.router)
+    app.include_router(emergency_router.router)
 
     return app
 

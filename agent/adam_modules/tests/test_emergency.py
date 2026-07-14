@@ -60,3 +60,59 @@ def test_payload_serializable(session):
     d = p.to_dict()
     assert d["external_id"] == s.external_id
     assert "recent_vitals" in d
+
+
+# ---- F15 (ETAP 26): audio + dispatch + rejestr + dialplan ----
+def test_build_emergency_audio_script(session):
+    from adam_modules.emergency import build_emergency_audio
+    s = _senior(session)
+    p = EmergencyService(session).build_payload(s, reason="ból w klatce piersiowej")
+    script = build_emergency_audio(p)
+    text = script.full_text()
+    assert "zagrożenia życia" in text
+    assert "Jan Kowalski" in text
+    assert "Sołacka" in text
+    # numer telefonu rozpisany słownie
+    assert "jeden" in text
+    # sekcja powtórzenia obecna
+    assert script.repeat_notice in script.segments
+
+
+def test_dispatch_creates_simulated_call_in_dev(session):
+    s = _senior(session)
+    call = EmergencyService(session).dispatch(s, reason="kryzys PURPLE")
+    assert call.id is not None
+    assert call.status.value == "simulated"   # brak originatora w dev
+    assert call.audio_script and "zagrożenia życia" in call.audio_script
+    assert call.payload_json
+
+
+def test_dispatch_with_originator_ok(session):
+    from adam_modules.emergency import OriginateResult
+    s = _senior(session)
+
+    class FakeOriginator:
+        def originate(self, *, number, audio_ref):
+            return OriginateResult(ok=True, channel_id="ch-112-1", detail="połączono")
+
+    call = EmergencyService(session).dispatch(s, reason="upadek", originator=FakeOriginator())
+    assert call.status.value == "dispatched"
+    assert call.channel_id == "ch-112-1"
+
+
+def test_emergency_history(session):
+    s = _senior(session)
+    svc = EmergencyService(session)
+    svc.dispatch(s, reason="raz")
+    svc.dispatch(s, reason="dwa")
+    hist = svc.history(s.id)
+    assert len(hist) == 2
+    assert hist[0].reason == "dwa"   # DESC
+
+
+def test_render_dialplan():
+    from adam_modules.emergency import render_emergency_dialplan
+    dp = render_emergency_dialplan()
+    assert "[adam-emergency]" in dp
+    assert "call112" in dp
+    assert "Playback" in dp

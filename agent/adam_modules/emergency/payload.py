@@ -11,6 +11,7 @@ Uwaga RODO: przekazanie danych do 112 ma podstawę w art. 6 ust. 1 lit. d
 """
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
 
@@ -98,3 +99,58 @@ class EmergencyService:
             if r is not None:
                 out[vt.value] = r.value
         return out
+
+    # ---- F15 (ETAP 26): pełny łańcuch wezwania 112 ----
+    def dispatch(self, senior: Senior, reason: str, *, originator=None):
+        """Buduje payload + skrypt głosowy, próbuje wywołać 112, zapisuje EmergencyCall.
+
+        Bez originatora (dev/sandbox) → status `simulated` (fail-safe, bez wyjątku).
+        Zwraca utworzony rekord EmergencyCall.
+        """
+        from .audio import build_emergency_audio
+        from .dialplan import originate_emergency
+        from .models import EmergencyCall, EmergencyStatus
+
+        payload = self.build_payload(senior, reason)
+        script = build_emergency_audio(payload)
+        result = originate_emergency(script, originator)
+
+        if result.simulated:
+            status = EmergencyStatus.simulated
+        elif result.ok:
+            status = EmergencyStatus.dispatched
+        else:
+            status = EmergencyStatus.failed
+
+        call = EmergencyCall(
+            senior_id=senior.id,
+            reason=reason,
+            semaphore_level=payload.semaphore_level,
+            status=status,
+            channel_id=result.channel_id,
+            payload_json=json.dumps(payload.to_dict(), ensure_ascii=False),
+            audio_script=script.full_text(),
+            detail=result.detail,
+        )
+        self.session.add(call)
+        self.session.flush()
+
+        # rejestr RODO (art. 6 ust. 1 lit. d — ochrona żywotnych interesów)
+        try:
+            from adam_modules.rodo import RodoService, ProcessingAction, DataCategory
+            RodoService(self.session).log(
+                senior.id, ProcessingAction.access, category=DataCategory.reports,
+                actor="emergency", detail=f"wezwanie 112: {reason} [{status.value}]",
+                legal_basis="art. 6 ust. 1 lit. d RODO",
+            )
+        except Exception:  # pragma: no cover — log nie może blokować wezwania
+            pass
+
+        return call
+
+    def history(self, senior_id: int, limit: int = 50):
+        from .models import EmergencyCall
+        return list(self.session.scalars(
+            select(EmergencyCall).where(EmergencyCall.senior_id == senior_id)
+            .order_by(EmergencyCall.id.desc()).limit(limit)
+        ))

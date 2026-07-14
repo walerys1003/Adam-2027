@@ -374,3 +374,33 @@ def test_consent_withdraw(client):
                     json={"consent_type": "call_recording"})
     assert r.status_code == 200
     assert r.json()["status"] == "withdrawn"
+
+
+# ---- emergency 112 (F15, ETAP 26) ----
+def test_emergency_dispatch_simulated(client):
+    s = _make_senior(client)
+    r = client.post(f"/api/seniors/{s['id']}/emergency/dispatch",
+                    json={"reason": "kryzys PURPLE"})
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["status"] == "simulated"
+    assert body["reason"] == "kryzys PURPLE"
+
+
+def test_emergency_payload_preview(client):
+    s = _make_senior(client)
+    r = client.get(f"/api/seniors/{s['id']}/emergency/payload?reason=upadek")
+    assert r.status_code == 200
+    body = r.json()
+    assert "audio_script" in body
+    assert "zagrożenia życia" in body["audio_script"]
+
+
+def test_emergency_history_and_dialplan(client):
+    s = _make_senior(client)
+    client.post(f"/api/seniors/{s['id']}/emergency/dispatch", json={"reason": "x"})
+    rh = client.get(f"/api/seniors/{s['id']}/emergency/history")
+    assert rh.status_code == 200 and len(rh.json()) == 1
+    rd = client.get(f"/api/seniors/{s['id']}/emergency/dialplan")
+    assert rd.status_code == 200
+    assert "[adam-emergency]" in rd.json()["dialplan"]
