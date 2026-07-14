@@ -1,0 +1,79 @@
+/* ============================================================
+   ADAM · globals.css
+   Tailwind layers + font-face + base typography defaults.
+   Import order (main.tsx): tokens.css → globals.css
+   ============================================================ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   Fonts — Google Fonts CDN loaded in index.html.
+   Self-host fallback lives in public/fonts/ (see docs).
+   ============================================ */
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    background: var(--paper);
+    color: var(--ink-900);
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-serif);
+    font-variation-settings: 'opsz' 60;
+    letter-spacing: var(--tracking-tight);
+    color: var(--ink-900);
+  }
+
+  ::selection {
+    background: var(--zloto-200);
+    color: var(--granat-900);
+  }
+
+  /* Focus visible — gold ring for accessibility */
+  :focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring-strong);
+    border-radius: var(--radius-sm);
+  }
+}
+
+@layer components {
+  /* Eyebrow — uppercase label above headings */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-caption);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--zloto-700);
+  }
+
+  /* Adam card — signature 12px radius surface */
+  .adam-card {
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-e1);
+  }
+
+  /* KPI numeral in Fraunces */
+  .kpi {
+    font-family: var(--font-serif);
+    font-variation-settings: 'opsz' 144;
+    font-weight: 500;
+    letter-spacing: var(--tracking-tight);
+    line-height: 1;
+  }
+}
+
+/* Custom scrollbar (subtle, warm) */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--paper-2); }
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: var(--radius-full);
+  border: 2px solid var(--paper-2);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--ink-400); }
