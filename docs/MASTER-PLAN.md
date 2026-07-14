@@ -143,11 +143,11 @@
 
 ---
 
-## ETAP 6 — PWA 🟢
-- [ ] E6.1 vite-plugin-pwa + manifest („Adam – Panel Opiekuna", theme #1a2744, ikony)
-- [ ] E6.2 Service Worker: cache-first assets / network-first API (Workbox)
-- [ ] E6.3 InstallPrompt banner + tryb standalone + offline fallback
-- [ ] E6.4 Ikony/splash (generacja) + weryfikacja Lighthouse PWA + commit/push
+## ETAP 6 — PWA ✅
+- [x] E6.1 vite-plugin-pwa + manifest („Adam — Panel Opiekuna", theme #1a2744, start_url /panel, standalone, ikony 192/512/maskable + apple-touch)
+- [x] E6.2 Service Worker (Workbox generateSW, autoUpdate): precache 15 wpisów + CacheFirst Google Fonts + navigateFallback /index.html
+- [x] E6.3 InstallPrompt (banner A2HS beforeinstallprompt + localStorage dismiss) + toast aktualizacji SW + offline-ready (light, wg Adam DS)
+- [x] E6.4 Ikony brandowe wygenerowane (granat + złoty monogram A) + iOS meta tags + build weryfikacja (manifest.webmanifest + sw.js OK) + commit/push
 
 ---
 

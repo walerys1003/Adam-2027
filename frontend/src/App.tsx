@@ -15,6 +15,7 @@ import { AccountPage } from '@/pages/panel/AccountPage'
 import { SettingsPage } from '@/pages/panel/SettingsPage'
 import { HelpPage } from '@/pages/panel/HelpPage'
 import { AdminLayout } from '@/components/admin'
+import { InstallPrompt } from '@/components/pwa/InstallPrompt'
 import {
   AdminDashboard,
   AdminSeniors,
@@ -51,6 +52,7 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <InstallPrompt />
         <Routes>
           <Route path="/" element={<LandingRoute />} />
           <Route path="/login" element={<LoginPage />} />
