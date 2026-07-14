@@ -183,9 +183,9 @@ Struktura: `agent/adam_modules/` (nowy pakiet obok AVA src/), FastAPI-style rout
 - [x] E8.3.4 System Prompt Adama + AI Act disclosure (przedstawia się jako AI)
 - [x] E8.3.5 Testy jednostkowe wszystkich triggerów + progów (26 testów, 46 total ✅)
 
-### 8.4 F6 — Medication tracker
-- [ ] E8.4.1 Model medications + adherence + MedGuard ref
-- [ ] E8.4.2 Serwis harmonogramu + liczenie adherence + API + testy
+### 8.4 F6 — Medication tracker ✅
+- [x] E8.4.1 Modele medications + medication_schedules + dose_logs + MedGuard flag (migracja 0004)
+- [x] E8.4.2 Serwis harmonogramu (days_mask) + generowanie dawek + sweep_missed + liczenie adherence + 11 testów
 
 ### 8.5 F7 — Pamięć semantyczna (RAG rozmów)
 - [ ] E8.5.1 Vector store rozmów (embeddingi) + context injection do promptu
