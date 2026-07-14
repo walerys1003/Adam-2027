@@ -67,5 +67,6 @@ def create_all():
     from adam_modules.scheduler import models as _sched_models  # noqa: F401
     from adam_modules.semaphore import models as _sem_models  # noqa: F401
     from adam_modules.medication import models as _med_models  # noqa: F401
+    from adam_modules.memory import models as _memory_models  # noqa: F401
 
     Base.metadata.create_all(_engine)

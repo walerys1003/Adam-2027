@@ -18,6 +18,7 @@ from adam_modules.seniors import models as _seniors  # noqa: E402,F401
 from adam_modules.scheduler import models as _scheduler  # noqa: E402,F401
 from adam_modules.semaphore import models as _semaphore  # noqa: E402,F401
 from adam_modules.medication import models as _medication  # noqa: E402,F401
+from adam_modules.memory import models as _memory  # noqa: E402,F401
 
 config = context.config
 

@@ -187,9 +187,9 @@ Struktura: `agent/adam_modules/` (nowy pakiet obok AVA src/), FastAPI-style rout
 - [x] E8.4.1 Modele medications + medication_schedules + dose_logs + MedGuard flag (migracja 0004)
 - [x] E8.4.2 Serwis harmonogramu (days_mask) + generowanie dawek + sweep_missed + liczenie adherence + 11 testów
 
-### 8.5 F7 — Pamięć semantyczna (RAG rozmów)
-- [ ] E8.5.1 Vector store rozmów (embeddingi) + context injection do promptu
-- [ ] E8.5.2 API retrieval + testy
+### 8.5 F7 — Pamięć semantyczna (RAG rozmów) ✅
+- [x] E8.5.1 MemoryChunk (embedding JSON) + pluggable Embedder + context injection do promptu (F5) (migracja 0005)
+- [x] E8.5.2 retrieve() (cosine top-k, filtr kind, scope per senior) + build_context() + forget_senior (RODO) + 13 testów
 
 ### 8.6 F8 — Crisis detection
 - [ ] E8.6.1 Detektor 14+ sygnałów (chest_pain, suicide_ideation, fall…) + mapowanie na semafor
