@@ -176,12 +176,12 @@ Struktura: `agent/adam_modules/` (nowy pakiet obok AVA src/), FastAPI-style rout
 - [x] E8.2.2 WelfareScheduler (APScheduler cron per kampania, Europe/Warsaw) + AriOriginator wrapper (NullOriginator do testów)
 - [x] E8.2.3 run_with_retries (3×/20s, każda próba osobny rekord audytu, exhausted→eskalacja) + SchedulerService + 7 testów
 
-### 8.3 F3+F4+F5 — Semafor + Guardrails + System Prompt (bezpieczeństwo razem)
-- [ ] E8.3.1 SemaphoreEngine (TRIGGERS→level, state machine) + tabela semaphore_events
-- [ ] E8.3.2 EscalationLadder (RED: retry→SMS→koordynator→PURPLE→112) + timery
-- [ ] E8.3.3 Guardrails (walidacja klasyfikacji, anty-halucynacja) 
-- [ ] E8.3.4 System Prompt Adama + AI Act disclosure (przedstawia się jako AI)
-- [ ] E8.3.5 Testy jednostkowe wszystkich triggerów + progów
+### 8.3 F3+F4+F5 — Semafor + Guardrails + System Prompt (bezpieczeństwo razem) ✅
+- [x] E8.3.1 SemaphoreEngine (TRIGGERS→level, state machine) + tabela semaphore_events (migracja 0003)
+- [x] E8.3.2 EscalationLadder (RED: retry→SMS→koordynator→PURPLE→112) + timery (offsety)
+- [x] E8.3.3 Guardrails (walidacja klasyfikacji, anty-halucynacja)
+- [x] E8.3.4 System Prompt Adama + AI Act disclosure (przedstawia się jako AI)
+- [x] E8.3.5 Testy jednostkowe wszystkich triggerów + progów (26 testów, 46 total ✅)
 
 ### 8.4 F6 — Medication tracker
 - [ ] E8.4.1 Model medications + adherence + MedGuard ref

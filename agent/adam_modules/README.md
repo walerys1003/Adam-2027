@@ -55,7 +55,7 @@ python3 -m pytest adam_modules/tests/ -q
 |---|---------|--------|
 | F1 | Profile seniorów (PII szyfrowane) | ✅ modele + schematy + serwis + migracja + testy |
 | F2 | Scheduler welfare-check | ✅ kampanie + retry 3×/20s + APScheduler + ARI wrapper + 7 testów |
-| F3–F5 | Semafor + eskalacja + guardrails + prompt | ⏳ |
+| F3–F5 | Semafor + eskalacja + guardrails + prompt | ✅ SemaphoreEngine (17 triggerów, state machine) + EscalationLadder (RED/PURPLE) + Guardrails (anty-halucynacja) + System Prompt (AI Act disclosure) + migracja 0003 + 26 testów |
 | F6 | Medication tracker | ⏳ |
 | F7 | Pamięć semantyczna (RAG) | ⏳ |
 | F8 | Crisis detection | ⏳ |

@@ -16,6 +16,7 @@ from adam_modules.common.db import Base  # noqa: E402
 # import modeli, by zarejestrowały się w metadata
 from adam_modules.seniors import models as _seniors  # noqa: E402,F401
 from adam_modules.scheduler import models as _scheduler  # noqa: E402,F401
+from adam_modules.semaphore import models as _semaphore  # noqa: E402,F401
 
 config = context.config
 
