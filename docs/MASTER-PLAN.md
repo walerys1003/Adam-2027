@@ -151,13 +151,13 @@
 
 ---
 
-## ETAP 7 — Capacitor iOS+Android 🔴 (kod tu, build u SilverTech)
-- [ ] E7.1 capacitor.config.ts (appId pl.silvertech.adam.caregiver) + npx cap init
-- [ ] E7.2 Dodanie platform ios/ + android/ (struktura)
-- [ ] E7.3 Pluginy: push-notifications, local-notifications, splash-screen, share, biometrics (Face ID)
-- [ ] E7.4 Warstwa natywna: NotificationService (RED/PURPLE critical), BiometricGate
-- [ ] E7.5 Splash #1a2744 + logo, konfiguracja APNs/FCM (placeholdery kluczy)
-- [ ] E7.6 docs/CAPACITOR-BUILD.md (instrukcja buildu .ipa/.aab, entitlement Critical Alerts) + commit/push
+## ETAP 7 — Capacitor iOS+Android ✅ (kod tu, build u SilverTech)
+- [x] E7.1 capacitor.config.ts (appId pl.silvertech.adam.caregiver, appName Adam, webDir dist, splash granat/złoto)
+- [x] E7.2 Platformy ios/ + android/ dodane (npx cap add) — struktura wersjonowana, artefakty w .gitignore
+- [x] E7.3 Wtyczki: push-notifications, local-notifications, splash-screen, share, capacitor-native-biometric (Face ID/Touch ID/odcisk)
+- [x] E7.4 Warstwa natywna src/lib/native/: NotificationService (kanał krytyczny RED/PURPLE + push), BiometricGate (Face ID), initNativeShell (no-op w web)
+- [x] E7.5 Splash #1a2744 + spinner złoto, kanały powiadomień + placeholdery APNs/FCM udokumentowane
+- [x] E7.6 docs/CAPACITOR-BUILD.md (instrukcja .ipa/.aab, Critical Alerts entitlement, placeholdery kluczy) + commit/push
 
 ---
 

@@ -1,0 +1,5 @@
+export { NotificationService } from './NotificationService'
+export type { SemaphoreLevel } from './NotificationService'
+export { BiometricGate } from './BiometricGate'
+export type { BiometricStatus } from './BiometricGate'
+export { initNativeShell } from './initNativeShell'
