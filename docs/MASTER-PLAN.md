@@ -264,6 +264,39 @@ Warstwa `adam_modules/api` wystawia funkcje F1–F18 przez REST/JSON, by fronten
 
 ---
 
+## ETAP 10 — Podpięcie frontendu do prawdziwego API ✅
+
+Panel (`frontend/`) łączy się z warstwą FastAPI (ETAP 9) przez **adapter** mapujący kontrakt
+REST na typy domenowe. Przełącznik mock⇄live sterowany `VITE_API_URL` — brak zmiennej = mock
+(dev bez backendu), ustawiona = prawdziwe API.
+
+### 10.1 Adapter backend→domena ✅
+- [x] E10.1.1 `src/lib/api/realApi.ts` — mapowanie `BackendSenior/Order/Adherence` → `Senior/SeniorDetail/Order/MoodPoint`
+- [x] E10.1.2 Wzbogacanie: `mood` z heurystyki semafora, `adherence30d` z F6, deterministyczny trend 7-dniowy
+- [x] E10.1.3 Fabryka `createRealApi(fetcher)` — wstrzykiwany fetch (testowalność)
+
+### 10.2 Fasada klienta (mock/live) ✅
+- [x] E10.2.1 `client.ts`: `USE_MOCK = !VITE_API_URL`, `realFetch` (Bearer + `X-API-Key`, 204→null)
+- [x] E10.2.2 Podpięcie `getMySeniors/getSenior/getMood/listOrders/cancelOrder/createOrder` za przełącznikiem
+- [x] E10.2.3 `login/decodeToken/messages/account` pozostają mockiem (backend nie ma jeszcze /auth /threads /billing)
+
+### 10.3 Konfiguracja środowiska ✅
+- [x] E10.3.1 `frontend/.env.example` (`VITE_API_URL`, `VITE_API_KEY`) + opis w docs/API.md
+- [x] E10.3.2 `.env.local` wykluczony z gita (whitelist tylko `.env.example`)
+
+### 10.4 Testy adaptera ✅
+- [x] E10.4.1 17 testów Vitest (mapowania + `createRealApi` ze stub-fetcherami, w tym `getMood`)
+
+### 10.5 Live smoke test frontend↔backend ✅
+- [x] E10.5.1 uvicorn na :8787 (persistent SQLite) + seed seniora (SR-A4772B9E) przez prawdziwe API
+- [x] E10.5.2 Adapter (`createRealApi(fetch)`) odpytany na żywo: `getMySeniors`/`getSenior`/`listOrders` mapują poprawnie
+
+### 10.6 Domknięcie ETAP 10 ✅
+- [x] E10.6.1 `npm run build` (tsc -b && vite build) — czysto, wykryty i naprawiony kontrakt `getMood` (`{ data, markers }`)
+- [x] E10.6.2 docs/API.md sekcja „Integracja z frontendem" + MASTER-PLAN ETAP 10 — commit/push
+
+---
+
 ## Zasada realizacji
 Koduję etap po etapie. Po każdym **podetapie** — build/test; po każdym **etapie** — commit + push do
 `walerys1003/Adam-2027`. Nie proszę o zgodę między etapami. Statusy `[ ]→[x]` aktualizuję w tym pliku.

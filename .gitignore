@@ -58,6 +58,8 @@ android/build/
 frontend/node_modules/
 frontend/dist/
 frontend/.vite/
+frontend/tsconfig.tsbuildinfo
+frontend/*.tsbuildinfo
 
 # Adam backend dev DB
 agent/adam_modules/migrations/adam_dev.db

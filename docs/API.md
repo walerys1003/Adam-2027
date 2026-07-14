@@ -110,3 +110,53 @@ cd agent
 python3 -m pytest adam_modules/tests/test_api.py -q   # 23 testy API
 python3 -m pytest adam_modules/tests/ -q               # 177 testów (F1–F18 + API)
 ```
+
+## Integracja z frontendem (ETAP 10)
+
+Panel opiekuna (`frontend/`) konsumuje to API przez **adapter** (`src/lib/api/realApi.ts`),
+który mapuje kontrakt FastAPI na typy domenowe frontendu (`Senior`, `SeniorDetail`, `Order`,
+`MoodPoint`). Fasada `src/lib/api/client.ts` przełącza mock⇄live na podstawie `VITE_API_URL`.
+
+### Przełącznik mock / live
+
+| `VITE_API_URL` | Tryb | Zachowanie |
+|---|---|---|
+| puste | **mock** (`USE_MOCK=true`) | dane w pamięci (`mockApi.ts`) — dev bez backendu |
+| ustawione | **live** | adapter `realApi` → prawdziwe endpointy FastAPI |
+
+Konfiguracja: skopiuj `frontend/.env.example` → `frontend/.env.local`:
+
+```
+VITE_API_URL=http://localhost:8787   # bazowy URL backendu
+VITE_API_KEY=                        # trafia do nagłówka X-API-Key (= ADAM_API_KEY)
+```
+
+### Mapowanie kontraktu (adapter)
+
+| Frontend (domain) | Backend (FastAPI) | Uwagi |
+|---|---|---|
+| `getMySeniors()` | `GET /api/seniors?limit=200` | `{ items,total }` → `{ seniors,total }` |
+| `getSenior(extId)` | `GET /api/seniors/by-external/{extId}` + `GET /api/seniors/{id}/medications/adherence?days=30` | `adherence30d` z F6; tolerancja 404 → 0 |
+| `getMood(extId)` | `GET /api/seniors/by-external/{extId}` | backend nie trzyma serii nastroju — trend 7-dniowy wyliczany deterministycznie z semafora |
+| `listOrders()` | `GET /api/seniors?limit=200` + `GET /api/marketplace/seniors/{id}/orders` | agregacja po seniorach |
+| `cancelOrder(id)` | `POST /api/marketplace/orders/{id}/cancel` | ValueError (poza oknem) → 422 |
+| `createOrder(...)` | `POST /api/marketplace/orders` | `{ senior_id, service_id }` |
+
+Backend jest **węższy** niż model frontendu (brak per-punkt `mood`/`adherence`), więc adapter
+**wzbogaca**: `mood` z heurystyki semafora (green 0.82 / yellow 0.58 / red 0.34 / purple 0.18),
+`adherence30d` z `/medications/adherence`, deterministyczny trend nastroju 7-dniowy.
+
+### Smoke test (live)
+
+```bash
+# 1. backend
+cd agent
+ADAM_DATABASE_URL="sqlite:////tmp/adam_live.db" \
+  ADAM_PII_KEY=dev ADAM_PII_PEPPER=dev \
+  uvicorn adam_modules.api.app:app --port 8787
+
+# 2. frontend — testy adaptera + build
+cd frontend
+npx vitest run src/lib/api/realApi.test.ts   # 17 testów adaptera
+npm run build                                 # tsc -b && vite build (weryfikacja typów)
+```

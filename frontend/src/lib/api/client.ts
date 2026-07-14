@@ -8,6 +8,7 @@
 
 import * as mock from './mockApi'
 import type { LoginPayload } from './mockApi'
+import { createRealApi } from './realApi'
 
 const USE_MOCK = !import.meta.env.VITE_API_URL
 
@@ -28,50 +29,55 @@ export const tokenStore = {
   },
 }
 
-async function realFetch(path: string, init?: RequestInit) {
+export async function realFetch(path: string, init?: RequestInit) {
   const base = import.meta.env.VITE_API_URL
   const token = tokenStore.get()
+  const apiKey = import.meta.env.VITE_API_KEY
   const res = await fetch(`${base}${path}`, {
     ...init,
     headers: {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(apiKey ? { 'X-API-Key': apiKey } : {}),
       ...init?.headers,
     },
   })
   if (!res.ok) throw new Error(`API ${res.status}: ${path}`)
+  // 204 No Content → brak ciała
+  if (res.status === 204) return null
   return res.json()
 }
 
+// Adapter backendu ETAP 9 (mapuje kontrakt FastAPI → typy domenowe).
+const real = createRealApi(realFetch)
+
 export const api = {
-  // Auth
-  login: (payload: LoginPayload) =>
-    USE_MOCK ? mock.login(payload) : realFetch('/api/auth/login', { method: 'POST', body: JSON.stringify(payload) }),
+  // Auth — backend nie ma jeszcze /auth (placeholder X-API-Key); mock zawsze.
+  login: (payload: LoginPayload) => mock.login(payload),
   decodeToken: mock.decodeToken,
 
-  // Seniors
-  getMySeniors: () => (USE_MOCK ? mock.getMySeniors() : realFetch('/api/seniors/mine')),
-  getSenior: (id: string) => (USE_MOCK ? mock.getSenior(id) : realFetch(`/api/seniors/${id}`)),
+  // Seniors — obsłużone przez adapter realApi (F1 + adherence F6).
+  getMySeniors: () => (USE_MOCK ? mock.getMySeniors() : real.getMySeniors()),
+  getSenior: (id: string) => (USE_MOCK ? mock.getSenior(id) : real.getSenior(id)),
   getMood: (id: string, range: '7d' | '14d' | '30d' | '90d' = '30d') =>
-    USE_MOCK ? mock.getMood(id, range) : realFetch(`/api/seniors/${id}/mood?range=${range}`),
+    USE_MOCK ? mock.getMood(id, range) : real.getMood(id),
 
-  // Orders
+  // Orders — F11 marketplace.
   createOrder: (input: { seniorId: string; categoryId: string; requestSource: 'adam-call' | 'caregiver-panel' }) =>
-    USE_MOCK ? mock.createOrder(input) : realFetch('/api/orders', { method: 'POST', body: JSON.stringify(input) }),
-  cancelOrder: (id: string) =>
-    USE_MOCK ? mock.cancelOrder(id) : realFetch(`/api/orders/${id}`, { method: 'DELETE' }),
-  listOrders: () => (USE_MOCK ? mock.listOrders() : realFetch('/api/orders')),
-
-  // Messages
-  listThreads: () => (USE_MOCK ? mock.listThreads() : realFetch('/api/threads')),
-  sendMessage: (threadId: string, body: string) =>
     USE_MOCK
-      ? mock.sendMessage(threadId, body)
-      : realFetch(`/api/threads/${threadId}/messages`, { method: 'POST', body: JSON.stringify({ body }) }),
+      ? mock.createOrder(input)
+      : realFetch('/api/marketplace/orders', {
+          method: 'POST',
+          body: JSON.stringify({ senior_id: Number(input.seniorId), service_id: Number(input.categoryId) }),
+        }),
+  cancelOrder: (id: string) => (USE_MOCK ? mock.cancelOrder(id) : real.cancelOrder(id)),
+  listOrders: () => (USE_MOCK ? mock.listOrders() : real.listOrders()),
 
-  // Account
-  listInvoices: () => (USE_MOCK ? mock.listInvoices() : realFetch('/api/billing/invoices')),
-  listSessions: () => (USE_MOCK ? mock.listSessions() : realFetch('/api/account/sessions')),
+  // Messages / Account — backend nie wystawia tych zasobów; mock (do ETAP 11+).
+  listThreads: () => mock.listThreads(),
+  sendMessage: (threadId: string, body: string) => mock.sendMessage(threadId, body),
+  listInvoices: () => mock.listInvoices(),
+  listSessions: () => mock.listSessions(),
 }
 
 export type { LoginPayload }
