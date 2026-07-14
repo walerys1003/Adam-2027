@@ -11,7 +11,14 @@ APScheduler>=3.10          # harmonogram welfare-check (F2)
 # --- warstwa API (ETAP 9) ---
 fastapi>=0.110             # REST API (routery F1–F18) + OpenAPI/docs
 uvicorn[standard]>=0.29    # serwer ASGI (prod: gunicorn+uvicorn workers)
-httpx>=0.27               # klient testowy (TestClient) + klienci REST adapterów
+httpx>=0.27               # klient testowy (TestClient) + realne adaptery notyfikacji (ETAP 13)
+
+# --- auth / obserwowalność (ETAP 11/14) ---
+# Świadomie BEZ pyjwt/passlib/prometheus-client — JWT HS256, PBKDF2 i metryki
+# zaimplementowane na stdlib (hmac/hashlib/logging), minimalizując zależności.
+# Zmienne środowiskowe: ADAM_JWT_SECRET, ADAM_JWT_ACCESS_TTL, ADAM_JWT_REFRESH_TTL,
+# ADAM_AUTH_USERS, ADAM_NOTIFY_PROVIDER (memory|null|live) + sekrety providerów
+# (ADAM_TWILIO_*, ADAM_SENDGRID_*, ADAM_FCM_KEY), ADAM_RATE_LIMIT/WINDOW/ENABLED.
 
 # --- produkcja (Frankfurt DC) ---
 psycopg[binary]>=3.1       # sterownik PostgreSQL (prod; dev używa SQLite)

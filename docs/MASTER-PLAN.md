@@ -297,6 +297,59 @@ REST na typy domenowe. Przełącznik mock⇄live sterowany `VITE_API_URL` — br
 
 ---
 
+## ETAP 11 — Uwierzytelnianie + RBAC (JWT) ✅ (kod tu, prod = Frankfurt DC)
+
+Placeholder `X-API-Key` zastąpiony pełnym uwierzytelnianiem tokenowym (JWT HS256, stdlib —
+bez pyjwt/passlib) + kontrolą ról. Login można w produkcji podmienić na OIDC bez zmiany kontraktu.
+
+### 11.1 Prymitywy bezpieczeństwa ✅
+- [x] E11.1.1 `auth/security.py`: PBKDF2-HMAC-SHA256 (hash/verify hasła, stały czas)
+- [x] E11.1.2 JWT HS256 own-impl (`create_token_pair`/`decode_token`, `exp`, typ access/refresh, podpis `ADAM_JWT_SECRET`)
+- [x] E11.1.3 `Role` (family<coordinator<admin) + `satisfies()` (hierarchia RBAC)
+
+### 11.2 Magazyn użytkowników + router `/api/auth` ✅
+- [x] E11.2.1 `auth/store.py`: UserStore (authenticate/get), dev z `ADAM_AUTH_USERS` lub demo (3 role)
+- [x] E11.2.2 Router: `POST /login` (401/422), `POST /refresh`, `GET /me` (Bearer) + walidacja e-mail (regex, bez email-validator)
+
+### 11.3 RBAC w API ✅
+- [x] E11.3.1 `deps`: `get_current_user` (401), `require_role(Role)` (403), `CurrentUser.can_access_senior`
+- [x] E11.3.2 Handler `TokenError→401` (WWW-Authenticate) + wpięcie routera auth w `create_app`
+
+---
+
+## ETAP 13 — Realne integracje powiadomień rodziny ✅ (kod tu, sieć = Frankfurt DC)
+
+MemoryAdapter (dev/test) uzupełniony o realne adaptery HTTP za tym samym `Protocol`.
+
+### 13.1 Adaptery HTTP ✅
+- [x] E13.1.1 `TwilioSmsAdapter` (Messages API, Basic auth)
+- [x] E13.1.2 `SendGridEmailAdapter` (Mail Send v3, Bearer)
+- [x] E13.1.3 `FcmPushAdapter` (FCM legacy, priorytet z bypass_dnd) — wszystkie fail-safe bez sekretu
+
+### 13.2 Selekcja z ENV + wpięcie ✅
+- [x] E13.2.1 `build_adapters()` wg `ADAM_NOTIFY_PROVIDER` (memory/null/live), kanał bez sekretu → degradacja
+- [x] E13.2.2 Router `family/dispatch` używa `build_adapters()` zamiast twardego MemoryAdapter
+
+---
+
+## ETAP 14 — Obserwowalność + hardening ✅
+
+Warstwa `api/observability.py` (stdlib — bez prometheus-client) dokłada middleware i metryki.
+
+### 14.1 Kontekst żądania ✅
+- [x] E14.1.1 `RequestContextMiddleware`: request-id (`X-Request-ID`), czas (`X-Response-Time-ms`), log strukturalny
+- [x] E14.1.2 `MetricsRegistry`: liczniki wg metody/kodu + średnia latencja (thread-safe)
+
+### 14.2 Rate-limit + /metrics ✅
+- [x] E14.2.1 `RateLimitMiddleware`: token-bucket per-klient (`ADAM_RATE_LIMIT/WINDOW/ENABLED`) → 429 + Retry-After; `/health,/metrics,/` wyłączone
+- [x] E14.2.2 `GET /metrics` (format Prometheus) + wpięcie middleware w `create_app` (kolejność CORS→context→rate-limit)
+
+### 14.3 Domknięcie 11/13/14 ✅
+- [x] E14.3.1 33 nowe testy (`test_auth` 19 + `test_notify_adapters` 7 + `test_middleware` 7) — **210 testów total**
+- [x] E14.3.2 requirements (adnotacja ENV, zero nowych zależności) + docs/API.md (auth/notify/obserwowalność, 40 endpointów) — commit/push
+
+---
+
 ## Zasada realizacji
 Koduję etap po etapie. Po każdym **podetapie** — build/test; po każdym **etapie** — commit + push do
 `walerys1003/Adam-2027`. Nie proszę o zgodę między etapami. Statusy `[ ]→[x]` aktualizuję w tym pliku.

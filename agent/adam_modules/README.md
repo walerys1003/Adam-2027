@@ -71,17 +71,20 @@ python3 -m pytest adam_modules/tests/ -q
 | F18 | Testy E2E + CI | ✅ pełny przepływ PURPLE (detekcja→consensus→guardrails→semafor→eskalacja→rodzina→112→disclosure→RODO) + scenariusze GREEN/state-machine + GitHub Actions CI (`.github/workflows/backend-ci.yml`) + 6 testów E2E |
 | **API** | Warstwa REST (FastAPI) — ETAP 9 | ✅ `adam_modules/api` — 33 endpointy F1–F18 (seniorzy/safety/leki/wearables/rodzina+SSE/marketplace/RODO/compliance) + OpenAPI `/docs` + maskowanie PII + guardrails + 23 testy (TestClient). Szczegóły: `docs/API.md` |
 
-**Łącznie: 177 testów (154 backend + 23 API), 7 migracji (0001–0007), CI (pytest + Alembic upgrade/downgrade). Backend F1–F18 + warstwa API kompletne.**
+**Łącznie: 210 testów (154 backend + 23 API + 33 auth/notify/obserwowalność), 7 migracji (0001–0007), CI (pytest + Alembic upgrade/downgrade). Backend F1–F18 + warstwa API + auth/RBAC + integracje + hardening kompletne.**
 
-## API (ETAP 9)
+## API (ETAP 9 + 11/13/14)
 
-Warstwa `adam_modules/api` (FastAPI) wystawia funkcje F1–F18 przez REST/JSON.
+Warstwa `adam_modules/api` (FastAPI) wystawia funkcje F1–F18 przez REST/JSON,
+plus uwierzytelnianie JWT + RBAC (ETAP 11), realne adaptery powiadomień (ETAP 13)
+oraz obserwowalność/rate-limit/`/metrics` (ETAP 14). Szczegóły: `docs/API.md`.
 
 ```bash
 cd agent
 ADAM_PII_KEY=dev ADAM_PII_PEPPER=dev \
   uvicorn adam_modules.api.app:app --reload --port 8787
-# → http://localhost:8787/docs (Swagger), /health
+# → http://localhost:8787/docs (Swagger), /health, /metrics
+# logowanie (dev): POST /api/auth/login {"email":"admin@silvertech.pl","password":"admin123"}
 ```
 
 Pełna mapa endpointów, zmienne środowiskowe i uwagi bezpieczeństwa: **`docs/API.md`**.

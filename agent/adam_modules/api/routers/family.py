@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 from adam_modules.seniors import SeniorService
 from adam_modules.seniors.models import SemaphoreLevel
 from adam_modules.family import (
-    FamilyService, FamilyRole, NotifyChannel, MemoryAdapter,
+    FamilyService, FamilyRole, NotifyChannel, build_adapters,
 )
 from ..deps import get_db
 
@@ -96,10 +96,8 @@ def add_member(senior_id: int, data: MemberIn, db: Session = Depends(get_db)):
 @router.post("/dispatch", response_model=list[NotificationOut])
 def dispatch(senior_id: int, data: DispatchIn, db: Session = Depends(get_db)):
     senior = _senior_or_404(db, senior_id)
-    adapters = {
-        "sms": MemoryAdapter(), "email": MemoryAdapter(),
-        "push": MemoryAdapter(), "call": MemoryAdapter(),
-    }
+    # Adaptery wg ENV (ADAM_NOTIFY_PROVIDER): memory (dev) / null / live.
+    adapters = build_adapters()
     svc = FamilyService(db, adapters=adapters)
     notifs = svc.dispatch(senior, data.level, title=data.title, body=data.body, hour=data.hour)
     db.flush()

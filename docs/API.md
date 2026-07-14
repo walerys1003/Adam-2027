@@ -33,14 +33,33 @@ ADAM_API_KEY="$API_KEY" ADAM_CORS_ORIGINS="https://panel.adam.silvertech.pl" \
 | `ADAM_PII_PEPPER` | Pieprz do blind index | `adam-pepper` |
 | `ADAM_API_KEY` | Klucz API (nagłówek `X-API-Key`); pusty = otwarte (dev) | — |
 | `ADAM_CORS_ORIGINS` | Dozwolone originy CORS (CSV) | `localhost:3000,localhost:5173` |
+| `ADAM_JWT_SECRET` | Sekret podpisu JWT HS256 (**wymagany w prod**) | dev-insecure |
+| `ADAM_JWT_ACCESS_TTL` | Ważność access-tokenu (s) | `900` (15 min) |
+| `ADAM_JWT_REFRESH_TTL` | Ważność refresh-tokenu (s) | `1209600` (14 dni) |
+| `ADAM_AUTH_USERS` | Użytkownicy dev: `email:hasło:rola[:sid1\|sid2],…` | demo (3 role) |
+| `ADAM_NOTIFY_PROVIDER` | Adaptery notyfikacji: `memory` / `null` / `live` | `memory` |
+| `ADAM_TWILIO_SID/TOKEN/FROM` | SMS (provider `live`) | — |
+| `ADAM_SENDGRID_KEY/FROM` | E-mail (provider `live`) | — |
+| `ADAM_FCM_KEY` | Push FCM (provider `live`) | — |
+| `ADAM_RATE_LIMIT` | Pojemność rate-limit (żądań/okno) | `120` |
+| `ADAM_RATE_WINDOW` | Okno rate-limit (s) | `60` |
+| `ADAM_RATE_ENABLED` | `0` wyłącza rate-limit | `1` |
+| `ADAM_LOG_LEVEL` | Poziom logów strukturalnych | `INFO` |
 
 > Uwaga SQLite: dla `:memory:` API używa `StaticPool` (współdzielone połączenie),
 > bo każde żądanie otwiera nową sesję. Produkcja to PostgreSQL — bez tego zastrzeżenia.
 
-## Mapa endpointów (33)
+## Mapa endpointów (40)
 
 ### System
-- `GET /health`, `GET /`, `GET /docs`, `GET /openapi.json`
+- `GET /health`, `GET /`, `GET /docs`, `GET /openapi.json`, `GET /metrics`
+
+### Auth (ETAP 11) `/api/auth`
+| Metoda | Ścieżka | Opis |
+|--------|---------|------|
+| POST | `/api/auth/login` | email+hasło → para JWT (access/refresh) + rola |
+| POST | `/api/auth/refresh` | refresh-token → nowa para JWT |
+| GET | `/api/auth/me` | profil zalogowanego (z access-tokenu; `Bearer`) |
 
 ### F1 — Seniorzy `/api/seniors`
 | Metoda | Ścieżka | Opis |
@@ -103,12 +122,41 @@ ADAM_API_KEY="$API_KEY" ADAM_CORS_ORIGINS="https://panel.adam.silvertech.pl" \
 - **CORS** zawężony do originów panelu.
 - Błędy walidacji domenowej (zły PESEL/NIP, poza oknem anulowania) → `422`.
 
+### Uwierzytelnianie i RBAC (ETAP 11)
+
+- **JWT HS256** (stdlib, bez pyjwt): access (15 min) + refresh (14 dni), podpis `ADAM_JWT_SECRET`.
+- **Hasła**: PBKDF2-HMAC-SHA256 (200k rund, sól per-hasło), porównanie w stałym czasie.
+- **Role (hierarchia)**: `family < coordinator < admin`. Zależność `require_role(Role.X)` → `403`
+  gdy rola za niska; `get_current_user` → `401` przy braku/wygaśnięciu tokenu.
+- **Dostęp do seniora**: `family` widzi tylko przypisanych (`senior_ids` w tokenie),
+  `coordinator`/`admin` — wszystkich (`CurrentUser.can_access_senior`).
+- Błędy uwierzytelniania (złe hasło / token) → `401` (`TokenError`, spójny komunikat — brak enumeracji).
+- Prod: `ADAM_JWT_SECRET` obowiązkowy; login można podmienić na OIDC (kontrakt `TokenOut` bez zmian).
+
+### Powiadomienia rodzinne (ETAP 13)
+
+- Adaptery za `Protocol` (`NotificationAdapter`), selekcja `build_adapters()` wg `ADAM_NOTIFY_PROVIDER`:
+  `memory` (dev/test), `null` (cisza), `live` (Twilio SMS / SendGrid e-mail / FCM push — httpx).
+- **Fail-safe**: kanał `live` bez sekretu zwraca `DeliveryResult(ok=False)` zamiast rzucać wyjątkiem.
+- Kanał `call` = warstwa ARI/telefonia (poza tym pakietem) — Null/Memory.
+
+### Obserwowalność i hardening (ETAP 14)
+
+- **Request-ID** (`X-Request-ID`, propagowany z żądania lub generowany) + **czas odpowiedzi** (`X-Response-Time-ms`).
+- **Log strukturalny** (`adam.api`): metoda, ścieżka, status, req_id, czas.
+- **Rate-limit** token-bucket per-klient (`ADAM_RATE_LIMIT`/`WINDOW`) → `429` + `Retry-After`;
+  `/health`, `/metrics`, `/` wyłączone. Prod: przenieść do Redis.
+- **`GET /metrics`** — ekspozycja w formacie Prometheus (liczniki wg metody/kodu, średnia latencja, odrzucenia rate-limit).
+
 ## Testy
 
 ```bash
 cd agent
-python3 -m pytest adam_modules/tests/test_api.py -q   # 23 testy API
-python3 -m pytest adam_modules/tests/ -q               # 177 testów (F1–F18 + API)
+python3 -m pytest adam_modules/tests/test_api.py -q          # 23 testy API (F1–F18)
+python3 -m pytest adam_modules/tests/test_auth.py -q         # 19 testów auth/RBAC (ETAP 11)
+python3 -m pytest adam_modules/tests/test_notify_adapters.py -q  # 7 testów adapterów (ETAP 13)
+python3 -m pytest adam_modules/tests/test_middleware.py -q   # 7 testów obserwowalności (ETAP 14)
+python3 -m pytest adam_modules/tests/ -q                     # 210 testów (F1–F18 + API + 11/13/14)
 ```
 
 ## Integracja z frontendem (ETAP 10)
