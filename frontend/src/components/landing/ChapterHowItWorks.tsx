@@ -1,5 +1,6 @@
 import { ChapterHead } from './ChapterHead'
 import { SemaphoreBadge } from '@/components/ui'
+import { cn } from '@/lib/cn'
 import type { SemaphoreLevel } from '@/types/domain'
 
 const CUTS: Array<{
@@ -58,7 +59,21 @@ export function ChapterHowItWorks() {
 
         <div className="grid md:grid-cols-3 gap-6">
           {CUTS.map((cut) => (
-            <article key={cut.n} className="adam-card p-6 flex flex-col">
+            <article
+              key={cut.n}
+              className="group relative adam-card p-6 flex flex-col overflow-hidden transition-shadow duration-300 ease-adam-out hover:shadow-e3"
+            >
+              {/* semaphore accent bar — silent color-coded depth cue */}
+              <span
+                aria-hidden
+                className={cn(
+                  'absolute top-0 left-0 h-full w-1',
+                  cut.level === 'green' && 'bg-sem-green',
+                  cut.level === 'yellow' && 'bg-sem-yellow',
+                  cut.level === 'red' && 'bg-sem-red',
+                  cut.level === 'purple' && 'bg-sem-purple',
+                )}
+              />
               <div className="font-serif italic text-h2 text-zloto-500 leading-none">{cut.n}</div>
               <h3 className="font-serif text-h4 text-granat-900 mt-4">{cut.time}</h3>
               <p className="text-body font-medium text-granat-800 mt-3">{cut.title}</p>

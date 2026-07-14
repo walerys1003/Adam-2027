@@ -2,14 +2,14 @@ import { ChapterHead } from './ChapterHead'
 import { cn } from '@/lib/cn'
 
 const PARTNERS = [
-  { n: '01', emoji: '💊', name: 'DOZ · Apteka św. Marcin', desc: 'Dostawa metforminy w 45 minut · Wilda, Grunwald · 487 zamówień w tym miesiącu', featured: true, meta: ['NIP 783-123-45-67', 'OC ważne', '4.8 ★'] },
-  { n: '02', emoji: '🚕', name: 'MPT Poznań', desc: 'Taxi medyczne · 687 zamówień 30d' },
-  { n: '03', emoji: '🛒', name: 'Frisco.pl', desc: 'Zakupy · 412 zamówień 30d' },
-  { n: '04', emoji: '👨‍⚕️', name: 'Dr Chmielewska POZ', desc: 'Lekarz domowy · Wilda + Jeżyce' },
-  { n: '05', emoji: '🧑‍⚕️', name: 'Pielęgniarka M.L.', desc: 'Iniekcje · opatrunki · pobrania' },
-  { n: '06', emoji: '🧹', name: 'CleanPoznań', desc: 'Sprzątanie · dedykowane seniorom' },
-  { n: '07', emoji: '💪', name: 'FizjoDom', desc: 'Rehabilitant · fizjoterapia' },
-  { n: '08', emoji: '💬', name: 'Psycholog M.N.', desc: 'Wsparcie psychologiczne' },
+  { n: '01', mono: 'DOZ', name: 'DOZ · Apteka św. Marcin', desc: 'Dostawa metforminy w 45 minut · Wilda, Grunwald · 487 zamówień w tym miesiącu', featured: true, meta: ['NIP 783-123-45-67', 'OC ważne', '4.8 ★'] },
+  { n: '02', mono: 'MPT', name: 'MPT Poznań', desc: 'Taxi medyczne · 687 zamówień 30d' },
+  { n: '03', mono: 'Fr', name: 'Frisco.pl', desc: 'Zakupy · 412 zamówień 30d' },
+  { n: '04', mono: 'Ch', name: 'Dr Chmielewska POZ', desc: 'Lekarz domowy · Wilda + Jeżyce' },
+  { n: '05', mono: 'ML', name: 'Pielęgniarka M.L.', desc: 'Iniekcje · opatrunki · pobrania' },
+  { n: '06', mono: 'CP', name: 'CleanPoznań', desc: 'Sprzątanie · dedykowane seniorom' },
+  { n: '07', mono: 'FD', name: 'FizjoDom', desc: 'Rehabilitant · fizjoterapia' },
+  { n: '08', mono: 'MN', name: 'Psycholog M.N.', desc: 'Wsparcie psychologiczne' },
 ]
 
 const STATS = [
@@ -40,12 +40,21 @@ export function PartnersSection() {
             <article
               key={p.n}
               className={cn(
-                'rounded-lg border border-line bg-white p-5',
-                p.featured && 'sm:col-span-2 border-zloto-300 bg-zloto-50/40',
+                'group rounded-lg border border-line bg-white p-5 transition-shadow duration-300 ease-adam-out hover:shadow-e2 hover:border-line-strong',
+                p.featured && 'sm:col-span-2 border-zloto-300 bg-zloto-50/40 hover:shadow-gold',
               )}
             >
               <div className="flex items-center justify-between mb-3">
-                <span className="text-3xl">{p.emoji}</span>
+                <span
+                  className={cn(
+                    'grid place-items-center h-11 w-11 rounded-md font-serif text-body font-medium tracking-tight border transition-colors',
+                    p.featured
+                      ? 'bg-granat-900 text-zloto-400 border-granat-800'
+                      : 'bg-paper-2 text-granat-700 border-line group-hover:border-zloto-300 group-hover:text-zloto-700',
+                  )}
+                >
+                  {p.mono}
+                </span>
                 <span className="font-mono text-caption tracking-[0.14em] uppercase text-ink-400">
                   Partner / {p.n}{p.featured && ' · Featured'}
                 </span>
