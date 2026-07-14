@@ -111,6 +111,19 @@ def call_start(body: CallStartIn, db: Session = Depends(get_db)):
     if not senior:
         raise HTTPException(status_code=404, detail="Senior nie znaleziony.")
 
+    # F12 (ETAP 25) — bramka zgód: bez aktywnych zgód obowiązkowych rozmowa NIE startuje.
+    from adam_modules.rodo import ConsentService
+    consent_svc = ConsentService(db)
+    gate = consent_svc.check_call_gate(senior.id)
+    consent_svc.log_gate_check(senior.id, gate)
+    db.flush()
+    if not gate.allowed:
+        return CallStartOut(
+            accepted=False,
+            detail=f"Brak wymaganych zgód RODO/AI Act: {gate.missing_values}",
+            senior_external_id=senior.external_id,
+        )
+
     req = CallStartRequest(
         senior_external_id=senior.external_id,
         senior_name=senior.first_name,

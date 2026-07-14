@@ -330,3 +330,47 @@ def test_speech_profile(client):
     assert r.status_code == 200
     body = r.json()
     assert "speech_rate" in body and "volume_gain_db" in body
+
+
+# ---- consents (F12, ETAP 25) ----
+def test_consents_snapshot_empty(client):
+    s = _make_senior(client)
+    r = client.get(f"/api/seniors/{s['id']}/consents")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["ai_disclosure"] == "none"
+
+
+def test_consents_gate_blocks_then_allows(client):
+    s = _make_senior(client)
+    # bramka blokuje bez zgód
+    r = client.get(f"/api/seniors/{s['id']}/consents/gate")
+    assert r.status_code == 200
+    assert r.json()["allowed"] is False
+    # udziel obowiązkowych zgód
+    for ct in ("ai_disclosure", "health_processing"):
+        rg = client.post(f"/api/seniors/{s['id']}/consents/grant",
+                         json={"consent_type": ct, "source": "panel"})
+        assert rg.status_code == 200, rg.text
+    r2 = client.get(f"/api/seniors/{s['id']}/consents/gate")
+    assert r2.json()["allowed"] is True
+
+
+def test_call_start_blocked_without_consent(client):
+    s = _make_senior(client)
+    r = client.post("/api/voice/call-start",
+                    json={"senior_external_id": s["external_id"], "reason": "welfare_check"})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["accepted"] is False
+    assert "zgód" in body["detail"].lower() or "consent" in body["detail"].lower()
+
+
+def test_consent_withdraw(client):
+    s = _make_senior(client)
+    client.post(f"/api/seniors/{s['id']}/consents/grant",
+                json={"consent_type": "call_recording"})
+    r = client.post(f"/api/seniors/{s['id']}/consents/withdraw",
+                    json={"consent_type": "call_recording"})
+    assert r.status_code == 200
+    assert r.json()["status"] == "withdrawn"
