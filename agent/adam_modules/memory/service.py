@@ -14,7 +14,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from adam_modules.seniors.models import Senior
-from .models import MemoryChunk, MemoryKind
+from .models import MemoryChunk, MemoryKind, ConversationSummary
 from .embedder import Embedder, HashingEmbedder, cosine_similarity
 
 
@@ -95,5 +95,59 @@ class MemoryService:
         chunks = self._all_for_senior(senior_id)
         for c in chunks:
             self.session.delete(c)
+        # usuń również streszczenia rozmów
+        summaries = list(self.session.scalars(
+            select(ConversationSummary).where(ConversationSummary.senior_id == senior_id)
+        ))
+        for s in summaries:
+            self.session.delete(s)
         self.session.flush()
-        return len(chunks)
+        return len(chunks) + len(summaries)
+
+    # ---- F7 (ETAP 28): streszczenia rozmów (pamięć długoterminowa) ----
+    def save_summary(
+        self,
+        senior: Senior,
+        summary: str,
+        *,
+        conversation_ref: str | None = None,
+        mood: str | None = None,
+        max_level: str | None = None,
+        topics: list[str] | None = None,
+        turn_count: int = 0,
+        remember_as_chunk: bool = True,
+    ) -> ConversationSummary:
+        """Zapisuje streszczenie rozmowy; opcjonalnie też jako przeszukiwalny chunk."""
+        row = ConversationSummary(
+            senior_id=senior.id,
+            conversation_ref=conversation_ref,
+            summary=summary,
+            mood=mood,
+            max_level=max_level,
+            topics=json.dumps(topics or [], ensure_ascii=False),
+            turn_count=turn_count,
+        )
+        self.session.add(row)
+        if remember_as_chunk:
+            # streszczenie trafia też do pamięci wektorowej → retrieval w kolejnych rozmowach
+            self.remember(senior, summary, kind=MemoryKind.conversation,
+                          source_ref=conversation_ref)
+        self.session.flush()
+        return row
+
+    def recent_summaries(self, senior_id: int, limit: int = 5) -> list[ConversationSummary]:
+        return list(self.session.scalars(
+            select(ConversationSummary).where(ConversationSummary.senior_id == senior_id)
+            .order_by(ConversationSummary.id.desc()).limit(limit)
+        ))
+
+    def continuity_context(self, senior_id: int, limit: int = 2) -> str:
+        """Blok „ciągłości" z ostatnich rozmów do wstrzyknięcia do promptu."""
+        rows = self.recent_summaries(senior_id, limit=limit)
+        if not rows:
+            return ""
+        lines = ["Z poprzednich rozmów (nawiąż naturalnie, jeśli pasuje):"]
+        for r in rows:
+            mood = f" (nastrój: {r.mood})" if r.mood else ""
+            lines.append(f"- {r.summary}{mood}")
+        return "\n".join(lines)

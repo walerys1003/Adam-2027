@@ -92,6 +92,7 @@ class DialogEngine:
         pace: CognitivePace = CognitivePace.normal,
         detector: CrisisDetector | None = None,
         use_consensus: bool = True,
+        memory_context: str | None = None,
     ):
         self.llm = llm
         self.senior_name = senior_name
@@ -114,10 +115,14 @@ class DialogEngine:
         self.volume_db = self.profile.volume_gain_db
 
         # system prompt (F5) — wstrzykiwany do LLM
+        # F7 (ETAP 28): ciągłość pamięci — kontekst „z poprzednich rozmów"
+        # budowany przez MemoryService.continuity_context i podany przez wołającego.
+        self.memory_context = memory_context
         self.system_prompt = build_system_prompt(
             senior_name=senior_name,
             senior_age=senior_age,
             speech_profile=self.profile.describe(),
+            extra_context=memory_context,
         )
         self._history: list[dict] = []
         self.outcome = CallOutcome(senior_external_id=senior_external_id)
