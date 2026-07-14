@@ -21,6 +21,10 @@ from .ari import AriChannel, FakeChannel, CallSession
 from .consensus import CrisisConsensus, CrisisVoteResult
 from .asterisk import AsteriskAriChannel
 from .prod_ports import WhisperASR, OpenAITTS, ElevenLabsTTS, OpenAILLM
+from .stasis import (
+    StasisApp, CallStartRequest, CallStartResult, VoicePorts,
+    build_call_session, originate_call,
+)
 
 __all__ = [
     "ASRPort", "LLMPort", "TTSPort",
@@ -32,4 +36,7 @@ __all__ = [
     "AsteriskAriChannel",
     # ETAP 18 — produkcyjne adaptery I/O głosu
     "WhisperASR", "OpenAITTS", "ElevenLabsTTS", "OpenAILLM",
+    # ETAP 19 — warstwa zdarzeń ARI (Stasis) + webhook startu połączenia
+    "StasisApp", "CallStartRequest", "CallStartResult", "VoicePorts",
+    "build_call_session", "originate_call",
 ]

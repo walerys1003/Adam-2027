@@ -18,6 +18,7 @@ from adam_modules.speech.profile import HearingLevel, CognitivePace
 from adam_modules.voice import (
     DialogEngine, RuleLLM, FakeChannel, CallSession,
 )
+from adam_modules.voice.stasis import CallStartRequest, originate_call
 from ..deps import get_db
 
 router = APIRouter(prefix="/api/voice", tags=["voice"])
@@ -80,4 +81,46 @@ def simulate_call(body: SimulateIn, db: Session = Depends(get_db)):
                     level=t.level.value, trigger=t.trigger)
             for t in outcome.turns
         ],
+    )
+
+
+# ---- webhook startu połączenia (ETAP 19) ----
+
+class CallStartIn(BaseModel):
+    senior_external_id: str = Field(min_length=1)
+    reason: str = "welfare_check"
+
+
+class CallStartOut(BaseModel):
+    accepted: bool
+    channel_id: str | None = None
+    detail: str = ""
+    senior_external_id: str
+
+
+@router.post("/call-start", response_model=CallStartOut)
+def call_start(body: CallStartIn, db: Session = Depends(get_db)):
+    """Inicjuje realne połączenie wychodzące do seniora (originate przez Asterisk).
+
+    Bez skonfigurowanego originatora ARI (środowisko sandbox/dev) zwraca
+    `accepted=false` z detalem — fail-safe, bez wyjątku. W produkcji originator
+    (POST /channels do Asteriska) jest wstrzykiwany na poziomie procesu Stasis.
+    """
+    svc = SeniorService(db)
+    senior = svc.get_by_external(body.senior_external_id)
+    if not senior:
+        raise HTTPException(status_code=404, detail="Senior nie znaleziony.")
+
+    req = CallStartRequest(
+        senior_external_id=senior.external_id,
+        senior_name=senior.first_name,
+        senior_age=senior.age,
+        reason=body.reason,
+    )
+    result = originate_call(req)  # originator=None w dev → accepted=False
+    return CallStartOut(
+        accepted=result.accepted,
+        channel_id=result.channel_id,
+        detail=result.detail,
+        senior_external_id=senior.external_id,
     )

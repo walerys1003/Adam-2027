@@ -251,3 +251,23 @@ def test_simulate_call_crisis_escalates(client):
     assert body["escalated"] is True
     assert body["max_level"] in ("red", "purple")
     assert body["top_trigger"] is not None
+
+
+# ============================================================ webhook /call-start (ETAP 19)
+
+def test_call_start_404_when_senior_missing(client):
+    r = client.post("/api/voice/call-start", json={"senior_external_id": "SR-NOPE"})
+    assert r.status_code == 404
+
+
+def test_call_start_noop_without_originator(client):
+    s = _make_senior(client, first="Zofia")
+    ext = s["external_id"]
+    r = client.post("/api/voice/call-start", json={"senior_external_id": ext})
+    assert r.status_code == 200, r.text
+    body = r.json()
+    # w dev/sandbox brak originatora ARI → accepted=false, fail-safe (bez wyjątku)
+    assert body["accepted"] is False
+    assert body["senior_external_id"] == ext
+    assert body["channel_id"] is None
+    assert body["detail"]
