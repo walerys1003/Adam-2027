@@ -78,11 +78,12 @@ export const api = {
   cancelOrder: (id: string) => (USE_MOCK ? mock.cancelOrder(id) : real.cancelOrder(id)),
   listOrders: () => (USE_MOCK ? mock.listOrders() : real.listOrders()),
 
-  // Messages / Account — backend nie wystawia jeszcze tych zasobów (planowane ETAP 22); mock.
-  listThreads: () => mock.listThreads(),
-  sendMessage: (threadId: string, body: string) => mock.sendMessage(threadId, body),
-  listInvoices: () => mock.listInvoices(),
-  listSessions: () => mock.listSessions(),
+  // Messages / Account — ETAP 22: realne /api/account gdy VITE_API_URL ustawione.
+  listThreads: () => (USE_MOCK ? mock.listThreads() : real.listThreads()),
+  sendMessage: (threadId: string, body: string) =>
+    USE_MOCK ? mock.sendMessage(threadId, body) : real.sendMessage(threadId, body),
+  listInvoices: () => (USE_MOCK ? mock.listInvoices() : real.listInvoices()),
+  listSessions: () => (USE_MOCK ? mock.listSessions() : real.listSessions()),
 }
 
 export type { LoginPayload }

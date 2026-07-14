@@ -21,6 +21,10 @@ import type {
   Order,
   User,
   Role,
+  Thread,
+  Message,
+  Invoice,
+  Session,
 } from '@/types/domain'
 import type { LoginPayload, LoginResult } from './mockApi'
 
@@ -94,6 +98,81 @@ export function mapRole(backendRole: string): Role {
     case 'coordinator': return 'caregiver'
     case 'family': return 'family_member'
     default: return 'caregiver'
+  }
+}
+
+/* ---------- kształty backendu ETAP 22 (/api/account) ---------- */
+
+export interface BackendMessage {
+  id: string
+  from: Message['from']
+  author_name: string
+  body: string
+  timestamp: string
+  read: boolean
+}
+
+export interface BackendThread {
+  id: string
+  subject: string
+  senior_id?: string | null
+  senior_name?: string | null
+  category: Thread['category']
+  last_message_at: string
+  unread: number
+  messages: BackendMessage[]
+}
+
+export interface BackendInvoice {
+  id: string
+  period: string
+  amount: string
+  status: Invoice['status']
+}
+
+export interface BackendSession {
+  id: string
+  device: string
+  location: string
+  last_active: string
+  current: boolean
+}
+
+export function mapMessage(m: BackendMessage): Message {
+  return {
+    id: m.id,
+    from: m.from,
+    authorName: m.author_name,
+    body: m.body,
+    timestamp: m.timestamp,
+    read: m.read,
+  }
+}
+
+export function mapThread(t: BackendThread): Thread {
+  return {
+    id: t.id,
+    subject: t.subject,
+    seniorId: t.senior_id ?? undefined,
+    seniorName: t.senior_name ?? undefined,
+    category: t.category,
+    lastMessageAt: t.last_message_at,
+    unread: t.unread,
+    messages: t.messages.map(mapMessage),
+  }
+}
+
+export function mapInvoice(b: BackendInvoice): Invoice {
+  return { id: b.id, period: b.period, amount: b.amount, status: b.status }
+}
+
+export function mapSession(b: BackendSession): Session {
+  return {
+    id: b.id,
+    device: b.device,
+    location: b.location,
+    lastActive: b.last_active,
+    current: b.current,
   }
 }
 
@@ -267,7 +346,37 @@ export function createRealApi(fetcher: Fetcher) {
     return { ok: true }
   }
 
-  return { login, refresh, me, getMySeniors, getSenior, getMood, listOrders, cancelOrder }
+  /* ---------- Messages / Account (ETAP 22 — /api/account) ---------- */
+
+  async function listThreads(): Promise<Thread[]> {
+    const threads: BackendThread[] = await fetcher('/api/account/threads')
+    return threads.map(mapThread)
+  }
+
+  async function sendMessage(threadId: string, body: string): Promise<Thread> {
+    // threadId = external_id seniora (backend grupuje wątki per senior)
+    const thread: BackendThread = await fetcher(
+      `/api/account/threads/${encodeURIComponent(threadId)}/messages`,
+      { method: 'POST', body: JSON.stringify({ body }) },
+    )
+    return mapThread(thread)
+  }
+
+  async function listInvoices(): Promise<Invoice[]> {
+    const invoices: BackendInvoice[] = await fetcher('/api/account/invoices')
+    return invoices.map(mapInvoice)
+  }
+
+  async function listSessions(): Promise<Session[]> {
+    const sessions: BackendSession[] = await fetcher('/api/account/sessions')
+    return sessions.map(mapSession)
+  }
+
+  return {
+    login, refresh, me,
+    getMySeniors, getSenior, getMood, listOrders, cancelOrder,
+    listThreads, sendMessage, listInvoices, listSessions,
+  }
 }
 
 export type RealApi = ReturnType<typeof createRealApi>

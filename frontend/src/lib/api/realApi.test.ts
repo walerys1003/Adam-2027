@@ -246,3 +246,80 @@ describe('createRealApi.me', () => {
     expect(user.name).toBe('admin')
   })
 })
+
+/* ---------- ETAP 22: Messages / Account ---------- */
+
+import { mapThread, mapMessage, mapInvoice, mapSession } from './realApi'
+
+describe('mapThread / mapMessage (ETAP 22)', () => {
+  const bThread = {
+    id: 'SR-1', subject: 'Alert — Jan', senior_id: 'SR-1', senior_name: 'Jan Kowalski',
+    category: 'alert' as const, last_message_at: '2027-01-01T10:00:00', unread: 2,
+    messages: [
+      { id: 'm1', from: 'coordinator' as const, author_name: 'Anna', body: 'Dzwonię',
+        timestamp: '2027-01-01T09:00:00', read: false },
+    ],
+  }
+  it('mapuje snake_case → camelCase', () => {
+    const t = mapThread(bThread)
+    expect(t.seniorId).toBe('SR-1')
+    expect(t.seniorName).toBe('Jan Kowalski')
+    expect(t.lastMessageAt).toBe('2027-01-01T10:00:00')
+    expect(t.unread).toBe(2)
+    expect(t.messages[0].authorName).toBe('Anna')
+    expect(t.messages[0].from).toBe('coordinator')
+  })
+  it('mapMessage zachowuje from i read', () => {
+    const m = mapMessage(bThread.messages[0])
+    expect(m.from).toBe('coordinator')
+    expect(m.read).toBe(false)
+  })
+})
+
+describe('mapInvoice / mapSession (ETAP 22)', () => {
+  it('mapuje fakturę', () => {
+    const i = mapInvoice({ id: 'FV/2027/01', period: 'Styczeń 2027', amount: '249 zł', status: 'pending' })
+    expect(i.id).toBe('FV/2027/01')
+    expect(i.status).toBe('pending')
+  })
+  it('mapuje sesję (last_active → lastActive)', () => {
+    const s = mapSession({ id: 'current', device: 'Sesja API · admin', location: '—',
+                           last_active: '2027-01-01T10:00:00', current: true })
+    expect(s.lastActive).toBe('2027-01-01T10:00:00')
+    expect(s.current).toBe(true)
+  })
+})
+
+describe('createRealApi.listThreads / sendMessage / listInvoices / listSessions', () => {
+  it('listThreads mapuje listę', async () => {
+    const api = createRealApi(async (path) => {
+      expect(path).toBe('/api/account/threads')
+      return [{ id: 'SR-1', subject: 's', category: 'report', last_message_at: 'x',
+                unread: 0, messages: [] }]
+    })
+    const t = await api.listThreads()
+    expect(t).toHaveLength(1)
+    expect(t[0].id).toBe('SR-1')
+  })
+  it('sendMessage POST-uje body i zwraca wątek', async () => {
+    let sent: any = null
+    const api = createRealApi(async (path, init) => {
+      sent = { path, body: JSON.parse(init!.body as string), method: init!.method }
+      return { id: 'SR-1', subject: 's', category: 'coordinator', last_message_at: 'x',
+               unread: 0, messages: [{ id: 'm1', from: 'coordinator', author_name: 'A',
+               body: 'hej', timestamp: 't', read: true }] }
+    })
+    const t = await api.sendMessage('SR-1', 'hej')
+    expect(sent.path).toBe('/api/account/threads/SR-1/messages')
+    expect(sent.method).toBe('POST')
+    expect(sent.body).toEqual({ body: 'hej' })
+    expect(t.messages[0].body).toBe('hej')
+  })
+  it('listInvoices / listSessions mapują', async () => {
+    const inv = createRealApi(async () => [{ id: 'FV', period: 'p', amount: '1 zł', status: 'paid' }])
+    expect((await inv.listInvoices())[0].id).toBe('FV')
+    const ses = createRealApi(async () => [{ id: 'current', device: 'd', location: '—',
+                                             last_active: 't', current: true }])
+    expect((await ses.listSessions())[0].current).toBe(true)
+  })
+})

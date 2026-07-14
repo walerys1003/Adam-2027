@@ -73,7 +73,7 @@ python3 -m pytest adam_modules/tests/ -q
 | **Głos** | Warstwa głosowa (ARI ↔ dialog) — ETAP 12/17 | ✅ `adam_modules/voice` — `DialogEngine` (maszyna stanów INIT→DISCLOSED→ACTIVE→ESCALATING→CLOSED) integruje F5 (prompt+ujawnienie AI) + F14 (profil mowy→TTS) + F3 (detekcja kryzysu/tura); **konsensus kryzysowy F16** (detektor+LLM, fail-safe, ETAP 17); porty ASR/LLM/TTS/ARI (Protocol) + impl. dev (Echo/Rule/Text/Fake) + prod `AsteriskAriChannel`; `POST /api/voice/simulate-call` + 19+15 testów. Szczegóły: `docs/API.md` |
 | **Hardening** | Bezpieczeństwo warstwy API — ETAP 14/16 | ✅ request-id/metryki/`/metrics`, nagłówki bezpieczeństwa (CSP/HSTS/nosniff/DENY), rate-limit pluggable (in-memory + Redis globalny, **fail-open**) + 7+12 testów. Szczegóły: `docs/API.md` |
 
-**Łącznie: 285 testów (154 backend + 23 API + 33 auth/notify/obserwowalność + 19 głos + 12 bezpieczeństwo + 15 konsensus/ARI), 7 migracji (0001–0007), CI (pytest + Alembic upgrade/downgrade). Backend F1–F18 + API + auth/RBAC + integracje + hardening v2 + warstwa głosowa z konsensusem + adapter Asterisk + artefakty wdrożeniowe kompletne.**
+**Łącznie: 292 testów (154 backend + 23 API + 33 auth/notify/obserwowalność + 19 głos + 12 bezpieczeństwo + 15 konsensus/ARI), 7 migracji (0001–0007), CI (pytest + Alembic upgrade/downgrade). Backend F1–F18 + API + auth/RBAC + integracje + hardening v2 + warstwa głosowa z konsensusem + adapter Asterisk + artefakty wdrożeniowe kompletne.**
 
 ## API (ETAP 9 + 11/12/13/14/16/17)
 

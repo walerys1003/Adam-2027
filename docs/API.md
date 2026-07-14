@@ -201,7 +201,7 @@ python3 -m pytest adam_modules/tests/test_middleware.py -q   # 7 testów obserwo
 python3 -m pytest adam_modules/tests/test_voice.py -q        # 19 testów warstwy głosowej (ETAP 12)
 python3 -m pytest adam_modules/tests/test_security.py -q     # 12 testów bezpieczeństwa/rate-limit (ETAP 16)
 python3 -m pytest adam_modules/tests/test_voice_prod.py -q   # 15 testów konsensusu + ARI (ETAP 17)
-python3 -m pytest adam_modules/tests/ -q                     # 285 testów (F1–F18 + API + 11/12/13/14/16/17)
+python3 -m pytest adam_modules/tests/ -q                     # 292 testów (F1–F18 + API + 11/12/13/14/16/17)
 ```
 
 ## Integracja z frontendem (ETAP 10)

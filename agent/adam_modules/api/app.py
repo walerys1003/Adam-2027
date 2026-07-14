@@ -113,6 +113,7 @@ def create_app(*, init_db: bool = True) -> FastAPI:
         rodo as rodo_router,
         compliance as compliance_router,
         voice as voice_router,
+        account as account_router,
     )
 
     app.include_router(auth_router.router)
@@ -125,6 +126,7 @@ def create_app(*, init_db: bool = True) -> FastAPI:
     app.include_router(rodo_router.router)
     app.include_router(compliance_router.router)
     app.include_router(voice_router.router)
+    app.include_router(account_router.router)
 
     return app
 
