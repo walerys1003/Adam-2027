@@ -20,6 +20,7 @@ from .dialog import DialogEngine, DialogState, DialogTurn, CallOutcome, Speaker
 from .ari import AriChannel, FakeChannel, CallSession
 from .consensus import CrisisConsensus, CrisisVoteResult
 from .asterisk import AsteriskAriChannel
+from .prod_ports import WhisperASR, OpenAITTS, ElevenLabsTTS, OpenAILLM
 
 __all__ = [
     "ASRPort", "LLMPort", "TTSPort",
@@ -29,4 +30,6 @@ __all__ = [
     "AriChannel", "FakeChannel", "CallSession",
     "CrisisConsensus", "CrisisVoteResult",
     "AsteriskAriChannel",
+    # ETAP 18 — produkcyjne adaptery I/O głosu
+    "WhisperASR", "OpenAITTS", "ElevenLabsTTS", "OpenAILLM",
 ]
