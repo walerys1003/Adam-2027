@@ -1,0 +1,244 @@
+/* ============================================================
+   ADAM · SilverTech · Design Tokens · v1.0 · 2026-07
+   Kierunek: Nordic humanism × Medical-premium
+   
+   Skopiuj ten plik do: src/styles/tokens.css
+   Importuj w: src/main.tsx → import './styles/tokens.css';
+   ============================================================ */
+
+:root {
+  /* ============================================
+     GRANAT · Primary palette (the fortress)
+     ============================================ */
+  --granat-50:  #f2f4f8;
+  --granat-100: #e4e8f0;
+  --granat-200: #c2cad9;
+  --granat-300: #8b98b3;
+  --granat-400: #5a6a8a;
+  --granat-500: #3b4a6b;
+  --granat-600: #243352;
+  --granat-700: #1a2744;   /* ★ PRIMARY BRAND (zaszyte w Capacitor splash, statusbar) */
+  --granat-800: #14213d;
+  --granat-900: #0e1a2e;
+  --granat-950: #08111f;
+
+  /* ============================================
+     ZŁOTO · Accent palette (matowe · never gradient bling)
+     ============================================ */
+  --zloto-50:   #faf3e6;
+  --zloto-100:  #f5e6cf;
+  --zloto-200:  #ebd0ac;
+  --zloto-300:  #dfba82;
+  --zloto-400:  #d4a75d;
+  --zloto-500:  #c8963e;   /* ★ PRIMARY ACCENT (1px linie · cyfry KPI · hover) */
+  --zloto-600:  #b88a35;
+  --zloto-700:  #a67c2e;
+  --zloto-800:  #8a6524;
+  --zloto-900:  #6b4d1a;
+
+  /* ============================================
+     SEMAFOR · 4-level (WCAG AA passed)
+     ============================================ */
+  --sem-green:      #2d6a4f;
+  --sem-green-bg:   #e8f2ec;
+  --sem-yellow:     #b8830d;  /* darkened from #e6a817 for AA on white */
+  --sem-yellow-bg:  #fbf0d9;
+  --sem-red:        #a5121a;  /* darkened from #c1121f for AA */
+  --sem-red-bg:     #fbe7e9;
+  --sem-purple:     #5a0561;
+  --sem-purple-bg:  #f3e6f5;
+
+  /* ============================================
+     Info (dla non-alertowych notyfikacji)
+     ============================================ */
+  --info-blue:      #1e40af;
+  --info-blue-bg:   #dbeafe;
+
+  /* ============================================
+     Neutrals · off-white (nie kliniczna biel)
+     ============================================ */
+  --paper:          #fbfaf7;   /* editorial off-white bg */
+  --paper-2:        #f5f3ee;
+  --paper-3:        #eeeadc;
+
+  --ink-900:        #0e1a2e;   /* body text */
+  --ink-700:        #2a3654;
+  --ink-500:        #5a6a8a;
+  --ink-400:        #8b98b3;
+  --ink-300:        #c2cad9;
+
+  --line:           #e4e0d5;   /* warm border, not cold gray */
+  --line-strong:    #cfc9b8;
+
+  /* ============================================
+     Typography · Fraunces + Geist
+     Setup: patrz DEVELOPER-HANDOFF.md sekcja "Fonts"
+     ============================================ */
+  --font-serif:  'Fraunces', 'Iowan Old Style', Georgia, serif;
+  --font-sans:   'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono:   'Geist Mono', 'SF Mono', Menlo, monospace;
+
+  /* Type scale */
+  --text-display:  84px;       /* Landing hero */
+  --text-h1:       56px;
+  --text-h2:       40px;
+  --text-h3:       28px;
+  --text-h4:       20px;
+  --text-body-l:   18px;
+  --text-body:     15px;
+  --text-label:    13px;
+  --text-caption:  11px;
+
+  --leading-tight:  0.95;
+  --leading-snug:   1.15;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.7;
+
+  --tracking-tight: -0.03em;
+  --tracking-normal: 0;
+  --tracking-wide:  0.02em;
+  --tracking-caps:  0.14em;
+
+  /* ============================================
+     Spacing scale
+     ============================================ */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  24px;
+  --space-6:  32px;
+  --space-7:  48px;
+  --space-8:  64px;
+  --space-9:  96px;
+
+  /* ============================================
+     Border radius
+     ============================================ */
+  --radius-sm:  4px;    /* inputs micro */
+  --radius-md:  8px;    /* buttons, inputs */
+  --radius-lg:  12px;   /* cards default (Adam signature) */
+  --radius-xl:  16px;   /* modals */
+  --radius-2xl: 24px;   /* hero surfaces */
+  --radius-full: 9999px; /* pills */
+
+  /* ============================================
+     Elevation · subtle, not floating
+     ============================================ */
+  --shadow-e1: 0 1px 2px rgba(14,26,46,0.04), 0 0 0 1px rgba(14,26,46,0.05);
+  --shadow-e2: 0 2px 8px rgba(14,26,46,0.06), 0 0 0 1px rgba(14,26,46,0.05);
+  --shadow-e3: 0 8px 24px rgba(14,26,46,0.08), 0 0 0 1px rgba(14,26,46,0.06);
+  --shadow-e4: 0 20px 48px rgba(14,26,46,0.12), 0 0 0 1px rgba(14,26,46,0.08);
+  --shadow-gold: 0 8px 24px rgba(200,150,62,0.15);
+  --shadow-red: 0 8px 24px rgba(165,18,26,0.25);
+  --shadow-purple: 0 8px 24px rgba(90,5,97,0.3);
+
+  /* ============================================
+     Motion · dedicated easing curves
+     ============================================ */
+  --ease-out:     cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out:  cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-elastic: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+
+  --duration-instant: 100ms;
+  --duration-fast:    150ms;
+  --duration-normal:  200ms;
+  --duration-slow:    400ms;
+
+  /* ============================================
+     Component-level tokens
+     ============================================ */
+
+  /* Semaphore signature */
+  --semaphore-band-width: 3px;
+  --semaphore-pulse-duration: 2s;
+  --semaphore-pulse-count: infinite;
+
+  /* Avatar */
+  --avatar-bg: linear-gradient(135deg, var(--granat-600), var(--granat-800));
+  --avatar-fg: var(--zloto-300);
+
+  /* Focus ring */
+  --focus-ring: 0 0 0 3px rgba(26, 39, 68, 0.1);
+  --focus-ring-strong: 0 0 0 3px rgba(200, 150, 62, 0.3);
+}
+
+/* ============================================
+   Reset + base
+   ============================================ */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink-900);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--leading-normal);
+}
+
+/* Fraunces variable font settings */
+.font-serif,
+h1, h2, h3, h4 {
+  font-family: var(--font-serif);
+  font-variation-settings: 'opsz' 60;
+  letter-spacing: var(--tracking-tight);
+}
+
+/* Serif italic accent (kluczowe dla Adam brand) */
+.text-italic,
+em {
+  font-style: italic;
+  color: var(--zloto-700);
+  font-weight: 400;
+}
+
+/* Numeric KPI in Fraunces (sygnatura Adama) */
+.text-kpi {
+  font-family: var(--font-serif);
+  font-variation-settings: 'opsz' 144;
+  font-weight: 500;
+  letter-spacing: var(--tracking-tight);
+}
+
+/* ============================================
+   Semaphore pulse animation (KRYTYCZNE)
+   Tylko dla RED i PURPLE
+   ============================================ */
+
+@keyframes semaphore-pulse-ring {
+  0%   { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+@keyframes semaphore-dot-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+
+/* ============================================
+   Print styles (raporty PDF)
+   ============================================ */
+
+@media print {
+  body { background: white; color: black; }
+  .no-print { display: none !important; }
+}
+
+/* ============================================
+   Reduced motion (a11y)
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

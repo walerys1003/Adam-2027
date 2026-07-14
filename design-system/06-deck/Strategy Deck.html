@@ -1,0 +1,1083 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<title>Adam — Redesign Strategy Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,400;9..144,0,500;9..144,0,600;9..144,1,400&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="deck_stage.js"></script>
+<style>
+  :root {
+    --granat-950: #08111f; --granat-900: #0e1a2e; --granat-800: #14213d; --granat-700: #1a2744;
+    --granat-600: #243352; --granat-500: #3b4a6b; --granat-400: #5a6a8a; --granat-300: #8b98b3;
+    --granat-200: #c2cad9; --granat-100: #e4e8f0;
+    --zloto-700: #a67c2e; --zloto-500: #c8963e; --zloto-400: #d4a75d; --zloto-300: #dfba82; --zloto-100: #f5e6cf; --zloto-50: #faf3e6;
+    --sem-green: #2d6a4f; --sem-yellow: #b8830d; --sem-red: #a5121a; --sem-purple: #5a0561;
+    --paper: #fbfaf7; --paper-2: #f5f3ee;
+    --ink-900: #0e1a2e; --ink-700: #2a3654; --ink-500: #5a6a8a; --ink-400: #8b98b3;
+    --line: #e4e0d5; --line-strong: #cfc9b8;
+    --serif: 'Fraunces', Georgia, serif;
+    --sans: 'Geist', -apple-system, sans-serif;
+    --mono: 'Geist Mono', Menlo, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { font-family: var(--sans); background: black; }
+
+  section {
+    width: 1920px; height: 1080px;
+    background: var(--paper);
+    color: var(--ink-900);
+    padding: 96px 120px;
+    position: relative;
+    overflow: hidden;
+  }
+  section.dark { background: var(--granat-900); color: var(--paper); }
+  section.paper2 { background: var(--paper-2); }
+
+  /* Chrome */
+  .slide-nav {
+    position: absolute; top: 40px; left: 120px; right: 120px;
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: var(--mono); font-size: 14px; letter-spacing: 0.14em; color: var(--ink-500); text-transform: uppercase;
+  }
+  .dark .slide-nav { color: var(--granat-300); }
+  .slide-nav .logo { display: flex; align-items: center; gap: 12px; }
+  .slide-nav .logo .mark { width: 28px; height: 28px; background: var(--granat-700); border-radius: 6px; display: grid; place-items: center; position: relative; }
+  .dark .slide-nav .logo .mark { background: var(--zloto-500); }
+  .slide-nav .logo .mark::after { content: ''; position: absolute; inset: 4px; border: 1px solid var(--zloto-500); border-radius: 3px; }
+  .dark .slide-nav .logo .mark::after { border-color: var(--granat-900); }
+  .slide-nav .logo .mark span { font-family: var(--serif); color: var(--zloto-500); font-size: 14px; z-index: 1; font-weight: 500; }
+  .dark .slide-nav .logo .mark span { color: var(--granat-900); }
+  .slide-nav .logo .txt { font-family: var(--serif); color: var(--granat-900); font-size: 18px; letter-spacing: -0.02em; text-transform: none; font-weight: 500; }
+  .dark .slide-nav .logo .txt { color: var(--paper); }
+
+  .slide-foot {
+    position: absolute; bottom: 40px; left: 120px; right: 120px;
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; color: var(--ink-500); text-transform: uppercase;
+  }
+  .dark .slide-foot { color: var(--granat-400); }
+
+  /* Type */
+  .eyebrow { font-family: var(--mono); font-size: 15px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--zloto-700); display: inline-flex; align-items: center; gap: 14px; }
+  .dark .eyebrow { color: var(--zloto-400); }
+  .eyebrow::before { content: ''; width: 32px; height: 1px; background: currentColor; }
+
+  h1.mega { font-family: var(--serif); font-weight: 400; font-size: 148px; line-height: 0.9; letter-spacing: -0.035em; color: var(--granat-900); font-variation-settings: 'opsz' 144; }
+  h1.mega em { font-style: italic; color: var(--zloto-700); }
+  .dark h1.mega { color: var(--paper); }
+  .dark h1.mega em { color: var(--zloto-400); }
+
+  h1.title { font-family: var(--serif); font-weight: 400; font-size: 96px; line-height: 0.95; letter-spacing: -0.03em; color: var(--granat-900); font-variation-settings: 'opsz' 144; }
+  h1.title em { font-style: italic; color: var(--zloto-700); }
+  .dark h1.title { color: var(--paper); }
+  .dark h1.title em { color: var(--zloto-400); }
+
+  h2.section-h { font-family: var(--serif); font-weight: 400; font-size: 72px; line-height: 1; letter-spacing: -0.025em; color: var(--granat-900); font-variation-settings: 'opsz' 100; }
+  h2.section-h em { font-style: italic; color: var(--zloto-700); }
+  .dark h2.section-h { color: var(--paper); }
+  .dark h2.section-h em { color: var(--zloto-400); }
+
+  .lead { font-family: var(--sans); font-size: 26px; line-height: 1.5; color: var(--ink-700); font-weight: 400; }
+  .dark .lead { color: var(--granat-200); }
+
+  .caption-italic { font-family: var(--serif); font-style: italic; font-size: 28px; line-height: 1.4; color: var(--ink-500); font-variation-settings: 'opsz' 36; font-weight: 300; }
+  .dark .caption-italic { color: var(--granat-300); }
+
+  /* Common */
+  .col-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; height: 100%; }
+  .col-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+  .col-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+
+  /* Sl1 · Cover */
+  .cover { display: flex; flex-direction: column; justify-content: center; height: 100%; }
+  .cover .issue { font-family: var(--mono); font-size: 16px; color: var(--zloto-700); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 40px; }
+  .cover .subtitle { font-family: var(--serif); font-style: italic; font-size: 38px; color: var(--ink-500); margin-top: 40px; max-width: 1200px; line-height: 1.35; font-weight: 300; font-variation-settings: 'opsz' 60; }
+  .cover .meta { position: absolute; bottom: 100px; left: 120px; right: 120px; display: flex; justify-content: space-between; align-items: end; font-family: var(--mono); font-size: 14px; color: var(--ink-500); letter-spacing: 0.12em; text-transform: uppercase; padding-top: 32px; border-top: 1px solid var(--line-strong); }
+  .cover .meta span { display: block; }
+  .cover .meta .k { color: var(--ink-900); font-family: var(--serif); font-size: 24px; letter-spacing: -0.01em; text-transform: none; margin-bottom: 4px; font-weight: 500; }
+
+  /* Diagnosis */
+  .diag-list { list-style: none; margin-top: 40px; }
+  .diag-list li { display: grid; grid-template-columns: 80px 1fr auto; gap: 24px; padding: 24px 0; border-bottom: 1px solid var(--line-strong); align-items: center; font-size: 22px; }
+  .diag-list li .num { font-family: var(--mono); font-size: 14px; color: var(--zloto-700); letter-spacing: 0.14em; }
+  .diag-list li .txt { font-family: var(--serif); font-size: 26px; color: var(--granat-900); font-weight: 400; letter-spacing: -0.01em; line-height: 1.3; }
+  .diag-list li .tag { font-family: var(--mono); font-size: 13px; color: var(--sem-red); letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 10px; background: rgba(165,18,26,0.08); border-radius: 4px; }
+  .diag-list li .tag.have { color: var(--sem-green); background: rgba(45,106,79,0.08); }
+  .diag-list li .tag.mid { color: var(--sem-yellow); background: rgba(184,131,13,0.1); }
+
+  /* Personas */
+  .persona-card { background: var(--paper); border: 1px solid var(--line); border-radius: 20px; padding: 40px 36px; position: relative; }
+  .persona-card .role { font-family: var(--mono); font-size: 13px; letter-spacing: 0.14em; color: var(--zloto-700); text-transform: uppercase; }
+  .persona-card h3 { font-family: var(--serif); font-size: 40px; color: var(--granat-900); font-weight: 500; letter-spacing: -0.015em; margin-top: 12px; line-height: 1.1; }
+  .persona-card .quote { font-family: var(--serif); font-style: italic; font-size: 20px; color: var(--ink-500); margin-top: 20px; line-height: 1.4; font-variation-settings: 'opsz' 24; font-weight: 300; }
+  .persona-card ul { list-style: none; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line); }
+  .persona-card li { padding: 8px 0; font-size: 15px; color: var(--ink-700); display: flex; gap: 12px; line-height: 1.5; }
+  .persona-card li::before { content: '—'; color: var(--zloto-500); }
+
+  /* Moodboard */
+  .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 24px; height: 700px; }
+  .mood-tile { border-radius: 16px; overflow: hidden; position: relative; background: var(--paper-2); border: 1px solid var(--line); }
+  .mood-tile .lbl { position: absolute; top: 20px; left: 20px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--zloto-400); z-index: 3; }
+  .mood-tile .cap { position: absolute; bottom: 20px; left: 20px; right: 20px; font-family: var(--serif); font-size: 18px; color: white; z-index: 3; font-style: italic; font-weight: 400; font-variation-settings: 'opsz' 24; text-shadow: 0 2px 12px rgba(0,0,0,0.4); }
+
+  /* Principle */
+  .principle-tile { padding: 40px 36px; background: var(--paper); border: 1px solid var(--line); border-radius: 16px; }
+  .principle-tile .num { font-family: var(--mono); font-size: 13px; color: var(--zloto-700); letter-spacing: 0.14em; }
+  .principle-tile h4 { font-family: var(--serif); font-size: 32px; color: var(--granat-900); font-weight: 500; letter-spacing: -0.015em; margin-top: 14px; line-height: 1.1; }
+  .principle-tile p { font-size: 16px; color: var(--ink-700); line-height: 1.55; margin-top: 16px; }
+
+  /* Color spec */
+  .cs-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+  .cs-tile { border-radius: 12px; overflow: hidden; border: 1px solid var(--line); }
+  .cs-tile .chip { height: 200px; position: relative; }
+  .cs-tile .lbl-top { position: absolute; top: 16px; left: 16px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; color: rgba(255,255,255,0.7); text-transform: uppercase; }
+  .cs-tile .info { background: white; padding: 16px 18px; }
+  .cs-tile .name { font-family: var(--serif); font-size: 22px; color: var(--granat-900); font-weight: 500; }
+  .cs-tile .hex { font-family: var(--mono); font-size: 12px; color: var(--ink-500); letter-spacing: 0.02em; margin-top: 4px; }
+
+  /* Type spec */
+  .type-row { display: grid; grid-template-columns: 260px 1fr; gap: 60px; align-items: baseline; padding: 32px 0; border-bottom: 1px solid var(--line); }
+  .type-row .m { font-family: var(--mono); font-size: 13px; color: var(--ink-500); letter-spacing: 0.06em; }
+  .type-row .m strong { display: block; color: var(--ink-900); font-family: var(--sans); font-weight: 600; font-size: 14px; letter-spacing: 0; margin-bottom: 4px; }
+
+  /* Semafor showcase */
+  .sem-showcase { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-top: 40px; }
+  .sem-block { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 32px; }
+  .sem-block h4 { font-family: var(--serif); font-size: 26px; color: var(--granat-900); font-weight: 500; letter-spacing: -0.015em; margin-bottom: 24px; }
+
+  .demo-card {
+    background: white; border: 1px solid var(--line); border-left-width: 4px;
+    border-radius: 10px; padding: 20px 24px; margin-bottom: 12px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .demo-card:last-child { margin-bottom: 0; }
+  .demo-card.g { border-left-color: var(--sem-green); }
+  .demo-card.y { border-left-color: var(--sem-yellow); }
+  .demo-card.r { border-left-color: var(--sem-red); background: linear-gradient(90deg, rgba(165,18,26,0.08), white 40%); }
+  .demo-card.p { border-left-color: var(--sem-purple); background: linear-gradient(90deg, rgba(90,5,97,0.08), white 40%); }
+  .demo-av-wrap { position: relative; }
+  .demo-av { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, var(--granat-500), var(--granat-800)); display: grid; place-items: center; color: var(--zloto-300); font-family: var(--serif); font-size: 17px; font-weight: 500; }
+  .demo-av-wrap.pr::before, .demo-av-wrap.pr::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 2px solid var(--sem-red); animation: pring 2s cubic-bezier(0.22,1,0.36,1) infinite; }
+  .demo-av-wrap.pr::after { animation-delay: 1s; }
+  .demo-av-wrap.pp::before, .demo-av-wrap.pp::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 2px solid var(--sem-purple); animation: pring 2s cubic-bezier(0.22,1,0.36,1) infinite; }
+  .demo-av-wrap.pp::after { animation-delay: 1s; }
+  @keyframes pring { 0% { transform: scale(1); opacity: 0.7; } 100% { transform: scale(1.6); opacity: 0; } }
+
+  .demo-info .n { font-family: var(--serif); font-size: 18px; color: var(--granat-900); font-weight: 500; }
+  .demo-info .n .age { font-family: var(--mono); font-size: 11px; color: var(--ink-500); margin-left: 8px; letter-spacing: 0.02em; }
+  .demo-info .s { font-size: 13px; color: var(--ink-500); margin-top: 3px; }
+  .demo-info .s.a { color: var(--sem-red); font-weight: 500; }
+  .demo-info .s.c { color: var(--sem-purple); font-weight: 600; }
+
+  /* Artefakty gallery */
+  .artefact-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 60px; }
+  .artefact { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+  .artefact .prev {
+    height: 240px; background: linear-gradient(135deg, var(--granat-800), var(--granat-950));
+    position: relative; overflow: hidden;
+    display: grid; place-items: center;
+  }
+  .artefact .prev.paper { background: linear-gradient(135deg, var(--paper), var(--paper-2)); }
+  .artefact .prev.editorial { background: linear-gradient(135deg, #d8c9a8, #5a4a2e); }
+  .artefact .prev-num { font-family: var(--serif); font-size: 96px; color: var(--zloto-500); opacity: 0.35; letter-spacing: -0.05em; font-style: italic; font-variation-settings: 'opsz' 144; font-weight: 400; }
+  .artefact .info { padding: 20px 24px; }
+  .artefact .cat { font-family: var(--mono); font-size: 10px; color: var(--zloto-700); letter-spacing: 0.14em; text-transform: uppercase; }
+  .artefact .t { font-family: var(--serif); font-size: 20px; color: var(--granat-900); margin-top: 8px; font-weight: 500; letter-spacing: -0.01em; line-height: 1.15; }
+  .artefact .d { font-size: 13px; color: var(--ink-500); margin-top: 8px; line-height: 1.5; }
+
+  /* Roadmap */
+  .phases { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; position: relative; }
+  .phase { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 32px 28px; position: relative; }
+  .phase.done { border-color: var(--sem-green); background: linear-gradient(180deg, rgba(45,106,79,0.06), white); }
+  .phase .lbl { font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; color: var(--zloto-700); text-transform: uppercase; }
+  .phase.done .lbl { color: var(--sem-green); }
+  .phase h4 { font-family: var(--serif); font-size: 26px; color: var(--granat-900); font-weight: 500; margin-top: 12px; letter-spacing: -0.01em; line-height: 1.15; }
+  .phase ul { list-style: none; margin-top: 20px; }
+  .phase li { padding: 6px 0; font-size: 14px; color: var(--ink-700); display: flex; gap: 10px; line-height: 1.4; }
+  .phase li::before { content: '·'; color: var(--zloto-500); font-size: 20px; line-height: 0.8; }
+  .phase.done li::before { content: '✓'; color: var(--sem-green); font-size: 12px; padding-top: 4px; }
+  .phase .est { font-family: var(--mono); font-size: 11px; color: var(--ink-500); letter-spacing: 0.06em; margin-top: 16px; padding-top: 12px; border-top: 1px dashed var(--line); }
+
+  /* Big statement */
+  .statement { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; height: 100%; }
+  .statement .attr { font-family: var(--mono); font-size: 16px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--zloto-400); margin-top: 60px; }
+
+  /* Split screens (variant compare) */
+  .compare-two { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 60px; height: 620px; }
+  .compare-item { border-radius: 20px; overflow: hidden; border: 1px solid var(--line); box-shadow: 0 20px 40px rgba(14,26,46,0.1); display: flex; flex-direction: column; }
+  .compare-preview { flex: 1; background: var(--paper); position: relative; overflow: hidden; padding: 32px; }
+  .compare-info { padding: 24px 28px; background: white; border-top: 1px solid var(--line); }
+  .compare-info .cat { font-family: var(--mono); font-size: 11px; color: var(--zloto-700); letter-spacing: 0.14em; text-transform: uppercase; }
+  .compare-info h4 { font-family: var(--serif); font-size: 24px; color: var(--granat-900); font-weight: 500; margin-top: 6px; letter-spacing: -0.01em; }
+  .compare-info p { font-size: 14px; color: var(--ink-500); margin-top: 8px; line-height: 1.5; }
+
+  /* Miniature landing preview */
+  .mini-hero { padding: 24px; }
+  .mini-hero h5 { font-family: var(--serif); font-size: 44px; line-height: 1; letter-spacing: -0.025em; color: var(--granat-900); font-weight: 400; font-variation-settings: 'opsz' 60; }
+  .mini-hero h5 em { font-style: italic; color: var(--zloto-700); }
+  .mini-hero p { font-size: 14px; color: var(--ink-700); margin-top: 12px; line-height: 1.5; }
+  .mini-hero .cta { margin-top: 20px; display: inline-block; padding: 10px 18px; background: var(--granat-700); color: white; font-family: var(--sans); font-size: 12px; border-radius: 6px; font-weight: 500; }
+  .mini-editorial .cta { background: var(--granat-900); border-radius: 999px; }
+
+  .mini-portrait { position: absolute; right: 24px; top: 24px; bottom: 24px; width: 45%; border-radius: 8px; overflow: hidden;
+    background: radial-gradient(ellipse at 35% 40%, rgba(200,150,62,0.28), transparent 55%), linear-gradient(160deg, #d8c9a8 0%, #a68d5f 30%, #5a4a2e 65%, var(--granat-800) 100%);
+  }
+  .mini-editorial .mini-portrait { right: 24px; top: 24px; bottom: 40%; width: auto; left: 55%; }
+
+  /* Final slide */
+  .final-slide { text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; }
+  .final-slide h1 { font-size: 168px; line-height: 0.9; max-width: 1400px; }
+  .final-slide .signature { margin-top: 80px; padding: 20px 0; border-top: 1px solid rgba(255,255,255,0.15); border-bottom: 1px solid rgba(255,255,255,0.15); display: inline-block; padding-left: 60px; padding-right: 60px; font-family: var(--mono); font-size: 14px; letter-spacing: 0.14em; color: var(--zloto-400); text-transform: uppercase; }
+
+  /* Table */
+  .comp-table { width: 100%; border-collapse: collapse; margin-top: 40px; }
+  .comp-table th { text-align: left; padding: 16px 20px; font-family: var(--mono); font-size: 13px; letter-spacing: 0.1em; color: var(--ink-500); text-transform: uppercase; border-bottom: 1px solid var(--line-strong); font-weight: 500; }
+  .comp-table td { padding: 20px; border-bottom: 1px solid var(--line); font-size: 17px; vertical-align: top; }
+  .comp-table td:first-child { font-family: var(--serif); font-size: 22px; color: var(--granat-900); font-weight: 500; letter-spacing: -0.005em; width: 260px; }
+  .comp-table td.avoid { color: var(--sem-red); }
+  .comp-table td.have { color: var(--granat-900); }
+  .comp-table td.have strong { color: var(--zloto-700); font-family: var(--serif); font-weight: 500; }
+
+</style>
+</head>
+<body>
+
+<script type="application/json" id="deck-config">
+{
+  "slideCounter": true,
+  "slideCounterFormat": "01 / 14",
+  "controls": true,
+  "scaleMode": "contain"
+}
+</script>
+
+<deck-stage>
+
+<!-- =========================================
+     SLIDE 1 — COVER
+     ========================================= -->
+<section class="dark" data-screen-label="01 Cover">
+  <div class="slide-nav">
+    <div class="logo">
+      <div class="mark"><span>A</span></div>
+      <div class="txt" style="color:var(--paper)">Adam</div>
+    </div>
+    <div>Redesign Strategy · v1.0</div>
+    <div>Lipiec 2026</div>
+  </div>
+
+  <div class="cover">
+    <div class="issue" style="color:var(--zloto-400)">SilverTech · Redesign Strategy · Numer 01</div>
+    <h1 class="mega" style="max-width:1600px">Nie <em>aplikacja.</em><br/>Powaga <em>instytucji.</em></h1>
+    <p class="subtitle">Jak przekształcić Adam z sprawnego generic-dashboardu w produkt o&nbsp;identyfikacji wizualnej godnej firmy z listy Fortune Top&nbsp;10 — bez porzucania granatu, złota i inwestycji już zaszytych w&nbsp;kodzie Capacitora.</p>
+  </div>
+
+  <div class="cover meta">
+    <div><span class="k" style="color:var(--paper)">Anna Chmielewska</span><span>Kierunek redesignu</span></div>
+    <div><span class="k" style="color:var(--paper)">Nordic humanism × Medical-premium</span><span>Kierunek wizualny</span></div>
+    <div><span class="k" style="color:var(--paper)">14 slajdów · 5 artefaktów</span><span>Format dostarczenia</span></div>
+  </div>
+</section>
+
+<!-- =========================================
+     SLIDE 2 — DIAGNOSIS
+     ========================================= -->
+<section data-screen-label="02 Diagnoza">
+  <div class="slide-nav">
+    <div class="logo">
+      <div class="mark"><span>A</span></div>
+      <div class="txt">Adam</div>
+    </div>
+    <div>Rozdział 01 · Diagnoza</div>
+    <div>Adam · Redesign Strategy</div>
+  </div>
+
+  <div style="max-width:1400px">
+    <div class="eyebrow" style="margin-bottom:32px">Rozdział 01 · Punkt startowy</div>
+    <h1 class="title" style="max-width:1500px">Co&nbsp;<em>mamy</em>, a czego <em>brakuje</em>.</h1>
+    <p class="lead" style="margin-top:32px;max-width:1200px">AVA v7.3.2 to sprawny generic-dashboard operatora. Ma wszystko od strony inżynierskiej — nie ma nic od strony marki, klienta, opiekuna. To nie jest kosmetyka — to zbudowanie tożsamości i dwóch nowych produktów.</p>
+
+    <ul class="diag-list" style="margin-top:56px">
+      <li><span class="num">MAMY</span><span class="txt">Admin UI · Dashboard, Agents, Providers, YAML editor, Wizard (16 stron)</span><span class="tag have">Do redesignu</span></li>
+      <li><span class="num">MAMY</span><span class="txt">Design system technologiczny — shadcn/ui, HSL variables, tailwindcss-animate</span><span class="tag mid">Do zastąpienia</span></li>
+      <li><span class="num">MAMY</span><span class="txt">Granat #1a2744 + złoto #c8963e w konfiguracji Capacitor (splash, statusbary)</span><span class="tag have">Zachować</span></li>
+      <li><span class="num">BRAK</span><span class="txt">Panel Opiekuna / Rodziny — 12 ekranów, RBAC, komponenty senioralne</span><span class="tag">Do zbudowania</span></li>
+      <li><span class="num">BRAK</span><span class="txt">Landing Page — 10 sekcji, cennik, FAQ, copy emocjonalny+faktyczny</span><span class="tag">Do zbudowania</span></li>
+      <li><span class="num">BRAK</span><span class="txt">Signature elements — SemaforBadge, MoodChart, MedicationRing, AlertTimeline</span><span class="tag">Do zbudowania</span></li>
+      <li><span class="num">BRAK</span><span class="txt">Design language — tożsamość wizualna dla całej rodziny produktów</span><span class="tag">Do zbudowania</span></li>
+    </ul>
+  </div>
+
+  <div class="slide-foot">
+    <span>Adam Redesign Strategy · 2026</span>
+    <span>02 · Diagnoza obecnego stanu</span>
+  </div>
+</section>
+
+<!-- =========================================
+     SLIDE 3 — AUDIENCE
+     ========================================= -->
+<section class="paper2" data-screen-label="03 Odbiorca">
+  <div class="slide-nav">
+    <div class="logo">
+      <div class="mark"><span>A</span></div>
+      <div class="txt">Adam</div>
+    </div>
+    <div>Rozdział 02 · Odbiorca</div>
+    <div>Kluczowa obserwacja</div>
+  </div>
+
+  <div class="eyebrow" style="margin-bottom:32px">Rozdział 02 · Dla kogo projektujemy</div>
+  <h1 class="title" style="max-width:1600px">Senior <em>nigdy</em> tego nie zobaczy.</h1>
+  <p class="lead" style="margin-top:24px;max-width:1300px">Adam rozmawia głosem. Cała warstwa wizualna trafia do dorosłych dzieci, koordynatorów i klientów. To nie jest „senior tech" — to premium SaaS dla zestresowanej rodziny.</p>
+
+  <div class="col-3" style="margin-top:60px">
+    <div class="persona-card">
+      <div class="role">Persona 01 · Główny odbiorca</div>
+      <h3>Dorosłe dziecko</h3>
+      <div class="quote">„Chciałbym wiedzieć, że u mamy wszystko dobrze, ale nie zdążę codziennie zadzwonić."</div>
+      <ul>
+        <li>30–55 lat, Warszawa/Poznań/Kraków</li>
+        <li>Mieszka 50–500 km od rodzica</li>
+        <li>Sprawdza panel 2–5× dziennie</li>
+        <li>Kupuje pakiet Rodzinny (79 zł)</li>
+      </ul>
+    </div>
+    <div class="persona-card">
+      <div class="role">Persona 02 · Wewnętrzny</div>
+      <h3>Koordynator SilverTech</h3>
+      <div class="quote">„Monitoruję 80 seniorów. Muszę widzieć eskalację w &lt;3 sekundach."</div>
+      <ul>
+        <li>25–40 lat, Poznań, dyżury 12h</li>
+        <li>Panel Admina, dark mode, 24/7</li>
+        <li>Reaguje na Red / Purple alerty</li>
+        <li>Potrzebuje data-density</li>
+      </ul>
+    </div>
+    <div class="persona-card">
+      <div class="role">Persona 03 · Marketing target</div>
+      <h3>Landing visitor</h3>
+      <div class="quote">„Widzę reklamę na FB. Muszę w 30s zrozumieć czy to nie jest kolejna aplikacja."</div>
+      <ul>
+        <li>Wchodzi z FB / Google / TVP</li>
+        <li>Skanuje hero, cennik, FAQ</li>
+        <li>Buduje zaufanie w 5 sekundach</li>
+        <li>Konwertuje na trial 14 dni</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="slide-foot"><span>Adam Redesign Strategy · 2026</span><span>03 · Trzy persony</span></div>
+</section>
+
+<!-- =========================================
+     SLIDE 4 — DIRECTION
+     ========================================= -->
+<section data-screen-label="04 Kierunek">
+  <div class="slide-nav">
+    <div class="logo">
+      <div class="mark"><span>A</span></div>
+      <div class="txt">Adam</div>
+    </div>
+    <div>Rozdział 03 · Kierunek wizualny</div>
+    <div>Decyzja strategiczna</div>
+  </div>
+
+  <div class="col-2" style="align-items:start">
+    <div>
+      <div class="eyebrow" style="margin-bottom:32px">Rozdział 03 · Kierunek</div>
+      <h1 class="title"><em>Nordic humanism</em> ×<br/>Medical-<em>premium</em>.</h1>
+      <p class="lead" style="margin-top:32px">Nie bank (za chłodny). Nie luxury heritage (zły sygnał cenowy). Nie warm-tech Apple (zła paleta). Nordic humanism zachowuje granat, dodaje ludzki ton, medyczna precyzja w warstwie danych.</p>
+
+      <table class="comp-table">
+        <tr><td>Bankowy · Deutsche Bank</td><td class="avoid">Za zimny, brak ciepła emocjonalnego</td></tr>
+        <tr><td>Medical-premium · Mayo Clinic</td><td class="have">→ Dyscyplina danych w produkcie</td></tr>
+        <tr><td>Warm-tech · Apple Health</td><td class="avoid">Wymaga zielonej palety, zerwanie z granatem</td></tr>
+        <tr><td>Nordic humanism · Airbnb+</td><td class="have"><strong>Kierunek fundamentalny</strong> — granat, złoto, editorial</td></tr>
+        <tr><td>Heritage luxury · Rolex</td><td class="avoid">Zły sygnał cenowy przy 49-119 zł/mies.</td></tr>
+      </table>
+    </div>
+
+    <div class="mood-grid">
+      <div class="mood-tile" style="background:linear-gradient(160deg, #d8c9a8 0%, #a68d5f 40%, #2a2317 100%); grid-column: span 2;">
+        <div class="lbl">Ref · 01</div>
+        <div class="cap">„Portret editorialny — sygnał człowieczeństwa"</div>
+      </div>
+      <div class="mood-tile" style="background:var(--granat-900); display:grid; place-items:center">
+        <div style="text-align:center; z-index:2;">
+          <div style="font-family:var(--serif); font-size:80px; color:var(--zloto-500); font-style:italic; font-variation-settings:'opsz' 144; font-weight:400; letter-spacing:-0.03em;">Aa</div>
+          <div style="font-family:var(--mono); font-size:10px; color:var(--granat-300); letter-spacing:0.14em; text-transform:uppercase; margin-top:8px;">Fraunces · Serif</div>
+        </div>
+      </div>
+      <div class="mood-tile" style="background:var(--paper); display:grid; place-items:center; border:1px solid var(--line);">
+        <div style="text-align:center;">
+          <div style="font-family:var(--sans); font-size:64px; color:var(--granat-900); font-weight:500; letter-spacing:-0.03em;">Aa</div>
+          <div style="font-family:var(--mono); font-size:10px; color:var(--ink-500); letter-spacing:0.14em; text-transform:uppercase; margin-top:8px;">Geist · Sans</div>
+        </div>
+      </div>
+      <div class="mood-tile" style="background:linear-gradient(135deg, var(--granat-700), var(--granat-900))">
+        <div class="lbl">Palette</div>
+        <div style="position:absolute; bottom:20px; left:20px; right:20px; display:flex; gap:8px; z-index:2;">
+          <div style="flex:1; height:80px; background:var(--granat-700); border-radius:6px;"></div>
+          <div style="flex:1; height:80px; background:var(--zloto-500); border-radius:6px;"></div>
+          <div style="flex:1; height:80px; background:var(--paper); border-radius:6px;"></div>
+        </div>
+      </div>
+      <div class="mood-tile" style="background: radial-gradient(ellipse at 60% 40%, rgba(200,150,62,0.4), transparent 55%), linear-gradient(200deg, #c9b48c 0%, #7f6a45 40%, #2a2317 100%);">
+        <div class="lbl">Ref · 02</div>
+        <div class="cap">„Fotografia klasy edytorialnej — landing only"</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-foot"><span>Adam Redesign Strategy · 2026</span><span>04 · Kierunek wizualny</span></div>
+</section>
+
+<!-- =========================================
+     SLIDE 5 — PRINCIPLES
+     ========================================= -->
+<section class="paper2" data-screen-label="05 Zasady">
+  <div class="slide-nav">
+    <div class="logo">
+      <div class="mark"><span>A</span></div>
+      <div class="txt">Adam</div>
+    </div>
+    <div>Rozdział 04 · Zasady projektowe</div>
+    <div>Pięć reguł</div>
+  </div>
+
+  <div class="eyebrow" style="margin-bottom:32px">Rozdział 04 · Design principles</div>
+  <h1 class="title">Pięć <em>zasad</em>, którym się kłaniamy.</h1>
+  <p class="lead" style="margin-top:24px;max-width:1300px">Każda z tych zasad rozwiązuje konkretny problem projektowy — nie są dekoracją.</p>
+
+  <div class="col-3" style="margin-top:56px; grid-template-columns: repeat(5, 1fr); gap: 24px;">
+    <div class="principle-tile">
+      <div class="num">Zasada 01</div>
+      <h4>Powaga bez chłodu</h4>
+      <p>Granat jako fortyfikacja. Off-white zamiast klinicznej bieli. Rodzina czuje instytucję — nie szpital.</p>
+    </div>
+    <div class="principle-tile">
+      <div class="num">Zasada 02</div>
+      <h4>Dowód przed obietnicą</h4>
+      <p>Każda liczba cytowalna. Cyfry w Fraunces, nie w Geist — jak w Financial Times.</p>
+    </div>
+    <div class="principle-tile">
+      <div class="num">Zasada 03</div>
+      <h4>Alarm ma siłę</h4>
+      <p>Semafor progresywny. Zieleń szepcze, purpura krzyczy. Zero alarm fatigue.</p>
+    </div>
+    <div class="principle-tile">
+      <div class="num">Zasada 04</div>
+      <h4>Człowiek, nie stock</h4>
+      <p>Fotografia editorialna tylko landing. Produkt = typografia i dane. Zero „grandma-uśmiech".</p>
+    </div>
+    <div class="principle-tile">
+      <div class="num">Zasada 05</div>
+      <h4>Dwie gęstości</h4>
+      <p>Opiekun potrzebuje powietrza. Koordynator potrzebuje danych. Jeden system, dwa tryby.</p>
+    </div>
+  </div>
+
+  <div class="slide-foot"><span>Adam Redesign Strategy · 2026</span><span>05 · Zasady projektowe</span></div>
+</section>
+
+<!-- =========================================
+     SLIDE 6 — COLOR
+     ========================================= -->
+<section data-screen-label="06 Kolor">
+  <div class="slide-nav">
+    <div class="logo">
+      <div class="mark"><span>A</span></div>
+      <div class="txt">Adam</div>
+    </div>
+    <div>Rozdział 05 · Kolor</div>
+    <div>Tokens · WCAG AA</div>
+  </div>
+
+  <div class="eyebrow" style="margin-bottom:24px">Rozdział 05 · Color system</div>
+  <h1 class="title"><em>Granat</em> zostaje.<br/>Złoto matowieje.</h1>
+  <p class="lead" style="margin-top:24px;max-width:1300px">Granat #1a2744 pozostaje flagą — bo jest w Capacitorze, w splash screenach, w statusbarach. Złoto #c8963e zostaje, ale jako <em>matowe</em>: hairline, cyfry KPI, akcent w karcie premium. Nigdy jako gradient bling.</p>
+
+  <div style="margin-top:60px">
+    <div style="font-family:var(--mono);font-size:14px;color:var(--zloto-700);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:20px">Granat scale · brand primary</div>
+    <div class="cs-row">
+      <div class="cs-tile"><div class="chip" style="background:var(--granat-100)"><div class="lbl-top" style="color:var(--ink-500)">100</div></div><div class="info"><div class="name">Granat 100</div><div class="hex">#E4E8F0</div></div></div>
+      <div class="cs-tile"><div class="chip" style="background:var(--granat-500)"><div class="lbl-top">500</div></div><div class="info"><div class="name">Granat 500</div><div class="hex">#3B4A6B</div></div></div>
+      <div class="cs-tile"><div class="chip" style="background:var(--granat-700)"><div class="lbl-top">700 · BRAND</div></div><div class="info"><div class="name">Granat 700</div><div class="hex">#1A2744</div></div></div>
+      <div class="cs-tile"><div class="chip" style="background:var(--granat-900)"><div class="lbl-top">900</div></div><div class="info"><div class="name">Granat 900</div><div class="hex">#0E1A2E</div></div></div>
+      <div class="cs-tile"><div class="chip" style="background:var(--granat-950)"><div class="lbl-top">950</div></div><div class="info"><div class="name">Granat 950</div><div class="hex">#08111F</div></div></div>
+    </div>
+
+    <div style="font-family:var(--mono);font-size:14px;color:var(--zloto-700);letter-spacing:0.14em;text-transform:uppercase;margin:44px 0 20px">Semafor 4-color · WCAG AA-passed</div>
+    <div class="cs-row">
+      <div class="cs-tile"><div class="chip" style="background:var(--sem-green);position:relative"><div class="lbl-top">L1 · SPOKOJNIE</div></div><div class="info"><div class="name">Green</div><div class="hex">#2D6A4F · AA 5.8:1</div></div></div>
+      <div class="cs-tile"><div class="chip" style="background:var(--sem-yellow)"><div class="lbl-top">L2 · UWAŻAJ</div></div><div class="info"><div class="name">Yellow</div><div class="hex">#B8830D · AA 4.6:1</div></div></div>
+      <div class="cs-tile"><div class="chip" style="background:var(--sem-red)"><div class="lbl-top">L3 · ALARM</div></div><div class="info"><div class="name">Red</div><div class="hex">#A5121A · AA 6.1:1</div></div></div>
+      <div class="cs-tile"><div class="chip" style="background:var(--sem-purple)"><div class="lbl-top">L4 · KRYTYCZNE</div></div><div class="info"><div class="name">Purple</div><div class="hex">#5A0561 · AA 8.9:1</div></div></div>
+      <div class="cs-tile"><div class="chip" style="background:var(--zloto-500);position:relative"><div class="lbl-top" style="color:var(--granat-900)">ACCENT</div></div><div class="info"><div class="name">Złoto 500</div><div class="hex">#C8963E</div></div></div>
+    </div>
+  </div>
+
+  <div class="slide-foot"><span>Adam Redesign Strategy · 2026</span><span>06 · Color system</span></div>
+</section>
+
+<!-- =========================================
+     SLIDE 7 — TYPE
+     ========================================= -->
+<section class="paper2" data-screen-label="07 Typografia">
+  <div class="slide-nav">
+    <div class="logo">
+      <div class="mark"><span>A</span></div>
+      <div class="txt">Adam</div>
+    </div>
+    <div>Rozdział 06 · Typografia</div>
+    <div>Fraunces + Geist</div>
+  </div>
+
+  <div class="col-2" style="align-items:start">
+    <div>
+      <div class="eyebrow" style="margin-bottom:24px">Rozdział 06 · Typography</div>
+      <h1 class="title"><em>Serif</em> tam, gdzie<br/>konkurencja używa <em>sans</em>.</h1>
+      <p class="lead" style="margin-top:24px">95% konkurencji health-tech używa Inter/Roboto. Adam używa Fraunces w nagłówkach i cyfrach KPI — element podpisu Fortune-tier. Body w Geist — nowoczesny sans, nie AI-slop.</p>
+
+      <div style="margin-top:40px;padding:24px;background:var(--paper);border:1px solid var(--line);border-radius:12px">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--ink-500);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px">Dlaczego darmowe zamienniki</div>
+        <p style="font-size:15px;line-height:1.6;color:var(--ink-700)">Tiempos Headline + Söhne (Klim) to ~$600+. Fraunces + Geist to darmowe, ale <strong style="color:var(--granat-900);font-family:var(--serif);font-weight:500">nie tandetne</strong> — Fraunces jest w Google Fonts jako opsz-variable font, Geist to font Vercela z 2023. Swap na Tiempos+Söhne to jednolinijkowa zmiana w CSS, jeśli licencja się znajdzie.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="type-row">
+        <div class="m"><strong>Display · 148px</strong>Fraunces 400 · opsz 144<br/>Landing hero</div>
+        <div style="font-family:var(--serif);font-size:96px;line-height:0.9;letter-spacing:-0.035em;color:var(--granat-900);font-weight:400">Adam</div>
+      </div>
+      <div class="type-row">
+        <div class="m"><strong>H1 · 96px</strong>Fraunces italic · opsz 100<br/>Section headers</div>
+        <div style="font-family:var(--serif);font-size:56px;line-height:1;letter-spacing:-0.025em;color:var(--zloto-700);font-style:italic;font-weight:400">codziennie.</div>
+      </div>
+      <div class="type-row">
+        <div class="m"><strong>H2 · 40px</strong>Fraunces 500 · opsz 60<br/>Card titles</div>
+        <div style="font-family:var(--serif);font-size:32px;letter-spacing:-0.02em;color:var(--granat-900);font-weight:500">Halina Wójcik</div>
+      </div>
+      <div class="type-row">
+        <div class="m"><strong>Body · 15-18px</strong>Geist 400/500<br/>UI text · paragraphs</div>
+        <div style="font-family:var(--sans);font-size:16px;line-height:1.55;color:var(--ink-700)">Adam każdego dnia rozmawia z Twoją mamą przez telefon.</div>
+      </div>
+      <div class="type-row">
+        <div class="m"><strong>Numeric KPI</strong>Fraunces 500 · opsz 144<br/><em>Sygnatura Adama</em></div>
+        <div style="font-family:var(--serif);font-size:56px;color:var(--granat-900);font-weight:500;letter-spacing:-0.02em;display:flex;align-items:baseline;gap:8px">96<span style="font-size:24px;color:var(--zloto-700);font-weight:400">%</span></div>
+      </div>
+      <div class="type-row">
+        <div class="m"><strong>Mono · 11px</strong>Geist Mono<br/>Labels · captions · code</div>
+        <div style="font-family:var(--mono);font-size:12px;letter-spacing:0.06em;color:var(--ink-500);text-transform:uppercase">OSTATNI KONTAKT · 12 LIP 08:14</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-foot"><span>Adam Redesign Strategy · 2026</span><span>07 · Typography</span></div>
+</section>
+
+<!-- =========================================
+     SLIDE 8 — SEMAFOR
+     ========================================= -->
+<section data-screen-label="08 Semafor">
+  <div class="slide-nav">
+    <div class="logo">
+      <div class="mark"><span>A</span></div>
+      <div class="txt">Adam</div>
+    </div>
+    <div>Rozdział 07 · Signature element</div>
+    <div>Semafor progresywny</div>
+  </div>
+
+  <div class="eyebrow" style="margin-bottom:24px">Rozdział 07 · Signature element</div>
+  <h1 class="title" style="max-width:1600px">Semafor <em>progresywny</em> — bo purpura nie&nbsp;może krzyczeć jak zieleń.</h1>
+  <p class="lead" style="margin-top:24px;max-width:1300px">Kluczowa decyzja projektowa: nie każdy stan ma tę samą intensywność wizualną. Zieleń i żółty są <em>ambient</em>. Czerwony i purpurowy dostają eskalację — pulsujący pierścień, gradient tła, dedykowany banner. Zapobiega alarm fatigue.</p>
+
+  <div class="sem-showcase">
+    <div class="sem-block">
+      <h4>Stany ambient · szept</h4>
+      <div class="demo-card g">
+        <div class="demo-av-wrap"><div class="demo-av">HW</div></div>
+        <div class="demo-info">
+          <div class="n">Halina Wójcik <span class="age">78 lat</span></div>
+          <div class="s">Spokojnie · mood 0.72 · leki OK</div>
+        </div>
+      </div>
+      <div class="demo-card y">
+        <div class="demo-av-wrap"><div class="demo-av">JK</div></div>
+        <div class="demo-info">
+          <div class="n">Janusz Kowalski <span class="age">82 lata</span></div>
+          <div class="s">Uważaj · samotność · mood 0.42</div>
+        </div>
+      </div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--ink-500);margin-top:20px;letter-spacing:0.06em;line-height:1.6">3PX WSTĘGA + IKONA STATUSU. NIC NIE PULSUJE. CODZIENNY STAN NIE ZABIERA UWAGI.</div>
+    </div>
+
+    <div class="sem-block">
+      <h4>Stany critical · krzyk</h4>
+      <div class="demo-card r">
+        <div class="demo-av-wrap pr"><div class="demo-av">MN</div></div>
+        <div class="demo-info">
+          <div class="n">Maria Nowak <span class="age">74 lata</span></div>
+          <div class="s a">Wykryto upadek · Adam dzwoni · 3m</div>
+        </div>
+      </div>
+      <div class="demo-card p">
+        <div class="demo-av-wrap pp"><div class="demo-av">SZ</div></div>
+        <div class="demo-info">
+          <div class="n">Stanisław Zieliński <span class="age">85 lat</span></div>
+          <div class="s c">112 w drodze · ETA 8 min · LIVE</div>
+        </div>
+      </div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--sem-red);margin-top:20px;letter-spacing:0.06em;line-height:1.6">PULSUJĄCY PIERŚCIEŃ + GRADIENT TŁA + BANNER + SMS 18S. ZAREZERWOWANY DLA REALNIE KRYTYCZNYCH ZDARZEŃ.</div>
+    </div>
+  </div>
+
+  <div class="slide-foot"><span>Adam Redesign Strategy · 2026</span><span>08 · Semafor progresywny</span></div>
+</section>
+
+<!-- =========================================
+     SLIDE 9 — LANDING VARIANTS
+     ========================================= -->
+<section class="paper2" data-screen-label="09 Landing warianty">
+  <div class="slide-nav">
+    <div class="logo">
+      <div class="mark"><span>A</span></div>
+      <div class="txt">Adam</div>
+    </div>
+    <div>Rozdział 08 · Landing Page</div>
+    <div>Dwa warianty</div>
+  </div>
+
+  <div class="eyebrow" style="margin-bottom:24px">Rozdział 08 · Landing Page · 2 warianty</div>
+  <h1 class="title" style="max-width:1400px"><em>Instytucjonalny</em>,<br/>albo <em>editorial.</em></h1>
+  <p class="lead" style="margin-top:24px;max-width:1300px">Oba używają tego samego design systemu. Różnica w charakterze: Wariant A rozmawia jak lekarz (Mayo Clinic). Wariant B jak redaktor magazynu (Airbnb+ nordic).</p>
+
+  <div class="compare-two">
+    <div class="compare-item">
+      <div class="compare-preview">
+        <div class="mini-hero">
+          <div style="font-family:var(--mono);font-size:10px;color:var(--zloto-700);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:12px">Cyfrowy opiekun rodzinny</div>
+          <h5>Codziennie dzwoni<br/>do <em>Twojej mamy.</em></h5>
+          <p>Adam to głosowy asystent, który dwa razy dziennie rozmawia telefonicznie z Twoim bliskim.</p>
+          <div class="cta">Zamów za 49 zł/mies. →</div>
+          <div style="margin-top:32px;display:flex;gap:24px;padding-top:20px;border-top:1px solid var(--line)">
+            <div><div style="font-family:var(--serif);font-size:32px;color:var(--granat-900);font-weight:500">18<span style="font-size:16px;color:var(--zloto-700)">s</span></div><div style="font-family:var(--mono);font-size:9px;color:var(--ink-500);letter-spacing:0.1em;text-transform:uppercase;margin-top:4px">ALARM RODZINA</div></div>
+            <div><div style="font-family:var(--serif);font-size:32px;color:var(--granat-900);font-weight:500">96<span style="font-size:16px;color:var(--zloto-700)">%</span></div><div style="font-family:var(--mono);font-size:9px;color:var(--ink-500);letter-spacing:0.1em;text-transform:uppercase;margin-top:4px">ADHERENCE</div></div>
+            <div><div style="font-family:var(--serif);font-size:32px;color:var(--granat-900);font-weight:500">24/7</div><div style="font-family:var(--mono);font-size:9px;color:var(--ink-500);letter-spacing:0.1em;text-transform:uppercase;margin-top:4px">DYŻUR</div></div>
+          </div>
+        </div>
+        <div style="position:absolute;right:24px;top:24px;bottom:24px;width:38%;background:var(--paper-2);border-radius:12px;padding:20px;border:1px solid var(--line);box-shadow:0 20px 40px -20px rgba(14,26,46,0.2)">
+          <div style="font-family:var(--serif);font-size:14px;color:var(--granat-900);margin-bottom:12px;font-weight:500">Moi bliscy</div>
+          <div style="background:white;border:1px solid var(--line);border-left:3px solid var(--sem-green);border-radius:6px;padding:8px 12px;margin-bottom:6px;display:flex;align-items:center;gap:8px">
+            <div style="width:24px;height:24px;border-radius:50%;background:var(--granat-700);display:grid;place-items:center;color:var(--zloto-300);font-family:var(--serif);font-size:9px">HW</div>
+            <div style="font-size:11px;color:var(--granat-900);font-weight:500">Halina W.</div>
+            <div style="margin-left:auto;font-family:var(--serif);font-size:12px;color:var(--granat-900);font-weight:500">96%</div>
+          </div>
+          <div style="background:linear-gradient(90deg,rgba(184,131,13,0.1),white 60%);border:1px solid var(--line);border-left:3px solid var(--sem-yellow);border-radius:6px;padding:8px 12px;margin-bottom:6px;display:flex;align-items:center;gap:8px">
+            <div style="width:24px;height:24px;border-radius:50%;background:var(--granat-700);display:grid;place-items:center;color:var(--zloto-300);font-family:var(--serif);font-size:9px">JK</div>
+            <div style="font-size:11px;color:var(--granat-900);font-weight:500">Janusz K.</div>
+            <div style="margin-left:auto;font-family:var(--serif);font-size:12px;color:var(--granat-900);font-weight:500">81%</div>
+          </div>
+          <div style="background:linear-gradient(90deg,rgba(165,18,26,0.1),white 60%);border:1px solid var(--line);border-left:3px solid var(--sem-red);border-radius:6px;padding:8px 12px;display:flex;align-items:center;gap:8px">
+            <div style="width:24px;height:24px;border-radius:50%;background:var(--granat-700);display:grid;place-items:center;color:var(--zloto-300);font-family:var(--serif);font-size:9px">MN</div>
+            <div style="font-size:11px;color:var(--granat-900);font-weight:500">Maria N.</div>
+            <div style="margin-left:auto;font-family:var(--serif);font-size:12px;color:var(--sem-red);font-weight:500">3m</div>
+          </div>
+        </div>
+      </div>
+      <div class="compare-info">
+        <div class="cat">Wariant A · Instytucjonalny</div>
+        <h4>Medical-premium · Mayo Clinic aesthetic</h4>
+        <p>Więcej dyscypliny, mniej fotografii, dużo powietrza, liczby jako dowód, side-by-side comparisons, ton faktyczny. Dla rodzin, które chcą mieć pewność że to poważne — nie zabawka startupowa.</p>
+      </div>
+    </div>
+
+    <div class="compare-item mini-editorial">
+      <div class="compare-preview">
+        <div class="mini-hero" style="position:relative">
+          <div style="display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:10px;color:var(--ink-500);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:16px">
+            <span>Numer 01</span><span style="width:16px;height:1px;background:var(--line-strong)"></span>
+            <span style="font-family:var(--serif);font-style:italic;font-size:11px;color:var(--zloto-700);text-transform:none">Codzienna opieka.</span>
+          </div>
+          <h5 style="font-size:52px;line-height:0.95">Codziennie<br/><em>dzwoni</em> do niej.<br/><span style="border-bottom:2px solid var(--zloto-500);padding-bottom:2px">Ty</span> masz spokój.</h5>
+          <p style="font-family:var(--serif);font-style:italic;font-size:15px;color:var(--ink-500);margin-top:16px;font-weight:300">Adam to głosowy asystent, który rozmawia z Twoją mamą jak zaufany sąsiad.</p>
+          <div class="cta">Poznaj Adama →</div>
+        </div>
+        <div style="position:absolute;right:24px;top:24px;left:55%;bottom:40%;border-radius:6px;overflow:hidden;background:radial-gradient(ellipse at 35% 40%, rgba(200,150,62,0.28), transparent 55%), linear-gradient(160deg, #d8c9a8 0%, #a68d5f 30%, #5a4a2e 65%, var(--granat-800) 100%);">
+          <div style="position:absolute;bottom:12px;left:16px;right:16px;font-family:var(--serif);font-style:italic;font-size:11px;color:rgba(255,255,255,0.9);line-height:1.4">Adam dzwoni codziennie o&nbsp;ósmej. Zawsze pyta, jak spałam.<br/><span style="font-style:normal;color:var(--zloto-300);font-weight:500">— Halina W., 78 lat, Wilda</span></div>
+        </div>
+        <div style="position:absolute;left:24px;right:55%;bottom:24px;height:35%;background:var(--granat-900);border-radius:6px;padding:16px;display:flex;flex-direction:column;justify-content:center;color:white">
+          <div style="font-family:var(--serif);font-size:13px;font-style:italic;font-weight:300;line-height:1.4">Wykrywa <em style="color:var(--zloto-400)">samotność</em> · Alarmuje w <em style="color:var(--zloto-400)">18s</em></div>
+        </div>
+      </div>
+      <div class="compare-info">
+        <div class="cat">Wariant B · Editorial</div>
+        <h4>Nordic humanism full · Airbnb + Apple Health warmth</h4>
+        <p>Asymetryczna typografia, fotografia portretowa z zacytowaną wypowiedzią, magazynowa numeracja rozdziałów, pull quotes. Dla rodzin, które reagują na emocję i storytelling — kadry i cytaty zamiast liczb.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-foot"><span>Adam Redesign Strategy · 2026</span><span>09 · Landing Page · 2 warianty</span></div>
+</section>
+
+<!-- =========================================
+     SLIDE 10 — PANEL OPIEKUNA
+     ========================================= -->
+<section data-screen-label="10 Panel Opiekuna">
+  <div class="slide-nav">
+    <div class="logo">
+      <div class="mark"><span>A</span></div>
+      <div class="txt">Adam</div>
+    </div>
+    <div>Rozdział 09 · Panel Opiekuna</div>
+    <div>Balanced density · Stripe-like</div>
+  </div>
+
+  <div class="col-2" style="align-items:start">
+    <div>
+      <div class="eyebrow" style="margin-bottom:24px">Rozdział 09 · Panel Opiekuna</div>
+      <h1 class="title"><em>Balanced.</em><br/>Powietrze i&nbsp;dowody.</h1>
+      <p class="lead" style="margin-top:24px">Rodzina otwiera panel z niepokojem. Gęstość Stripe Dashboard — czytelne kafelki, dużo białej przestrzeni, jeden focus per widok. Kluczowe elementy: <em>Dashboard z listą seniorów</em>, <em>Widok szczegółowy</em> z 5 tabami, <em>krytyczny banner alertu</em> gdy potrzeba.</p>
+
+      <div style="margin-top:40px;padding:28px;background:var(--paper-2);border:1px solid var(--line);border-radius:12px">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--zloto-700);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:16px">Kluczowe komponenty senioralne</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:14px;color:var(--ink-700);line-height:1.5">
+          <div>• SeniorCard (semafor 4-col)</div>
+          <div>• SemaphoreBadge (Slack-like)</div>
+          <div>• MoodChart (14/30/90d Recharts)</div>
+          <div>• MedicationRing (SVG adherence)</div>
+          <div>• AlertTimeline (chronologia)</div>
+          <div>• ConversationCard (transcript + audio)</div>
+          <div>• EmergencyContactList</div>
+          <div>• AlertBanner (Red/Purple full)</div>
+        </div>
+      </div>
+
+      <div style="margin-top:24px;font-family:var(--mono);font-size:12px;color:var(--ink-500);letter-spacing:0.06em">→ Zobacz pełny mockup w pliku „Panel Opiekuna.html"</div>
+    </div>
+
+    <div style="background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:0 30px 60px -20px rgba(14,26,46,0.15)">
+      <!-- Simulated panel screenshot -->
+      <div style="display:grid;grid-template-columns:80px 1fr;gap:16px;height:600px">
+        <div style="background:var(--granat-900);border-radius:8px;padding:12px 8px">
+          <div style="width:20px;height:20px;background:var(--zloto-500);border-radius:4px;margin-bottom:24px"></div>
+          <div style="height:8px;background:var(--zloto-500);border-radius:2px;margin-bottom:8px"></div>
+          <div style="height:6px;background:var(--granat-700);border-radius:2px;margin-bottom:6px"></div>
+          <div style="height:6px;background:var(--granat-700);border-radius:2px;margin-bottom:6px"></div>
+          <div style="height:6px;background:var(--granat-700);border-radius:2px"></div>
+        </div>
+        <div>
+          <!-- Head -->
+          <div style="font-family:var(--serif);font-size:28px;color:var(--granat-900);font-weight:400;letter-spacing:-0.02em">Dzień dobry, <span style="color:var(--zloto-700);font-style:italic">Anno</span>.</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--ink-500);letter-spacing:0.06em;margin-top:6px">WT 12 LIP 2026 · ODŚWIEŻONO 14:22</div>
+
+          <!-- Alert -->
+          <div style="margin-top:16px;background:white;border:1px solid var(--sem-red);border-left:3px solid var(--sem-red);border-radius:8px;padding:12px 14px;display:flex;align-items:center;gap:12px">
+            <div style="width:24px;height:24px;background:rgba(165,18,26,0.15);border-radius:50%;display:grid;place-items:center;color:var(--sem-red);font-size:14px;font-weight:600">!</div>
+            <div style="flex:1"><div style="font-size:11px;font-weight:600;color:var(--granat-900)">Potencjalny upadek · Maria N.</div><div style="font-size:9px;color:var(--ink-500);margin-top:2px">Adam próbuje się dodzwonić · 3 min</div></div>
+            <div style="padding:4px 10px;background:var(--sem-red);color:white;border-radius:4px;font-size:9px;font-family:var(--sans);font-weight:500">Zadzwoń</div>
+          </div>
+
+          <!-- KPI mini -->
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px">
+            <div style="background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px"><div style="font-family:var(--mono);font-size:8px;color:var(--ink-500);letter-spacing:0.08em;text-transform:uppercase">Bliscy</div><div style="font-family:var(--serif);font-size:20px;color:var(--granat-900);font-weight:500;margin-top:2px">3</div></div>
+            <div style="background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px"><div style="font-family:var(--mono);font-size:8px;color:var(--ink-500);letter-spacing:0.08em;text-transform:uppercase">Rozmowy 7d</div><div style="font-family:var(--serif);font-size:20px;color:var(--granat-900);font-weight:500;margin-top:2px">14/14</div></div>
+            <div style="background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px"><div style="font-family:var(--mono);font-size:8px;color:var(--ink-500);letter-spacing:0.08em;text-transform:uppercase">Śr. adherence</div><div style="font-family:var(--serif);font-size:20px;color:var(--granat-900);font-weight:500;margin-top:2px">89%</div></div>
+            <div style="background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px"><div style="font-family:var(--mono);font-size:8px;color:var(--ink-500);letter-spacing:0.08em;text-transform:uppercase">Alerty 30d</div><div style="font-family:var(--serif);font-size:20px;color:var(--granat-900);font-weight:500;margin-top:2px">4</div></div>
+          </div>
+
+          <!-- Senior cards -->
+          <div style="margin-top:16px">
+            <div style="font-family:var(--serif);font-size:14px;color:var(--granat-900);font-weight:500;margin-bottom:8px">Moi bliscy</div>
+            <div style="background:linear-gradient(90deg,rgba(165,18,26,0.06),white 40%);border:1px solid var(--line);border-left:3px solid var(--sem-red);border-radius:8px;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px">
+              <div style="position:relative"><div style="width:28px;height:28px;border-radius:50%;background:var(--granat-700);display:grid;place-items:center;color:var(--zloto-300);font-family:var(--serif);font-size:11px;font-weight:500">MN</div><div style="position:absolute;inset:-3px;border-radius:50%;border:1.5px solid var(--sem-red);opacity:0.6"></div></div>
+              <div style="flex:1"><div style="font-family:var(--serif);font-size:12px;color:var(--granat-900);font-weight:500">Maria Nowak <span style="font-family:var(--mono);font-size:9px;color:var(--ink-500);margin-left:6px">74 lata · Grunwald</span></div><div style="font-size:10px;color:var(--sem-red);font-weight:500;margin-top:2px">🔴 Alarm · potencjalny upadek</div></div>
+              <div style="font-family:var(--serif);font-size:14px;color:var(--sem-red);font-weight:500">3m</div>
+            </div>
+            <div style="background:white;border:1px solid var(--line);border-left:3px solid var(--sem-green);border-radius:8px;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px">
+              <div style="width:28px;height:28px;border-radius:50%;background:var(--granat-700);display:grid;place-items:center;color:var(--zloto-300);font-family:var(--serif);font-size:11px;font-weight:500">HW</div>
+              <div style="flex:1"><div style="font-family:var(--serif);font-size:12px;color:var(--granat-900);font-weight:500">Halina Wójcik <span style="font-family:var(--mono);font-size:9px;color:var(--ink-500);margin-left:6px">78 lat · Wilda</span></div><div style="font-size:10px;color:var(--ink-500);margin-top:2px">🟢 Spokojnie · mood 0.72 · 08:14</div></div>
+              <div style="font-family:var(--serif);font-size:14px;color:var(--granat-900);font-weight:500">96%</div>
+            </div>
+            <div style="background:white;border:1px solid var(--line);border-left:3px solid var(--sem-yellow);border-radius:8px;padding:12px 14px;display:flex;align-items:center;gap:12px">
+              <div style="width:28px;height:28px;border-radius:50%;background:var(--granat-700);display:grid;place-items:center;color:var(--zloto-300);font-family:var(--serif);font-size:11px;font-weight:500">JK</div>
+              <div style="flex:1"><div style="font-family:var(--serif);font-size:12px;color:var(--granat-900);font-weight:500">Janusz Kowalski <span style="font-family:var(--mono);font-size:9px;color:var(--ink-500);margin-left:6px">82 lata · Jeżyce</span></div><div style="font-size:10px;color:var(--ink-500);margin-top:2px">🟡 Uważaj · samotność · mood 0.42</div></div>
+              <div style="font-family:var(--serif);font-size:14px;color:var(--granat-900);font-weight:500">81%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-foot"><span>Adam Redesign Strategy · 2026</span><span>10 · Panel Opiekuna</span></div>
+</section>
+
+<!-- =========================================
+     SLIDE 11 — PANEL ADMINA
+     ========================================= -->
+<section class="dark" data-screen-label="11 Panel Admina">
+  <div class="slide-nav">
+    <div class="logo">
+      <div class="mark"><span>A</span></div>
+      <div class="txt" style="color:var(--paper)">Adam</div>
+    </div>
+    <div>Rozdział 10 · Panel Admina</div>
+    <div>Data-dense · Dark mode</div>
+  </div>
+
+  <div class="col-2" style="align-items:start;height:calc(100% - 200px)">
+    <div>
+      <div class="eyebrow" style="margin-bottom:24px">Rozdział 10 · Panel Admina</div>
+      <h1 class="title"><em>Data-dense.</em><br/>Dla&nbsp;koordynatora, nie&nbsp;klienta.</h1>
+      <p class="lead" style="margin-top:24px">Koordynator SilverTech monitoruje 80+ seniorów w&nbsp;trybie ciągłym. Dark mode zmniejsza zmęczenie oczu. Gęstość Bloomberg Terminal. Ten sam design system, inne parametry gęstości.</p>
+
+      <div style="margin-top:40px;padding:28px;background:rgba(255,255,255,0.05);border:1px solid var(--granat-700);border-radius:12px">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--zloto-400);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:16px">Kluczowe różnice vs. AVA v7.3.2</div>
+        <div style="font-size:15px;color:var(--granat-200);line-height:1.7">
+          <div style="padding:8px 0;border-bottom:1px solid var(--granat-700)"><strong style="color:var(--paper);font-family:var(--serif);font-weight:500">Live feed</strong> — wszystkie zdarzenia z 5s refresh, obok statycznych kart KPI</div>
+          <div style="padding:8px 0;border-bottom:1px solid var(--granat-700)"><strong style="color:var(--paper);font-family:var(--serif);font-weight:500">Semafor pipe</strong> — kolorowe chip'y w tabelach, purpura pulsuje przy LIVE</div>
+          <div style="padding:8px 0;border-bottom:1px solid var(--granat-700)"><strong style="color:var(--paper);font-family:var(--serif);font-weight:500">Prompt editor</strong> — Monaco-like z color-coded YAML + diff + hot-reload</div>
+          <div style="padding:8px 0"><strong style="color:var(--paper);font-family:var(--serif);font-weight:500">Cost tracking</strong> — providers, latencja p95, koszt/1k, margin brutto</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--granat-950);border:1px solid var(--granat-700);border-radius:16px;padding:20px;position:relative">
+      <!-- Sim dashboard -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--granat-800);border-radius:6px;margin-bottom:12px">
+        <div style="display:flex;gap:12px;font-family:var(--mono);font-size:10px;color:var(--granat-300);letter-spacing:0.06em">
+          <span>SILVERTECH · OPS ·</span><span style="color:var(--paper)">DASHBOARD</span>
+        </div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--sem-green)">● LIVE 5s</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:12px">
+        <div style="background:var(--granat-800);border:1px solid var(--granat-700);border-radius:6px;padding:10px 12px"><div style="font-family:var(--mono);font-size:8px;color:var(--granat-300);letter-spacing:0.08em;text-transform:uppercase">Aktywne</div><div style="font-family:var(--serif);font-size:20px;color:var(--paper);font-weight:500;margin-top:2px">17</div></div>
+        <div style="background:var(--granat-800);border:1px solid var(--granat-700);border-radius:6px;padding:10px 12px"><div style="font-family:var(--mono);font-size:8px;color:var(--granat-300);letter-spacing:0.08em;text-transform:uppercase">Dziś</div><div style="font-family:var(--serif);font-size:20px;color:var(--paper);font-weight:500;margin-top:2px">2,347</div></div>
+        <div style="background:var(--granat-800);border:1px solid var(--granat-700);border-radius:6px;padding:10px 12px"><div style="font-family:var(--mono);font-size:8px;color:var(--granat-300);letter-spacing:0.08em;text-transform:uppercase">Seniorzy</div><div style="font-family:var(--serif);font-size:20px;color:var(--paper);font-weight:500;margin-top:2px">1,247</div></div>
+        <div style="background:var(--granat-800);border:1px solid var(--granat-700);border-radius:6px;padding:10px 12px"><div style="font-family:var(--mono);font-size:8px;color:var(--granat-300);letter-spacing:0.08em;text-transform:uppercase">Alerty</div><div style="font-family:var(--serif);font-size:20px;color:var(--paper);font-weight:500;margin-top:2px">23</div></div>
+        <div style="background:var(--granat-800);border:1px solid var(--granat-700);border-radius:6px;padding:10px 12px"><div style="font-family:var(--mono);font-size:8px;color:var(--granat-300);letter-spacing:0.08em;text-transform:uppercase">MTTA</div><div style="font-family:var(--serif);font-size:20px;color:var(--paper);font-weight:500;margin-top:2px">14s</div></div>
+        <div style="background:var(--granat-800);border:1px solid var(--granat-700);border-radius:6px;padding:10px 12px"><div style="font-family:var(--mono);font-size:8px;color:var(--granat-300);letter-spacing:0.08em;text-transform:uppercase">Uptime</div><div style="font-family:var(--serif);font-size:20px;color:var(--paper);font-weight:500;margin-top:2px">99.97%</div></div>
+      </div>
+
+      <div style="background:var(--granat-800);border:1px solid var(--granat-700);border-radius:8px;padding:14px 16px;height:220px;margin-bottom:10px">
+        <div style="font-family:var(--sans);font-size:12px;color:var(--paper);font-weight:600;margin-bottom:8px">Rozmowy · rozkład dobowy</div>
+        <svg viewBox="0 0 400 140" style="width:100%;height:calc(100% - 20px)">
+          <line x1="20" y1="20" x2="400" y2="20" stroke="var(--granat-700)" stroke-dasharray="2 3"/>
+          <line x1="20" y1="70" x2="400" y2="70" stroke="var(--granat-700)" stroke-dasharray="2 3"/>
+          <line x1="20" y1="120" x2="400" y2="120" stroke="var(--granat-700)" stroke-dasharray="2 3"/>
+          <path d="M20,100 L50,70 L80,50 L110,60 L140,80 L170,90 L200,80 L230,65 L260,45 L290,30 L320,55 L360,45 L400,35" stroke="var(--zloto-500)" stroke-width="1.5" fill="none"/>
+          <circle cx="240" cy="60" r="3" fill="var(--zloto-400)"/>
+        </svg>
+      </div>
+
+      <table style="width:100%;border-collapse:collapse;font-size:10px;color:var(--paper)">
+        <tr style="border-bottom:1px solid var(--granat-700)">
+          <td style="padding:6px 10px;font-family:var(--mono);color:var(--granat-300);letter-spacing:0.06em">SZ</td>
+          <td><span style="background:rgba(168,85,247,0.15);color:#a855f7;padding:1px 6px;border-radius:3px;font-family:var(--mono);font-size:9px">🟣 PURPLE</span></td>
+          <td style="padding:6px;font-family:var(--mono);color:var(--paper)">158 bpm</td>
+          <td style="text-align:right;color:var(--sem-red);padding:6px 10px;font-family:var(--mono)">LIVE</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--granat-700)">
+          <td style="padding:6px 10px;font-family:var(--mono);color:var(--granat-300)">MN</td>
+          <td><span style="background:rgba(239,68,68,0.15);color:#ef4444;padding:1px 6px;border-radius:3px;font-family:var(--mono);font-size:9px">🔴 RED</span></td>
+          <td style="padding:6px;font-family:var(--mono)">126 bpm</td>
+          <td style="text-align:right;padding:6px 10px;font-family:var(--mono);color:var(--granat-300)">3m</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 10px;font-family:var(--mono);color:var(--granat-300)">JK</td>
+          <td><span style="background:rgba(234,179,8,0.15);color:#eab308;padding:1px 6px;border-radius:3px;font-family:var(--mono);font-size:9px">🟡 YELLOW</span></td>
+          <td style="padding:6px;font-family:var(--mono)">72 bpm</td>
+          <td style="text-align:right;padding:6px 10px;font-family:var(--mono);color:var(--granat-300)">1h</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="slide-foot"><span>Adam Redesign Strategy · 2026</span><span>11 · Panel Admina · Dark</span></div>
+</section>
+
+<!-- =========================================
+     SLIDE 12 — DELIVERABLES
+     ========================================= -->
+<section class="paper2" data-screen-label="12 Dostawa">
+  <div class="slide-nav">
+    <div class="logo">
+      <div class="mark"><span>A</span></div>
+      <div class="txt">Adam</div>
+    </div>
+    <div>Rozdział 11 · Dostawa</div>
+    <div>7 artefaktów</div>
+  </div>
+
+  <div class="eyebrow" style="margin-bottom:24px">Rozdział 11 · Artefakty tej iteracji</div>
+  <h1 class="title">Siedem <em>plików.</em><br/>Jedna <em>tożsamość.</em></h1>
+  <p class="lead" style="margin-top:24px;max-width:1400px">Każdy artefakt otwierasz osobno. Wszystkie używają tego samego design systemu — zmiana koloru w jednym miejscu propaguje wszędzie.</p>
+
+  <div class="artefact-grid">
+    <div class="artefact">
+      <div class="prev"><div class="prev-num">01</div></div>
+      <div class="info">
+        <div class="cat">Fundament</div>
+        <div class="t">Design System</div>
+        <div class="d">Tokens, type scale, kolor, semafor, komponenty senioralne, elevation, motion.</div>
+      </div>
+    </div>
+    <div class="artefact">
+      <div class="prev editorial"><div class="prev-num" style="color:var(--zloto-100)">02</div></div>
+      <div class="info">
+        <div class="cat">Landing · A</div>
+        <div class="t">Instytucjonalny</div>
+        <div class="d">Medical-premium leaning. Mayo Clinic aesthetic. Liczby + comparison.</div>
+      </div>
+    </div>
+    <div class="artefact">
+      <div class="prev editorial"><div class="prev-num" style="color:var(--zloto-100)">03</div></div>
+      <div class="info">
+        <div class="cat">Landing · B</div>
+        <div class="t">Editorial</div>
+        <div class="d">Nordic humanism full. Asymetryczna typografia, portret, magazyn.</div>
+      </div>
+    </div>
+    <div class="artefact">
+      <div class="prev paper"><div class="prev-num" style="color:var(--granat-700);opacity:0.15">04</div></div>
+      <div class="info">
+        <div class="cat">Panel Opiekuna</div>
+        <div class="t">Dashboard + Senior</div>
+        <div class="d">Lista bliskich + widok szczegółowy z 5 tabami (Overview/Rozmowy/Leki/Alerty/Raporty).</div>
+      </div>
+    </div>
+    <div class="artefact">
+      <div class="prev"><div class="prev-num">05</div></div>
+      <div class="info">
+        <div class="cat">Panel Admina</div>
+        <div class="t">Ops · Dark mode</div>
+        <div class="d">Data-dense dashboard + prompt editor · dla koordynatorów SilverTech.</div>
+      </div>
+    </div>
+    <div class="artefact">
+      <div class="prev" style="background:linear-gradient(135deg,var(--sem-red),var(--sem-purple))"><div class="prev-num" style="color:rgba(255,255,255,0.4)">06</div></div>
+      <div class="info">
+        <div class="cat">Alerty krytyczne</div>
+        <div class="t">Red + Purple</div>
+        <div class="d">Dedykowany artefakt · escalation ladder + 2 full-screen alerty + phone push.</div>
+      </div>
+    </div>
+    <div class="artefact">
+      <div class="prev" style="background:linear-gradient(135deg,var(--granat-800),var(--granat-950))"><div class="prev-num">07</div></div>
+      <div class="info">
+        <div class="cat">Deck strategiczny</div>
+        <div class="t">Ten dokument</div>
+        <div class="d">14 slajdów · dla zarządu, inwestorów, zespołu · pełny narracyjny wywód.</div>
+      </div>
+    </div>
+    <div class="artefact" style="background:var(--paper-2);border:1px dashed var(--line-strong)">
+      <div class="prev" style="background:var(--paper-2);border-bottom:1px dashed var(--line-strong)"><div style="font-family:var(--mono);font-size:14px;color:var(--ink-500);letter-spacing:0.14em">NEXT ITERATION</div></div>
+      <div class="info">
+        <div class="cat">Iteracja II</div>
+        <div class="t">Mobile PWA/Capacitor</div>
+        <div class="d">Wersja mobilna Panelu Opiekuna po zamknięciu design language w webie.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-foot"><span>Adam Redesign Strategy · 2026</span><span>12 · Artefakty dostawcze</span></div>
+</section>
+
+<!-- =========================================
+     SLIDE 13 — ROADMAP
+     ========================================= -->
+<section data-screen-label="13 Roadmap">
+  <div class="slide-nav">
+    <div class="logo">
+      <div class="mark"><span>A</span></div>
+      <div class="txt">Adam</div>
+    </div>
+    <div>Rozdział 12 · Roadmap</div>
+    <div>4 fazy wdrożenia</div>
+  </div>
+
+  <div class="eyebrow" style="margin-bottom:24px">Rozdział 12 · Kalendarz wdrożenia</div>
+  <h1 class="title">Cztery fazy.<br/>Osiem <em>tygodni</em>.</h1>
+  <p class="lead" style="margin-top:24px;max-width:1400px">Nie budujemy wszystkiego na raz. Fundament najpierw. Widoczne dla klienta później. Wewnętrzne narzędzia na końcu — bo koordynator zniesie tydzień staregu UI, klient nie zniesie.</p>
+
+  <div class="phases" style="margin-top:56px">
+    <div class="phase done">
+      <div class="lbl">Faza 01 · GOTOWE</div>
+      <h4>Design System + Strategia</h4>
+      <ul>
+        <li>Tokens, type scale, kolor</li>
+        <li>Komponenty senioralne</li>
+        <li>Deck strategiczny</li>
+        <li>2 warianty landingu</li>
+      </ul>
+      <div class="est">TYDZIEŃ 1 · TA ITERACJA</div>
+    </div>
+    <div class="phase">
+      <div class="lbl">Faza 02 · Następne</div>
+      <h4>Panel Opiekuna production</h4>
+      <ul>
+        <li>Wybór wariantu landingu</li>
+        <li>Panel Opiekuna wdrożenie React</li>
+        <li>PWA manifest + Service Worker</li>
+        <li>Ekrany alertów full-flow</li>
+      </ul>
+      <div class="est">TYGODNIE 2-4</div>
+    </div>
+    <div class="phase">
+      <div class="lbl">Faza 03 · Kliencki</div>
+      <h4>Capacitor iOS + Android</h4>
+      <ul>
+        <li>Wrapping do natywnych apek</li>
+        <li>Push notifications (RED/PURPLE)</li>
+        <li>Face ID / biometria</li>
+        <li>App Store · Google Play</li>
+      </ul>
+      <div class="est">TYGODNIE 5-6</div>
+    </div>
+    <div class="phase">
+      <div class="lbl">Faza 04 · Internal</div>
+      <h4>Panel Admina redesign</h4>
+      <ul>
+        <li>Migracja z shadcn na Adam DS</li>
+        <li>Dark mode implementation</li>
+        <li>Prompt editor Monaco</li>
+        <li>Live feed WebSocket</li>
+      </ul>
+      <div class="est">TYGODNIE 7-8</div>
+    </div>
+  </div>
+
+  <div class="slide-foot"><span>Adam Redesign Strategy · 2026</span><span>13 · Roadmap</span></div>
+</section>
+
+<!-- =========================================
+     SLIDE 14 — FIN
+     ========================================= -->
+<section class="dark" data-screen-label="14 Zakończenie">
+  <div class="slide-nav">
+    <div class="logo">
+      <div class="mark"><span>A</span></div>
+      <div class="txt" style="color:var(--paper)">Adam</div>
+    </div>
+    <div>Fin.</div>
+    <div>Adam · Redesign Strategy</div>
+  </div>
+
+  <div class="final-slide">
+    <div style="font-family:var(--mono);font-size:16px;color:var(--zloto-400);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:60px">Rozdział ostatni</div>
+    <h1 class="mega" style="max-width:1600px">Spokój,<br/>który ma <em>dowody.</em></h1>
+    <p class="caption-italic" style="margin-top:60px;max-width:1200px;font-size:32px">Adam nie jest aplikacją.<br/>Jest codzienną praktyką opieki — <em style="color:var(--zloto-400)">a wygląda tak, jak powinna.</em></p>
+    <div class="signature">SilverTech · Poznań · Lipiec 2026</div>
+  </div>
+</section>
+
+</deck-stage>
+
+</body>
+</html>

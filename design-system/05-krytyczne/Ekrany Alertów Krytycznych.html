@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1440" />
+<title>Adam — Ekrany alertów krytycznych</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,400;9..144,0,500;9..144,0,600;9..144,1,400&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --granat-950: #08111f; --granat-900: #0e1a2e; --granat-800: #14213d; --granat-700: #1a2744;
+    --granat-600: #243352; --granat-500: #3b4a6b; --granat-400: #5a6a8a; --granat-300: #8b98b3;
+    --granat-200: #c2cad9; --granat-100: #e4e8f0;
+    --zloto-700: #a67c2e; --zloto-500: #c8963e; --zloto-400: #d4a75d; --zloto-300: #dfba82; --zloto-100: #f5e6cf;
+    --sem-green: #2d6a4f; --sem-yellow: #b8830d;
+    --sem-red: #a5121a; --sem-red-2: #d21823; --sem-red-bg: #fbe7e9;
+    --sem-purple: #5a0561; --sem-purple-2: #7d0788; --sem-purple-bg: #f3e6f5;
+    --paper: #fbfaf7; --paper-2: #f5f3ee;
+    --ink-900: #0e1a2e; --ink-700: #2a3654; --ink-500: #5a6a8a; --ink-400: #8b98b3;
+    --line: #e4e0d5; --line-strong: #cfc9b8;
+    --serif: 'Fraunces', Georgia, serif;
+    --sans: 'Geist', -apple-system, sans-serif;
+    --mono: 'Geist Mono', Menlo, monospace;
+    --ease-out: cubic-bezier(0.22,1,0.36,1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--paper-2); color: var(--ink-900); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+
+  .page-nav {
+    background: var(--granat-900);
+    color: white;
+    padding: 20px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--granat-700);
+  }
+  .page-nav .title { font-family: var(--serif); font-size: 20px; letter-spacing: -0.02em; font-weight: 500; }
+  .page-nav .title em { font-style: italic; color: var(--zloto-400); }
+  .page-nav .meta { font-family: var(--mono); font-size: 11px; color: var(--granat-300); letter-spacing: 0.08em; }
+
+  main { max-width: 1400px; margin: 0 auto; padding: 48px; }
+
+  h1.title { font-family: var(--serif); font-size: 56px; letter-spacing: -0.03em; color: var(--granat-900); font-weight: 400; line-height: 1; margin-bottom: 16px; font-variation-settings: 'opsz' 100; }
+  h1.title em { font-style: italic; color: var(--zloto-700); }
+  .subtitle { font-size: 17px; color: var(--ink-700); max-width: 720px; line-height: 1.55; margin-bottom: 56px; }
+
+  .escalation-chart { background: white; border: 1px solid var(--line); border-radius: 16px; padding: 32px 40px; margin-bottom: 64px; }
+  .esc-h { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+  .esc-h h2 { font-family: var(--serif); font-size: 28px; letter-spacing: -0.015em; color: var(--granat-900); font-weight: 500; }
+  .esc-h .num { font-family: var(--mono); font-size: 11px; color: var(--zloto-700); letter-spacing: 0.1em; text-transform: uppercase; }
+
+  .levels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; position: relative; }
+  .levels::before {
+    content: ''; position: absolute; top: 24px; left: 12%; right: 12%; height: 2px;
+    background: linear-gradient(90deg, var(--sem-green), var(--sem-yellow), var(--sem-red), var(--sem-purple));
+    border-radius: 2px; z-index: 0;
+  }
+  .lvl { text-align: center; position: relative; z-index: 1; padding-top: 60px; }
+  .lvl .marker { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 28px; height: 28px; border-radius: 50%; border: 3px solid var(--paper); display: grid; place-items: center; font-family: var(--serif); font-size: 12px; color: white; font-weight: 500; }
+  .lvl.green .marker { background: var(--sem-green); }
+  .lvl.yellow .marker { background: var(--sem-yellow); }
+  .lvl.red .marker { background: var(--sem-red); }
+  .lvl.purple .marker { background: var(--sem-purple); }
+  .lvl h3 { font-family: var(--serif); font-size: 22px; margin-bottom: 8px; font-weight: 500; letter-spacing: -0.01em; }
+  .lvl .l { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); margin-bottom: 12px; }
+  .lvl p { font-size: 12.5px; color: var(--ink-700); line-height: 1.5; }
+  .lvl.green h3 { color: var(--sem-green); }
+  .lvl.yellow h3 { color: var(--sem-yellow); }
+  .lvl.red h3 { color: var(--sem-red); }
+  .lvl.purple h3 { color: var(--sem-purple); }
+
+  /* Two big screens */
+  .screens-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+
+  .screen-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow: 0 30px 60px -20px rgba(14,26,46,0.12);
+  }
+  .screen-card .frame-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px;
+    background: var(--paper-2);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: var(--ink-500); text-transform: uppercase;
+  }
+  .screen-card .frame-head .dots { display: flex; gap: 6px; }
+  .screen-card .frame-head .dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--granat-200); }
+  .screen-card .caption { padding: 20px 24px; background: var(--paper-2); border-top: 1px solid var(--line); }
+  .screen-card .caption .k { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; color: var(--zloto-700); text-transform: uppercase; }
+  .screen-card .caption .t { font-family: var(--serif); font-size: 20px; color: var(--granat-900); margin-top: 6px; font-weight: 500; letter-spacing: -0.01em; }
+  .screen-card .caption .d { font-size: 13px; color: var(--ink-700); margin-top: 6px; line-height: 1.5; }
+
+  /* ==============================
+     RED ALERT SCREEN
+     ============================== */
+  .alert-body { padding: 40px 40px 32px; background: linear-gradient(180deg, var(--sem-red-bg) 0%, white 60%); position: relative; overflow: hidden; }
+  .alert-body::before {
+    content: ''; position: absolute; top: -50%; left: -20%; right: -20%; height: 300px;
+    background: radial-gradient(ellipse, rgba(165,18,26,0.15), transparent 60%);
+    pointer-events: none;
+  }
+  .alert-eyebrow { display: inline-flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; padding: 6px 12px; border-radius: 999px; background: var(--sem-red); color: white; font-weight: 500; position: relative; }
+  .alert-eyebrow::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: white; animation: blink 1s infinite; }
+  @keyframes blink { 50% { opacity: 0.3; } }
+  .purple-eyebrow { background: var(--sem-purple); }
+
+  .alert-headline { font-family: var(--serif); font-size: 40px; line-height: 1.05; letter-spacing: -0.025em; color: var(--granat-900); font-weight: 500; margin-top: 20px; font-variation-settings: 'opsz' 60; position: relative; }
+  .alert-headline em { color: var(--sem-red); font-style: normal; }
+  .alert-headline em.purple { color: var(--sem-purple); }
+  .alert-timer { display: inline-flex; align-items: baseline; gap: 8px; font-family: var(--serif); margin-top: 12px; padding: 8px 16px; background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(165,18,26,0.15); border: 1px solid var(--sem-red); }
+  .alert-timer .val { font-size: 28px; color: var(--sem-red); font-weight: 500; letter-spacing: -0.02em; font-variation-settings: 'opsz' 60; }
+  .alert-timer .lbl { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; color: var(--ink-500); text-transform: uppercase; }
+  .alert-timer.purple { border-color: var(--sem-purple); box-shadow: 0 4px 12px rgba(90,5,97,0.2); }
+  .alert-timer.purple .val { color: var(--sem-purple); }
+
+  .senior-block { display: grid; grid-template-columns: auto 1fr; gap: 24px; margin-top: 32px; padding: 24px; background: white; border-radius: 16px; border: 1px solid var(--sem-red); position: relative; }
+  .senior-block.purple { border-color: var(--sem-purple); }
+  .sb-av-wrap { position: relative; }
+  .sb-av { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--granat-500), var(--granat-800)); display: grid; place-items: center; color: var(--zloto-300); font-family: var(--serif); font-size: 26px; font-weight: 500; box-shadow: inset 0 0 0 2px rgba(200,150,62,0.25); }
+  .sb-av-wrap::before, .sb-av-wrap::after { content: ''; position: absolute; inset: -6px; border-radius: 50%; border: 2.5px solid var(--sem-red); animation: pulse-big 2s var(--ease-out) infinite; }
+  .sb-av-wrap::after { animation-delay: 1s; }
+  .sb-av-wrap.purple::before, .sb-av-wrap.purple::after { border-color: var(--sem-purple); }
+  @keyframes pulse-big { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.6); opacity: 0; } }
+
+  .sb-info h3 { font-family: var(--serif); font-size: 26px; color: var(--granat-900); font-weight: 500; letter-spacing: -0.015em; }
+  .sb-info .meta { display: flex; gap: 12px; margin-top: 4px; font-size: 13px; color: var(--ink-500); }
+  .sb-info .meta .sep { color: var(--line-strong); }
+  .sb-info .signals { display: flex; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+  .signal-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: var(--sem-red-bg); color: var(--sem-red); border-radius: 999px; font-size: 12px; font-weight: 500; }
+  .signal-chip.purple { background: var(--sem-purple-bg); color: var(--sem-purple); }
+  .signal-chip svg { flex-shrink: 0; }
+
+  /* Vitals grid */
+  .vitals { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 24px; }
+  .vital { background: white; border-radius: 12px; border: 1px solid var(--line); padding: 16px 18px; position: relative; }
+  .vital.alert { border-color: var(--sem-red); background: linear-gradient(180deg, var(--sem-red-bg) 0%, white 60%); }
+  .vital.critical { border-color: var(--sem-purple); background: linear-gradient(180deg, var(--sem-purple-bg) 0%, white 60%); }
+  .vital .lbl { font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em; color: var(--ink-500); text-transform: uppercase; }
+  .vital .val { font-family: var(--serif); font-size: 32px; color: var(--granat-900); margin-top: 6px; font-weight: 500; letter-spacing: -0.02em; line-height: 1; font-variation-settings: 'opsz' 60; }
+  .vital .val sub { font-family: var(--serif); font-size: 12px; color: var(--zloto-700); font-weight: 400; margin-left: 2px; }
+  .vital.alert .val { color: var(--sem-red); }
+  .vital.critical .val { color: var(--sem-purple); }
+  .vital .src { font-family: var(--mono); font-size: 9px; color: var(--ink-500); margin-top: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+  /* Actions */
+  .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; padding: 0 40px; }
+  .btn-alert { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 18px 24px; border-radius: 12px; font-family: var(--sans); font-weight: 600; font-size: 15px; border: none; cursor: pointer; letter-spacing: -0.005em; }
+  .btn-alert.primary-red { background: var(--sem-red); color: white; box-shadow: 0 8px 24px rgba(165,18,26,0.25); }
+  .btn-alert.primary-purple { background: var(--sem-purple); color: white; box-shadow: 0 8px 24px rgba(90,5,97,0.3); }
+  .btn-alert.secondary { background: white; color: var(--granat-900); border: 1px solid var(--line-strong); }
+
+  /* Timeline block */
+  .timeline-block { padding: 24px 40px 40px; background: white; border-top: 1px solid var(--line); }
+  .timeline-block h4 { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; color: var(--ink-500); text-transform: uppercase; margin-bottom: 16px; }
+  .tl { position: relative; padding-left: 24px; }
+  .tl::before { content: ''; position: absolute; left: 5px; top: 8px; bottom: 8px; width: 1.5px; background: var(--line-strong); }
+  .tl-i { padding-bottom: 14px; position: relative; }
+  .tl-i:last-child { padding-bottom: 0; }
+  .tl-i::before { content: ''; position: absolute; left: -23px; top: 5px; width: 13px; height: 13px; border-radius: 50%; background: white; border: 2px solid var(--granat-300); }
+  .tl-i.now::before { background: var(--sem-red); border-color: var(--sem-red); animation: pulse-dot 1s infinite; }
+  .tl-i.now.purple::before { background: var(--sem-purple); border-color: var(--sem-purple); }
+  @keyframes pulse-dot { 0%,100% { transform: scale(1); } 50% { transform: scale(1.3); } }
+  .tl-t { font-family: var(--mono); font-size: 10px; color: var(--ink-500); letter-spacing: 0.06em; }
+  .tl-title { font-size: 13.5px; color: var(--granat-900); font-weight: 500; margin-top: 2px; }
+  .tl-title.now { color: var(--sem-red); }
+  .tl-title.now.purple { color: var(--sem-purple); }
+  .tl-desc { font-size: 12.5px; color: var(--ink-700); margin-top: 3px; line-height: 1.4; }
+
+  /* Phone push notification mock */
+  .phone-showcase { display: flex; gap: 40px; margin-top: 80px; align-items: flex-start; }
+  .phone-mock {
+    width: 320px;
+    height: 640px;
+    background: var(--granat-950);
+    border-radius: 44px;
+    padding: 12px;
+    box-shadow: 0 40px 80px -20px rgba(14,26,46,0.4);
+    position: relative;
+    flex-shrink: 0;
+  }
+  .phone-inner {
+    width: 100%; height: 100%;
+    background: linear-gradient(180deg, #1a1a2e 0%, #0e1a2e 100%);
+    border-radius: 34px;
+    padding: 48px 20px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .phone-notch { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 100px; height: 24px; background: black; border-radius: 12px; }
+  .phone-time { position: absolute; top: 20px; left: 24px; font-family: var(--sans); color: white; font-size: 14px; font-weight: 600; }
+  .phone-status { position: absolute; top: 20px; right: 24px; display: flex; gap: 4px; color: white; }
+  .push {
+    background: rgba(255,255,255,0.14);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .push.critical-red { background: linear-gradient(135deg, rgba(210,24,35,0.9), rgba(165,18,26,0.85)); }
+  .push.critical-purple { background: linear-gradient(135deg, rgba(125,7,136,0.9), rgba(90,5,97,0.85)); }
+  .push-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .push-icon { width: 20px; height: 20px; border-radius: 5px; background: var(--zloto-500); display: grid; place-items: center; }
+  .push-icon span { font-family: var(--serif); color: var(--granat-900); font-size: 11px; font-weight: 500; }
+  .push-app { font-family: var(--sans); font-size: 11px; color: rgba(255,255,255,0.8); letter-spacing: 0.02em; flex: 1; }
+  .push-time { font-family: var(--mono); font-size: 10px; color: rgba(255,255,255,0.6); }
+  .push-title { font-family: var(--serif); color: white; font-size: 16px; font-weight: 500; line-height: 1.2; letter-spacing: -0.01em; }
+  .push-body { font-size: 12.5px; color: rgba(255,255,255,0.88); margin-top: 4px; line-height: 1.4; }
+  .push.critical-red .push-title, .push.critical-purple .push-title { font-weight: 600; }
+
+  .phone-caption { max-width: 400px; }
+  .phone-caption .lbl { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; color: var(--zloto-700); text-transform: uppercase; }
+  .phone-caption h3 { font-family: var(--serif); font-size: 28px; letter-spacing: -0.015em; color: var(--granat-900); margin-top: 10px; font-weight: 500; line-height: 1.15; }
+  .phone-caption p { font-size: 15px; color: var(--ink-700); margin-top: 16px; line-height: 1.6; }
+  .phone-caption ul { list-style: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--line); }
+  .phone-caption li { padding: 8px 0; display: flex; gap: 12px; font-size: 13.5px; color: var(--ink-700); border-bottom: 1px dashed var(--line); }
+  .phone-caption li:last-child { border-bottom: none; }
+  .phone-caption li strong { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: var(--granat-700); min-width: 80px; }
+
+</style>
+</head>
+<body>
+
+<nav class="page-nav">
+  <div class="title">Adam · <em>Alerty krytyczne</em></div>
+  <div class="meta">DEDYKOWANY ARTEFAKT · SEMAFOR PROGRESYWNY · RED + PURPLE</div>
+</nav>
+
+<main>
+  <h1 class="title"><em>Alarm</em> ma&nbsp;siłę.</h1>
+  <p class="subtitle">Semafor Adama nie krzyczy w każdym stanie. Green i Yellow są ambientowe. Red i Purple dostają eskalację wizualną — pulsujący pierścień, gradient tła, dedykowany layout. To zapobiega alarm fatigue: gdy rodzina widzi purpurę, wie że to nie jest zwykły powiadomienie.</p>
+
+  <!-- Escalation ladder -->
+  <div class="escalation-chart">
+    <div class="esc-h">
+      <h2>Ścieżka eskalacji</h2>
+      <span class="num">4 poziomy · progresywna intensywność</span>
+    </div>
+    <div class="levels">
+      <div class="lvl green">
+        <div class="marker">L1</div>
+        <div class="l">Ambient</div>
+        <h3>Spokojnie</h3>
+        <p>Statyczna wstęga po lewej karty. Nic nie pulsuje. Codzienny stan nie zabiera uwagi.</p>
+      </div>
+      <div class="lvl yellow">
+        <div class="marker">L2</div>
+        <div class="l">Ambient</div>
+        <h3>Uważaj</h3>
+        <p>Statyczna wstęga żółta + subtelny push „warto zadzwonić". Bez SMS-a, bez wibracji nocą.</p>
+      </div>
+      <div class="lvl red">
+        <div class="marker">L3</div>
+        <div class="l">Escalation</div>
+        <h3>Alarm</h3>
+        <p>Pulsujący pierścień + gradient tła karty + banner + SMS + push. Rodzina powiadamiana w 18s.</p>
+      </div>
+      <div class="lvl purple">
+        <div class="marker">L4</div>
+        <div class="l">Critical</div>
+        <h3>Krytyczne</h3>
+        <p>Wszystko z Red + auto-dial 112 + LIVE feed dla rodziny. Zarezerwowany dla zagrożenia życia.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Two big screens: RED + PURPLE -->
+  <div class="screens-grid">
+
+    <!-- ============================
+         RED ALERT — potencjalny upadek
+         ============================ -->
+    <div class="screen-card">
+      <div class="frame-head">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <div>PANEL OPIEKUNA · ALERT L3 · RED</div>
+        <div style="font-family:var(--serif);color:var(--granat-900)">14:22:07</div>
+      </div>
+
+      <div class="alert-body">
+        <span class="alert-eyebrow">Semafor Red · Alarm aktywny</span>
+        <h2 class="alert-headline">Potencjalny <em>upadek</em>.<br/>Adam próbuje się dodzwonić.</h2>
+        <div class="alert-timer">
+          <span class="val">03:24</span><span class="lbl">min od zdarzenia</span>
+        </div>
+
+        <div class="senior-block">
+          <div class="sb-av-wrap"><div class="sb-av">MN</div></div>
+          <div class="sb-info">
+            <h3>Maria Nowak</h3>
+            <div class="meta">
+              <span>74 lata</span><span class="sep">·</span>
+              <span>Grunwald, Poznań</span><span class="sep">·</span>
+              <span>ul. Ogrodowa 12/4</span>
+            </div>
+            <div class="signals">
+              <span class="signal-chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L1 21h22L12 2z"/></svg>Wykryto upadek</span>
+              <span class="signal-chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>HR skok +34 bpm</span>
+              <span class="signal-chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 01-2.2 2 20 20 0 01-8.6-3.1 20 20 0 01-6-6 20 20 0 01-3.1-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.5 2.1L7.9 9.8a16 16 0 006 6l1.2-1.3a2 2 0 012.1-.5c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg>Nie odbiera · 3 próby</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="vitals">
+          <div class="vital alert">
+            <div class="lbl">Tętno</div>
+            <div class="val">126<sub>bpm</sub></div>
+            <div class="src">Xiaomi Band 8</div>
+          </div>
+          <div class="vital">
+            <div class="lbl">SpO₂</div>
+            <div class="val">95<sub>%</sub></div>
+            <div class="src">Xiaomi Band 8</div>
+          </div>
+          <div class="vital alert">
+            <div class="lbl">Ruch</div>
+            <div class="val">0</div>
+            <div class="src">Ostatnie 3m</div>
+          </div>
+          <div class="vital">
+            <div class="lbl">Kroki dziś</div>
+            <div class="val">1247</div>
+            <div class="src">Do 14:19</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn-alert primary-red">Zadzwoń do Marii teraz</button>
+        <button class="btn-alert secondary">Otwórz mapę · ETA</button>
+      </div>
+
+      <div class="timeline-block">
+        <h4>Chronologia zdarzenia</h4>
+        <div class="tl">
+          <div class="tl-i now">
+            <div class="tl-t">14:22:07 · TERAZ</div>
+            <div class="tl-title now">Panel opiekuna aktywny · powiadomienie rodziny</div>
+            <div class="tl-desc">SMS wysłany do +48 606 123 456. Koordynator SilverTech powiadomiony.</div>
+          </div>
+          <div class="tl-i">
+            <div class="tl-t">14:21:52 · 15s temu</div>
+            <div class="tl-title">Adam · 3. próba połączenia · brak odpowiedzi</div>
+            <div class="tl-desc">Automatyczna eskalacja do rodziny. SMS w drodze.</div>
+          </div>
+          <div class="tl-i">
+            <div class="tl-t">14:21:12 · 55s temu</div>
+            <div class="tl-title">Adam · 2. próba · brak odpowiedzi</div>
+          </div>
+          <div class="tl-i">
+            <div class="tl-t">14:20:32 · 1m 35s temu</div>
+            <div class="tl-title">Adam · 1. próba połączenia</div>
+            <div class="tl-desc">Automatyczny welfare check po sygnale upadku.</div>
+          </div>
+          <div class="tl-i">
+            <div class="tl-t">14:18:43 · 3m 24s temu</div>
+            <div class="tl-title" style="color:var(--sem-red)">Xiaomi Band 8 · wykrycie upadku</div>
+            <div class="tl-desc">Gwałtowne przemieszczenie 3-osiowe, wzrost pulsu +34 bpm, następnie bezruch.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="caption">
+        <div class="k">Ekran 01 · Semafor Red</div>
+        <div class="t">Alarm z eskalacją, ale bez wywołania służb</div>
+        <div class="d">Adam sygnalizuje potencjalny kryzys — dane wearable + brak odpowiedzi na 3 próby. SMS + push do rodziny w 18s. Koordynator SilverTech otrzymuje jednoczesne powiadomienie. Rodzina może zadzwonić lub otworzyć mapę. Jeśli w 60s brak reakcji — eskalacja do Purple.</div>
+      </div>
+    </div>
+
+    <!-- ============================
+         PURPLE ALERT — 112 wezwane
+         ============================ -->
+    <div class="screen-card">
+      <div class="frame-head">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <div>PANEL OPIEKUNA · ALERT L4 · PURPLE · LIVE</div>
+        <div style="font-family:var(--serif);color:var(--sem-purple);font-weight:500">🔴 LIVE 00:42</div>
+      </div>
+
+      <div class="alert-body" style="background:linear-gradient(180deg, var(--sem-purple-bg) 0%, white 60%)">
+        <span class="alert-eyebrow purple-eyebrow">Semafor Purple · 112 w drodze</span>
+        <h2 class="alert-headline">Wezwanie <em class="purple">112</em>.<br/>Karetka w drodze — ETA <em class="purple">8 min</em>.</h2>
+        <div class="alert-timer purple">
+          <span class="val">00:42</span><span class="lbl">od auto-dial 112</span>
+        </div>
+
+        <div class="senior-block purple">
+          <div class="sb-av-wrap purple"><div class="sb-av">SZ</div></div>
+          <div class="sb-info">
+            <h3>Stanisław Zieliński</h3>
+            <div class="meta">
+              <span>85 lat</span><span class="sep">·</span>
+              <span>Stare Miasto, Poznań</span><span class="sep">·</span>
+              <span>ul. Wodna 8/2A</span>
+            </div>
+            <div class="signals">
+              <span class="signal-chip purple"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>HR 158 bpm · arytmia</span>
+              <span class="signal-chip purple"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>„Ból w klatce" · rozmowa 22:14</span>
+              <span class="signal-chip purple"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 4L4 20"/><path d="M20 20L4 4"/></svg>Utracono kontakt</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="vitals">
+          <div class="vital critical">
+            <div class="lbl">Tętno</div>
+            <div class="val">158<sub>bpm</sub></div>
+            <div class="src">Apple Watch S9</div>
+          </div>
+          <div class="vital critical">
+            <div class="lbl">SpO₂</div>
+            <div class="val">89<sub>%</sub></div>
+            <div class="src">Poniżej normy</div>
+          </div>
+          <div class="vital critical">
+            <div class="lbl">EKG · zdarzenie</div>
+            <div class="val" style="font-size:14px;font-family:var(--sans);color:var(--sem-purple);text-transform:uppercase;letter-spacing:0.05em">AFib</div>
+            <div class="src">Wykryto 22:12</div>
+          </div>
+          <div class="vital">
+            <div class="lbl">Karetka ETA</div>
+            <div class="val" style="color:var(--zloto-700)">8<sub>min</sub></div>
+            <div class="src">Nr karetki #47-12</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn-alert primary-purple">Śledź lokalizację karetki</button>
+        <button class="btn-alert secondary">Zadzwoń do koordynatora</button>
+      </div>
+
+      <div class="timeline-block">
+        <h4>Chronologia zdarzenia · LIVE</h4>
+        <div class="tl">
+          <div class="tl-i now purple">
+            <div class="tl-t">22:15:34 · TERAZ · LIVE</div>
+            <div class="tl-title now purple">Karetka w drodze · ETA 8 minut</div>
+            <div class="tl-desc">Dyspozytor 112 potwierdził zgłoszenie. Nr wozu 47-12. Panel śledzi lokalizację live.</div>
+          </div>
+          <div class="tl-i">
+            <div class="tl-t">22:14:52 · 42s temu</div>
+            <div class="tl-title" style="color:var(--sem-purple)">Adam · auto-dial 112</div>
+            <div class="tl-desc">Podano adres, wiek, choroby (nadciśnienie, arytmia), aktualne leki. Dyspozytor odebrał 5s później.</div>
+          </div>
+          <div class="tl-i">
+            <div class="tl-t">22:14:20 · 1m 14s temu</div>
+            <div class="tl-title">Rodzina powiadomiona · córka Magdalena C.</div>
+            <div class="tl-desc">SMS + push. Córka: „jadę do niego". ETA rodzina 25 min.</div>
+          </div>
+          <div class="tl-i">
+            <div class="tl-t">22:13:47 · 1m 47s temu</div>
+            <div class="tl-title">Koordynator SilverTech online</div>
+            <div class="tl-desc">Krzysztof M. · podjął sprawę, nie może się dodzwonić.</div>
+          </div>
+          <div class="tl-i">
+            <div class="tl-t">22:13:12 · 2m 22s temu</div>
+            <div class="tl-title" style="color:var(--sem-purple)">Kryzys werbalny + AFib</div>
+            <div class="tl-desc">Rozmowa z Adamem: „boli mnie serce, duszność". Apple Watch: AFib. Semafor przełącza na Purple.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="caption">
+        <div class="k">Ekran 02 · Semafor Purple</div>
+        <div class="t">Zagrożenie życia · Adam wezwał 112</div>
+        <div class="d">Kombinacja sygnałów: werbalny („ból w klatce"), wearable (HR 158, AFib), utrata kontaktu. Adam podjął decyzję o wywołaniu 112 zgodnie z protokołem. Rodzina i koordynator otrzymują widok LIVE — z chronologią, śledzeniem karetki, listą leków dostarczoną do służb. Zarezerwowane dla realnie krytycznych zdarzeń — statystycznie <strong>0,3% wszystkich alertów</strong>.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Phone push notification showcase -->
+  <div class="phone-showcase">
+    <div class="phone-mock">
+      <div class="phone-inner">
+        <div class="phone-notch"></div>
+        <div class="phone-time">14:22</div>
+        <div class="phone-status">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M2 12h4v10H2zM10 8h4v14h-4zM18 2h4v20h-4z"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M23 9c-3.5 0-6-2.5-6-6h-2c0 4.4 3.6 8 8 8V9zm-16 0V7c-4.4 0-8 3.6-8 8h2c0-3.5 2.5-6 6-6z"/></svg>
+          <div style="width:20px;height:10px;border:1px solid white;border-radius:2px;position:relative"><div style="position:absolute;inset:1px;background:white;width:70%"></div></div>
+        </div>
+
+        <div style="text-align:center;color:white;font-family:var(--serif);font-size:64px;font-weight:300;margin-top:20px;letter-spacing:-0.03em;font-variation-settings:'opsz' 144">
+          14:22
+        </div>
+        <div style="text-align:center;color:rgba(255,255,255,0.7);font-size:13px;margin-bottom:32px">wtorek, 12 lipca</div>
+
+        <div class="push critical-purple">
+          <div class="push-head">
+            <div class="push-icon"><span>A</span></div>
+            <span class="push-app">ADAM · 112 W DRODZE</span>
+            <span class="push-time">teraz</span>
+          </div>
+          <div class="push-title">Alarm krytyczny — Stanisław Z.</div>
+          <div class="push-body">Adam wezwał 112. Karetka ETA 8 min. Ból w klatce + AFib. Otwórz LIVE →</div>
+        </div>
+
+        <div class="push critical-red">
+          <div class="push-head">
+            <div class="push-icon"><span>A</span></div>
+            <span class="push-app">ADAM · UPADEK WYKRYTY</span>
+            <span class="push-time">3m</span>
+          </div>
+          <div class="push-title">Potencjalny upadek — Maria N.</div>
+          <div class="push-body">Xiaomi Band zarejestrował upadek. Adam nie może się dodzwonić od 3 min.</div>
+        </div>
+
+        <div class="push">
+          <div class="push-head">
+            <div class="push-icon"><span>A</span></div>
+            <span class="push-app">ADAM · RAPORT PORANNY</span>
+            <span class="push-time">08:20</span>
+          </div>
+          <div class="push-title">Wszystko dobrze u Haliny.</div>
+          <div class="push-body">Mood 0.72, leki wzięte, welfare check odbyty. Nic nie wymaga uwagi.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phone-caption">
+      <div class="lbl">Ekran 03 · Push notyfikacje mobile</div>
+      <h3>Trzy poziomy powiadomień — <em style="color:var(--zloto-700);font-style:italic;font-family:var(--serif)">jasna</em> hierarchia.</h3>
+      <p>Powiadomienia Adama na iOS/Android mają dedykowane style dla Green (neutralne szare), Red (czerwony gradient, bypass DND jeśli włączone) i Purple (purpurowy gradient, wibracja krytyczna, bypass ciszy nocnej zawsze).</p>
+      <ul>
+        <li><strong>GREEN</strong><span>Codzienny podsumowaniowy push. Nie budzi. Można wyłączyć.</span></li>
+        <li><strong>YELLOW</strong><span>Sugestia — „warto zadzwonić". Bez wibracji nocą.</span></li>
+        <li><strong>RED</strong><span>SMS w 18s + push z wibracją. Bypass DND jeśli włączone „krytyczne alerty".</span></li>
+        <li><strong>PURPLE</strong><span>Zawsze bypass ciszy. Wibracja krytyczna. Powtarzana co 30s aż do odczytania.</span></li>
+      </ul>
+    </div>
+  </div>
+
+</main>
+
+</body>
+</html>

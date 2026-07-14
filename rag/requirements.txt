@@ -1,0 +1,7 @@
+# ADAM-2027 RAG · zależności do budowy i przeszukiwania indeksu
+# Instalacja torch CPU-only (bez CUDA — mniejszy, wystarczy dla e5-small):
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+#   pip install -r rag/requirements.txt
+sentence-transformers>=5.0.0
+numpy>=1.26.0
+python-docx>=1.1.0   # tylko jeśli regenerujesz docs/source-md z .docx

@@ -1,0 +1,746 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1440" />
+<title>Adam — Codzienna rozmowa z Twoim bliskim · SilverTech</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,300;9..144,0,400;9..144,0,500;9..144,1,400;9..144,1,500&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --granat-950: #08111f; --granat-900: #0e1a2e; --granat-800: #14213d;
+    --granat-700: #1a2744; --granat-600: #243352; --granat-500: #3b4a6b;
+    --granat-400: #5a6a8a; --granat-300: #8b98b3; --granat-200: #c2cad9;
+    --granat-100: #e4e8f0; --granat-50: #f2f4f8;
+    --zloto-700: #a67c2e; --zloto-600: #b88a35; --zloto-500: #c8963e;
+    --zloto-400: #d4a75d; --zloto-300: #dfba82; --zloto-100: #f5e6cf; --zloto-50: #faf3e6;
+    --sem-green: #2d6a4f; --sem-yellow: #b8830d; --sem-red: #a5121a; --sem-purple: #5a0561;
+    --paper: #fbfaf7; --paper-2: #f5f3ee; --paper-3: #eeeadc;
+    --ink-900: #0e1a2e; --ink-700: #2a3654; --ink-500: #5a6a8a; --ink-400: #8b98b3;
+    --line: #e4e0d5; --line-strong: #cfc9b8;
+    --serif: 'Fraunces', Georgia, serif;
+    --sans: 'Geist', -apple-system, sans-serif;
+    --mono: 'Geist Mono', Menlo, monospace;
+    --ease-out: cubic-bezier(0.22,1,0.36,1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--paper); color: var(--ink-900); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+
+  .container { max-width: 1360px; margin: 0 auto; padding: 0 56px; }
+  .container-tight { max-width: 1100px; margin: 0 auto; padding: 0 56px; }
+
+  /* NAV — thinner, editorial */
+  nav.top { position: sticky; top: 0; z-index: 50; background: rgba(251,250,247,0.85); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+  nav.top .row { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-mark { width: 30px; height: 30px; background: var(--granat-700); border-radius: 6px; position: relative; display: grid; place-items: center; }
+  .logo-mark::after { content: ''; position: absolute; inset: 4px; border: 1px solid var(--zloto-500); border-radius: 3px; }
+  .logo-mark span { font-family: var(--serif); color: var(--zloto-500); font-size: 15px; font-weight: 500; z-index: 1; }
+  .logo-txt { font-family: var(--serif); font-size: 20px; letter-spacing: -0.025em; color: var(--granat-900); font-weight: 500; line-height: 1; }
+  .logo-txt .sub { font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em; color: var(--ink-500); text-transform: uppercase; display: block; margin-top: 3px; font-weight: 400; }
+  .nav-links { display: flex; align-items: center; gap: 32px; font-size: 14px; color: var(--ink-700); }
+  .nav-cta { display: flex; align-items: center; gap: 12px; }
+
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 999px; font-family: var(--sans); font-weight: 500; font-size: 14px; border: none; cursor: pointer; transition: all 0.15s var(--ease-out); }
+  .btn-primary { background: var(--granat-900); color: var(--paper); }
+  .btn-primary:hover { background: var(--granat-700); }
+  .btn-accent { background: var(--zloto-500); color: var(--granat-900); }
+  .btn-ghost { background: transparent; color: var(--granat-900); border: 1px solid var(--granat-900); }
+  .btn-ghost:hover { background: var(--granat-900); color: var(--paper); }
+  .btn-lg { padding: 18px 32px; font-size: 15px; }
+  .btn .arrow { transition: transform 0.2s var(--ease-out); }
+  .btn:hover .arrow { transform: translateX(3px); }
+
+  /* HERO — asymmetric editorial */
+  .hero { padding: 40px 0 100px; position: relative; overflow: hidden; }
+  .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: end; min-height: 640px; }
+  .hero-left { padding-top: 80px; padding-bottom: 40px; }
+  .hero-issue { display: flex; align-items: center; gap: 20px; font-family: var(--mono); font-size: 11px; color: var(--ink-500); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 48px; }
+  .hero-issue .num { font-family: var(--serif); font-size: 14px; color: var(--zloto-700); letter-spacing: -0.01em; text-transform: none; font-style: italic; }
+  .hero-issue .line { flex: 1; height: 1px; background: var(--line-strong); max-width: 80px; }
+
+  .hero h1 { font-family: var(--serif); font-weight: 400; font-size: 96px; line-height: 0.9; letter-spacing: -0.035em; color: var(--granat-900); font-variation-settings: 'opsz' 144; }
+  .hero h1 .italic { font-style: italic; color: var(--zloto-700); font-weight: 400; }
+  .hero h1 .under { border-bottom: 2px solid var(--zloto-500); padding-bottom: 4px; }
+  .hero .lead { font-family: var(--serif); font-style: italic; font-weight: 300; font-size: 22px; line-height: 1.5; color: var(--ink-700); margin-top: 36px; max-width: 480px; font-variation-settings: 'opsz' 36; }
+  .hero-cta { display: flex; align-items: center; gap: 12px; margin-top: 48px; }
+  .hero-meta { display: flex; gap: 48px; margin-top: 72px; padding-top: 32px; border-top: 1px solid var(--line-strong); }
+  .hero-meta div { }
+  .hero-meta .k { font-family: var(--serif); font-size: 40px; color: var(--granat-900); font-weight: 500; letter-spacing: -0.02em; line-height: 1; font-variation-settings: 'opsz' 60; }
+  .hero-meta .k sub { font-family: var(--serif); font-size: 16px; color: var(--zloto-700); font-weight: 400; }
+  .hero-meta .l { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; color: var(--ink-500); text-transform: uppercase; margin-top: 8px; }
+
+  /* Portrait — placeholder editorial */
+  .hero-right { position: relative; height: 640px; }
+  .portrait {
+    position: absolute; top: 0; right: 0; bottom: 0; left: 40px;
+    background:
+      radial-gradient(ellipse at 35% 40%, rgba(200,150,62,0.28), transparent 55%),
+      linear-gradient(160deg, #d8c9a8 0%, #a68d5f 30%, #5a4a2e 65%, var(--granat-800) 100%);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  /* subtle texture overlay */
+  .portrait::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(120deg, transparent 0, transparent 2px, rgba(14,26,46,0.02) 2px, rgba(14,26,46,0.02) 3px),
+      radial-gradient(circle at 60% 30%, rgba(255,240,210,0.15), transparent 50%);
+    mix-blend-mode: multiply;
+  }
+  /* Silhouette suggestion */
+  .portrait::after {
+    content: ''; position: absolute; bottom: 0; left: 15%; right: 15%; top: 30%;
+    background: radial-gradient(ellipse at center 20%, rgba(30,20,10,0.5), transparent 55%),
+                radial-gradient(ellipse at center 55%, rgba(30,20,10,0.7), transparent 40%);
+  }
+  .portrait-caption {
+    position: absolute; bottom: 24px; left: 24px; right: 24px;
+    display: flex; justify-content: space-between; align-items: end;
+    color: rgba(255,255,255,0.9);
+    z-index: 2;
+  }
+  .portrait-caption .who { font-family: var(--serif); font-style: italic; font-size: 15px; }
+  .portrait-caption .who .name { font-style: normal; font-weight: 500; color: var(--zloto-300); }
+  .portrait-caption .meta { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.6); }
+  .portrait-quote {
+    position: absolute; top: 40px; left: 40px; right: 40px;
+    font-family: var(--serif); font-style: italic; font-size: 24px; line-height: 1.3;
+    color: rgba(255,255,255,0.95); letter-spacing: -0.01em; font-variation-settings: 'opsz' 36; font-weight: 300;
+    z-index: 2;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.4);
+  }
+  .portrait-quote::before { content: '"'; font-size: 96px; position: absolute; top: -30px; left: -20px; color: var(--zloto-500); opacity: 0.6; line-height: 1; }
+
+  /* SIGN-OFF STRIP */
+  .signoff { padding: 40px 0; background: var(--granat-900); color: var(--paper); position: relative; overflow: hidden; }
+  .signoff::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--zloto-500), transparent); opacity: 0.7; }
+  .signoff-marquee { display: flex; align-items: center; gap: 56px; font-family: var(--serif); font-size: 22px; font-weight: 400; color: var(--paper); font-variation-settings: 'opsz' 36; }
+  .signoff-marquee .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--zloto-500); flex-shrink: 0; }
+  .signoff-marquee em { color: var(--zloto-400); font-style: italic; }
+
+  /* SECTION scaffolding — magazine style */
+  section.chapter { padding: 140px 0; }
+  .chapter-head { display: grid; grid-template-columns: 220px 1fr; gap: 80px; margin-bottom: 96px; align-items: start; }
+  .chapter-num-block { }
+  .chapter-num { font-family: var(--serif); font-style: italic; font-size: 96px; color: var(--zloto-500); line-height: 1; letter-spacing: -0.04em; font-variation-settings: 'opsz' 144; font-weight: 400; }
+  .chapter-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-500); margin-top: 8px; }
+  .chapter-h { font-family: var(--serif); font-weight: 400; font-size: 64px; line-height: 1; letter-spacing: -0.03em; color: var(--granat-900); font-variation-settings: 'opsz' 100; }
+  .chapter-h em { font-style: italic; color: var(--zloto-700); }
+  .chapter-sub { font-family: var(--sans); font-size: 18px; line-height: 1.6; color: var(--ink-700); margin-top: 28px; max-width: 620px; }
+
+  /* PROBLEM — magazine two-column */
+  .problem-body { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+  .problem-image {
+    aspect-ratio: 4/5;
+    background:
+      radial-gradient(ellipse at 40% 30%, rgba(255,220,180,0.35), transparent 55%),
+      linear-gradient(200deg, #c9b48c 0%, #7f6a45 40%, #2a2317 100%);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+  .problem-image::after {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 60%, rgba(30,20,10,0.4), transparent 60%);
+  }
+  .problem-image .caption { position: absolute; bottom: 20px; left: 24px; right: 24px; color: rgba(255,255,255,0.85); font-family: var(--serif); font-style: italic; font-size: 14px; z-index: 2; font-variation-settings: 'opsz' 20; }
+  .problem-image .caption .num { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; color: var(--zloto-400); text-transform: uppercase; font-style: normal; display: block; margin-bottom: 4px; }
+  .problem-text .pull { font-family: var(--serif); font-style: italic; font-weight: 300; font-size: 32px; line-height: 1.3; color: var(--granat-900); letter-spacing: -0.015em; font-variation-settings: 'opsz' 60; }
+  .problem-text .pull::first-letter { font-size: 96px; float: left; line-height: 0.8; padding: 6px 12px 0 0; color: var(--zloto-700); font-style: italic; font-weight: 400; }
+  .problem-text .body-p { font-family: var(--sans); font-size: 16px; line-height: 1.7; color: var(--ink-700); margin-top: 32px; }
+  .problem-text .body-p + .body-p { margin-top: 20px; }
+
+  /* HOW IT WORKS — narrative vertical */
+  .how-story { max-width: 900px; margin: 0 auto; }
+  .story-cut { display: grid; grid-template-columns: 100px 1fr; gap: 40px; padding: 48px 0; border-bottom: 1px solid var(--line-strong); align-items: start; }
+  .story-cut:last-child { border-bottom: none; }
+  .cut-num { font-family: var(--serif); font-style: italic; font-size: 72px; line-height: 1; color: var(--zloto-500); letter-spacing: -0.03em; font-variation-settings: 'opsz' 144; }
+  .cut-body h3 { font-family: var(--serif); font-size: 40px; line-height: 1.05; letter-spacing: -0.02em; color: var(--granat-900); font-weight: 400; font-variation-settings: 'opsz' 60; }
+  .cut-body h3 em { font-style: italic; color: var(--zloto-700); }
+  .cut-body .caption { font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--ink-500); margin-top: 12px; font-variation-settings: 'opsz' 24; font-weight: 300; }
+  .cut-body .desc { font-size: 16px; line-height: 1.6; color: var(--ink-700); margin-top: 24px; max-width: 640px; }
+  .cut-body .meta-row { display: flex; gap: 24px; margin-top: 24px; font-family: var(--mono); font-size: 11px; color: var(--ink-500); letter-spacing: 0.06em; }
+  .cut-body .meta-row span { padding: 4px 10px; background: var(--paper-2); border-radius: 999px; }
+
+  /* FEATURES — asymmetric collage */
+  .feats { background: var(--paper-2); }
+  .feats-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 24px; grid-auto-rows: minmax(280px, auto); }
+  .feat-card { background: var(--paper); border-radius: 4px; padding: 40px 36px; border: 1px solid var(--line); position: relative; overflow: hidden; }
+  .feat-card.wide { grid-column: span 4; }
+  .feat-card.med { grid-column: span 3; }
+  .feat-card.sm  { grid-column: span 2; }
+  .feat-card.dark { background: var(--granat-900); color: var(--paper); border-color: var(--granat-700); }
+  .feat-card.gold { background: var(--zloto-100); border-color: var(--zloto-300); }
+  .feat-num { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; color: var(--zloto-700); text-transform: uppercase; }
+  .feat-card.dark .feat-num { color: var(--zloto-400); }
+  .feat-title { font-family: var(--serif); font-size: 32px; line-height: 1.05; letter-spacing: -0.02em; color: var(--granat-900); margin-top: 20px; font-weight: 400; font-variation-settings: 'opsz' 60; }
+  .feat-title em { font-style: italic; color: var(--zloto-700); }
+  .feat-card.dark .feat-title { color: var(--paper); }
+  .feat-card.dark .feat-title em { color: var(--zloto-400); }
+  .feat-desc { font-size: 15px; line-height: 1.6; color: var(--ink-700); margin-top: 20px; }
+  .feat-card.dark .feat-desc { color: var(--granat-200); }
+  .feat-card.wide .feat-title { font-size: 44px; }
+  .feat-visual { position: absolute; right: -40px; bottom: -40px; width: 180px; height: 180px; opacity: 0.08; color: var(--granat-700); }
+  .feat-card.dark .feat-visual { opacity: 0.18; color: var(--zloto-400); }
+
+  /* TESTIMONIAL — big pull quote */
+  .testimonial { padding: 140px 0; background: var(--granat-900); color: var(--paper); position: relative; overflow: hidden; }
+  .testimonial::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--zloto-500), transparent); opacity: 0.5; }
+  .testimonial-content { max-width: 1000px; margin: 0 auto; padding: 0 56px; text-align: center; }
+  .test-mark { font-family: var(--serif); font-size: 120px; line-height: 0.8; color: var(--zloto-500); font-style: italic; font-variation-settings: 'opsz' 144; }
+  .test-quote { font-family: var(--serif); font-size: 48px; line-height: 1.2; color: var(--paper); font-weight: 400; letter-spacing: -0.02em; margin-top: 24px; font-variation-settings: 'opsz' 100; }
+  .test-quote em { font-style: italic; color: var(--zloto-400); }
+  .test-attr { margin-top: 48px; display: inline-flex; align-items: center; gap: 16px; }
+  .test-attr .av { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--granat-500), var(--granat-800)); display: grid; place-items: center; font-family: var(--serif); font-size: 20px; color: var(--zloto-300); border: 1px solid var(--zloto-500); }
+  .test-attr .who { text-align: left; }
+  .test-attr .name { font-family: var(--serif); font-size: 18px; color: var(--paper); font-weight: 500; }
+  .test-attr .role { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; color: var(--granat-300); text-transform: uppercase; margin-top: 4px; }
+
+  /* PRICING — editorial */
+  .pricing-hd { max-width: 720px; margin: 0 auto 80px; text-align: center; }
+  .price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .price-card { padding: 48px 36px; border: 1px solid var(--line-strong); border-radius: 4px; background: var(--paper); position: relative; }
+  .price-card.hero { background: var(--granat-900); color: var(--paper); border-color: var(--granat-900); transform: scale(1.04); z-index: 2; box-shadow: 0 30px 60px -20px rgba(14,26,46,0.3); }
+  .price-card .tag { position: absolute; top: -12px; left: 36px; padding: 4px 12px; background: var(--zloto-500); color: var(--granat-900); font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; border-radius: 4px; }
+  .price-name { font-family: var(--serif); font-style: italic; font-size: 24px; color: var(--zloto-700); }
+  .price-card.hero .price-name { color: var(--zloto-400); }
+  .price-h { font-family: var(--serif); font-size: 32px; line-height: 1.1; color: var(--granat-900); margin-top: 8px; font-weight: 400; letter-spacing: -0.02em; }
+  .price-card.hero .price-h { color: var(--paper); }
+  .price-amt { font-family: var(--serif); font-size: 88px; color: var(--granat-900); margin-top: 32px; letter-spacing: -0.04em; line-height: 1; font-weight: 400; font-variation-settings: 'opsz' 144; display: flex; align-items: baseline; gap: 8px; }
+  .price-card.hero .price-amt { color: var(--zloto-400); }
+  .price-amt .cur { font-size: 24px; color: var(--zloto-700); font-style: italic; }
+  .price-card.hero .price-amt .cur { color: var(--zloto-400); }
+  .price-amt .per { font-family: var(--mono); font-size: 12px; color: var(--ink-500); letter-spacing: 0.08em; margin-left: 12px; }
+  .price-card.hero .price-amt .per { color: var(--granat-300); }
+  .price-desc { font-family: var(--serif); font-style: italic; font-size: 15px; color: var(--ink-700); margin-top: 20px; line-height: 1.5; font-variation-settings: 'opsz' 20; font-weight: 300; }
+  .price-card.hero .price-desc { color: var(--granat-200); }
+  .price-cta { margin-top: 40px; }
+  .price-cta button { width: 100%; justify-content: center; padding: 14px 20px; }
+  .price-list { list-style: none; margin-top: 32px; padding-top: 32px; border-top: 1px solid var(--line-strong); }
+  .price-card.hero .price-list { border-top-color: var(--granat-700); }
+  .price-list li { padding: 8px 0; font-size: 14px; color: var(--ink-700); display: flex; gap: 10px; }
+  .price-card.hero .price-list li { color: var(--granat-100); }
+  .price-list li::before { content: '—'; color: var(--zloto-500); flex-shrink: 0; }
+
+  /* FINAL CTA */
+  .final { padding: 160px 0; text-align: center; background: var(--paper); position: relative; }
+  .final::before {
+    content: ''; position: absolute; top: 40%; left: 50%; transform: translate(-50%,-50%);
+    width: 520px; height: 520px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(200,150,62,0.12), transparent 60%);
+    pointer-events: none;
+  }
+  .final h2 { font-family: var(--serif); font-size: 96px; line-height: 0.95; letter-spacing: -0.035em; color: var(--granat-900); font-weight: 400; max-width: 900px; margin: 0 auto; position: relative; font-variation-settings: 'opsz' 144; }
+  .final h2 em { font-style: italic; color: var(--zloto-700); }
+  .final .lead { font-family: var(--serif); font-style: italic; font-size: 22px; color: var(--ink-700); max-width: 560px; margin: 36px auto 0; line-height: 1.5; font-variation-settings: 'opsz' 36; font-weight: 300; position: relative; }
+  .final .final-cta { display: inline-flex; gap: 12px; margin-top: 48px; position: relative; }
+
+  /* FOOTER */
+  footer { background: var(--granat-950); color: var(--granat-300); padding: 96px 0 40px; }
+  .foot-top { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 64px; padding-bottom: 56px; border-bottom: 1px solid var(--granat-700); }
+  footer h5 { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--zloto-400); margin-bottom: 20px; }
+  footer .flinks a { display: block; padding: 6px 0; font-size: 13px; color: var(--granat-200); }
+  footer .flinks a:hover { color: var(--zloto-400); }
+  .foot-tag { font-family: var(--serif); font-style: italic; font-size: 22px; color: var(--paper); margin-top: 20px; font-variation-settings: 'opsz' 36; font-weight: 300; line-height: 1.4; }
+  .foot-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 32px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; color: var(--granat-400); }
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="top">
+  <div class="container row">
+    <a href="#" class="logo">
+      <div class="logo-mark"><span>A</span></div>
+      <div class="logo-txt">Adam<span class="sub">SilverTech · Poznań</span></div>
+    </a>
+    <div class="nav-links">
+      <a href="#opowiesc">Historia</a>
+      <a href="#jak">Jak to działa</a>
+      <a href="#funkcje">Funkcje</a>
+      <a href="#cennik">Cennik</a>
+      <a href="#kontakt">Kontakt</a>
+    </div>
+    <div class="nav-cta">
+      <button class="btn btn-ghost">Zaloguj</button>
+      <button class="btn btn-primary">Zamów Adama <span class="arrow">→</span></button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO — editorial -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-left">
+        <div class="hero-issue">
+          <span>Numer 01</span>
+          <span class="line"></span>
+          <span class="num"><em>Codzienna opieka.</em></span>
+          <span class="line"></span>
+          <span>Lipiec 2026</span>
+        </div>
+
+        <h1>Codziennie<br/><span class="italic">dzwoni</span> do&nbsp;niej.<br/><span class="under">Ty</span> masz spokój.</h1>
+
+        <p class="lead">Adam to głosowy asystent, który rozmawia z Twoją mamą jak zaufany sąsiad. Dwa razy dziennie. Bez ekranu, bez aplikacji, bez internetu po jej stronie.</p>
+
+        <div class="hero-cta">
+          <button class="btn btn-primary btn-lg">Poznaj Adama <span class="arrow">→</span></button>
+          <button class="btn btn-ghost btn-lg" style="border-color:transparent;padding-left:8px">▶ Posłuchaj rozmowy (0:42)</button>
+        </div>
+
+        <div class="hero-meta">
+          <div>
+            <div class="k">18<sub>s</sub></div>
+            <div class="l">Alarm rodzina</div>
+          </div>
+          <div>
+            <div class="k">96<sub>%</sub></div>
+            <div class="l">Adherence leków</div>
+          </div>
+          <div>
+            <div class="k">2×</div>
+            <div class="l">Dziennie welfare check</div>
+          </div>
+          <div>
+            <div class="k">49<sub>zł</sub></div>
+            <div class="l">Od tyle miesięcznie</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="portrait">
+          <div class="portrait-quote">Adam dzwoni codziennie o&nbsp;ósmej. Nie wiem, czy to&nbsp;komputer, ale zawsze pyta, jak spałam.</div>
+          <div class="portrait-caption">
+            <div class="who"><span class="name">Halina W.</span>, 78 lat<br/>Wilda, Poznań</div>
+            <div class="meta">Fot. placeholder<br/>Do wymiany przed launch</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SIGN-OFF marquee strip -->
+<section class="signoff">
+  <div class="container">
+    <div class="signoff-marquee">
+      <span>Wykrywa <em>samotność</em></span>
+      <span class="dot"></span>
+      <span>Przypomina o <em>lekach</em></span>
+      <span class="dot"></span>
+      <span>Alarmuje rodzinę w <em>18 sekund</em></span>
+      <span class="dot"></span>
+      <span>Zna <em>wielkopolski</em></span>
+      <span class="dot"></span>
+      <span>Bez smartfona, bez internetu</span>
+    </div>
+  </div>
+</section>
+
+<!-- CHAPTER 1 · PROBLEM -->
+<section class="chapter" id="opowiesc" style="background:var(--paper-2)">
+  <div class="container-tight">
+    <div class="chapter-head">
+      <div class="chapter-num-block">
+        <div class="chapter-num">01</div>
+        <div class="chapter-label">Historia · Rozdział pierwszy</div>
+      </div>
+      <div>
+        <h2 class="chapter-h">Między <em>troską</em>,<br/>a <em>codziennością</em>.</h2>
+        <p class="chapter-sub">85% dorosłych dzieci martwi się o samotnie mieszkających rodziców. Tylko 12% jest w stanie sprawdzić ich codziennie. To pęknięcie — nie luka technologiczna. Zaprojektowaliśmy Adama, żeby je wypełnić.</p>
+      </div>
+    </div>
+
+    <div class="problem-body">
+      <div class="problem-image">
+        <div class="caption">
+          <span class="num">Placeholder · Do wymiany</span>
+          Kadr niedzielny · rozmowa raz w tygodniu · trzy minuty
+        </div>
+      </div>
+      <div class="problem-text">
+        <p class="pull">Dzwoniłam w niedziele. Mówiła że wszystko dobrze. Trzy tygodnie później dostałam telefon ze szpitala.</p>
+        <p class="body-p">To zdanie usłyszeliśmy w wywiadach z rodzinami tylko w Wielkopolsce ponad czterdzieści razy. Zawsze ta sama struktura: „nie wiedziałam", „dowiedziałam się za późno", „myślałam, że wszystko dobrze". Nie z braku miłości — z braku czasu i systemu.</p>
+        <p class="body-p">Zatrudnienie opiekunki to 4500 zł miesięcznie plus rekrutacja, plus kwestia zaufania. Aplikacje z guzikiem SOS wymagają, żeby senior nosił urządzenie, umiał je obsłużyć i pamiętał, że istnieje. Telefon co niedzielę — jak wyżej.</p>
+        <p class="body-p">Adam wykonuje jedną rzecz, którą każdy z nas próbowałby wykonać ręcznie, gdyby miał czas: dzwoni. Codziennie. Rozmawia. Zauważa. Zapisuje. Powiadamia — Ciebie, koordynatora, w krytycznym przypadku 112.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHAPTER 2 · HOW IT WORKS -->
+<section class="chapter" id="jak">
+  <div class="container-tight">
+    <div class="chapter-head">
+      <div class="chapter-num-block">
+        <div class="chapter-num">02</div>
+        <div class="chapter-label">Historia · Rozdział drugi</div>
+      </div>
+      <div>
+        <h2 class="chapter-h">Trzy <em>ujęcia</em>,<br/>jednego dnia.</h2>
+        <p class="chapter-sub">Wtorek, 12 lipca. Rano, wieczór, moment kryzysu. Tak wygląda dzień z Adamem po stronie seniora — i po stronie rodziny.</p>
+      </div>
+    </div>
+
+    <div class="how-story">
+      <div class="story-cut">
+        <div class="cut-num">01</div>
+        <div class="cut-body">
+          <h3>08:00 · <em>Dzień dobry, Pani Halino</em></h3>
+          <div class="caption">Adam dzwoni. Rozmowa trwa 3 minuty 22 sekundy.</div>
+          <p class="desc">Pyta o sen, ból, samopoczucie. Przypomina o metforminie. Notuje głośność, tempo mowy, mood. Wynik: semafor Green. Krótki zapis trafia do panelu córki — bez notyfikacji, bez wibracji, po prostu jest tam rano, gdy zajrzy.</p>
+          <div class="meta-row">
+            <span>MOOD 0.72</span>
+            <span>LEKI 07:15 OK</span>
+            <span>SEMAFOR GREEN</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="story-cut">
+        <div class="cut-num">02</div>
+        <div class="cut-body">
+          <h3>19:00 · <em>Coś się zmieniło</em></h3>
+          <div class="caption">Adam pyta, mama mówi „wnuki dawno nie dzwoniły".</div>
+          <p class="desc">Sygnał samotności. Nie kryzys — ale zmiana tonu wobec tygodnia. Semafor przełącza się na Yellow. Córka dostaje delikatny push: „Mama wspomniała, że dawno się nie widzieliście. Może zadzwoń wieczorem." Bez alarmu, bez dramatyzmu. Konkretna sugestia w konkretnej chwili.</p>
+          <div class="meta-row">
+            <span>MOOD 0.42</span>
+            <span>SAMOTNOŚĆ WYKRYTA</span>
+            <span>SEMAFOR YELLOW</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="story-cut">
+        <div class="cut-num">03</div>
+        <div class="cut-body">
+          <h3>22:14 · <em>Upadek. Adam reaguje.</em></h3>
+          <div class="caption">Xiaomi Band 8 wykrywa gwałtowne przemieszczenie. Adam dzwoni.</div>
+          <p class="desc">Nikt nie odbiera. Adam próbuje trzy razy w odstępie 20 sekund. Po ostatniej próbie: SMS do córki z lokalizacją i statusem, jednoczesne połączenie do koordynatora SilverTech w Poznaniu. Jeśli koordynator w ciągu 40 sekund nie potwierdzi kontaktu — Adam wybiera 112. Semafor Purple. Cała eskalacja: 78 sekund od upadku do karetki.</p>
+          <div class="meta-row">
+            <span>UPADEK WYKRYTY</span>
+            <span>SMS RODZINA 18s</span>
+            <span>112 · SEMAFOR PURPLE</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHAPTER 3 · FEATURES -->
+<section class="chapter feats" id="funkcje">
+  <div class="container">
+    <div class="chapter-head">
+      <div class="chapter-num-block">
+        <div class="chapter-num">03</div>
+        <div class="chapter-label">Sześć funkcji</div>
+      </div>
+      <div>
+        <h2 class="chapter-h">Nie <em>aplikacja</em>.<br/>Codzienna praktyka.</h2>
+        <p class="chapter-sub">Każdą z tych funkcji wynegocjowaliśmy z rodzinami w rozmowach — nie w burzy mózgów.</p>
+      </div>
+    </div>
+
+    <div class="feats-grid">
+      <div class="feat-card wide dark">
+        <div class="feat-num">Funkcja / 01</div>
+        <div class="feat-title">Rozpoznaje <em>ton głosu</em>,<br/>nie tylko słowa.</div>
+        <p class="feat-desc">Model językowy Adama fine-tunowany na 200+ godzinach mowy senioralnej z Wielkopolski. Rozumie „ale coś dziś słabo" i wie, że to nie żart. Analiza pitchu, tempa, pauz. 14+ sygnałów kryzysu wykrywanych w tle rozmowy.</p>
+        <svg class="feat-visual" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.2">
+          <path d="M5 50 Q15 20 25 50 T45 50 T65 50 T85 50"/>
+          <path d="M5 50 Q10 60 15 50 T25 50 T35 50 T45 50 T55 50 T65 50 T75 50 T85 50" opacity="0.5"/>
+        </svg>
+      </div>
+
+      <div class="feat-card sm gold">
+        <div class="feat-num">Funkcja / 02</div>
+        <div class="feat-title">Przypomina<br/>o <em>lekach</em>.</div>
+        <p class="feat-desc">Metformina, amlodypina, insulina. Adam zna schemat, pyta o wzięcie, notuje adherence.</p>
+      </div>
+
+      <div class="feat-card med">
+        <div class="feat-num">Funkcja / 03</div>
+        <div class="feat-title">Alarm w <em>18&nbsp;sekund</em>.</div>
+        <p class="feat-desc">4-poziomowy semafor eskalacji: Green, Yellow, Red, Purple. Przy zagrożeniu życia Adam sam wykonuje połączenie 112 z podaniem adresu, wieku i danych medycznych z profilu seniora.</p>
+        <svg class="feat-visual" viewBox="0 0 100 100" fill="currentColor">
+          <rect x="10" y="45" width="80" height="10" rx="5"/>
+          <circle cx="20" cy="50" r="6" fill="var(--sem-green)"/>
+          <circle cx="42" cy="50" r="6" fill="var(--sem-yellow)"/>
+          <circle cx="64" cy="50" r="6" fill="var(--sem-red)"/>
+          <circle cx="86" cy="50" r="6" fill="var(--sem-purple)"/>
+        </svg>
+      </div>
+
+      <div class="feat-card med">
+        <div class="feat-num">Funkcja / 04</div>
+        <div class="feat-title">Xiaomi. Apple.<br/>Garmin. <em>Wszystko</em>.</div>
+        <p class="feat-desc">Integracja z opaskami i zegarkami. HR, SpO₂, wykrycie upadku, sen. Adam pyta o kontekst — nie wysyła alarmu przy porannym spacerze z tętnem 130.</p>
+      </div>
+
+      <div class="feat-card sm">
+        <div class="feat-num">Funkcja / 05</div>
+        <div class="feat-title">Concierge · <em>marketplace</em>.</div>
+        <p class="feat-desc">Lekarz domowy, taxi, apteka, sprzątanie, pielęgniarka. 10 kategorii, 80+ zweryfikowanych partnerów Poznania.</p>
+      </div>
+
+      <div class="feat-card wide">
+        <div class="feat-num">Funkcja / 06</div>
+        <div class="feat-title">Raporty <em>tygodniowe</em> — jak od geriatry.</div>
+        <p class="feat-desc">Krótki dzienny w aplikacji. Pełny tygodniowy PDF na e-mail. Miesięczne podsumowanie z trendami mood, adherence, HR. Format zgodny z HL7 FHIR — do przekazania lekarzowi bez tłumaczenia.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARTNERS · POZNAŃ ECOSYSTEM (editorial style) -->
+<section class="chapter" style="background:var(--paper);padding:120px 0" id="partnerzy">
+  <div class="container-tight">
+    <div class="chapter-head">
+      <div class="chapter-num-block">
+        <div class="chapter-num">Alt.</div>
+        <div class="chapter-label">Ekosystem · Lokalny biznes</div>
+      </div>
+      <div>
+        <h2 class="chapter-h">Osiemdziesiąt <em>rąk</em>,<br/>jeden Poznań.</h2>
+        <p class="chapter-sub">Adam nie zamawia u anonimowych podwykonawców. Każdy z osiemdziesięciu partnerów SilverTech ma ważne OC, zweryfikowany NIP i historię pracy. Osiemdziesiąt procent to lokalne firmy poznańskie — bo tylko lokalny partner wie, że pani Halina mieszka na trzecim piętrze bez windy.</p>
+      </div>
+    </div>
+
+    <!-- Editorial grid — asymmetric like magazine -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:32px">
+      <div style="grid-column:span 2;padding:32px 28px;background:var(--paper-2);border:1px solid var(--line);border-radius:4px;position:relative;overflow:hidden">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--zloto-700);letter-spacing:0.14em;text-transform:uppercase">Partner / 01 · Featured</div>
+        <div style="font-size:64px;margin-top:16px">💊</div>
+        <h3 style="font-family:var(--serif);font-size:32px;color:var(--granat-900);font-weight:500;margin-top:12px;letter-spacing:-0.02em;font-variation-settings:'opsz' 60">DOZ · Apteka św. Marcin</h3>
+        <p style="font-family:var(--serif);font-style:italic;font-size:15px;color:var(--ink-700);margin-top:8px;font-weight:300">„Dostawa metforminy w 45 minut · Wilda, Grunwald · 487 zamówień w tym miesiącu"</p>
+        <div style="margin-top:20px;display:flex;gap:12px;font-family:var(--mono);font-size:10px;color:var(--ink-500);letter-spacing:0.06em">
+          <span>NIP 783-123-45-67</span>
+          <span>OC ważne</span>
+          <span>4.8 ★</span>
+        </div>
+      </div>
+
+      <div style="padding:24px 22px;background:var(--paper-2);border:1px solid var(--line);border-radius:4px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--zloto-700);letter-spacing:0.14em;text-transform:uppercase">Partner / 02</div>
+        <div style="font-size:36px;margin-top:12px">🚕</div>
+        <h4 style="font-family:var(--serif);font-size:18px;color:var(--granat-900);font-weight:500;margin-top:8px;letter-spacing:-0.01em">MPT Poznań</h4>
+        <p style="font-size:12px;color:var(--ink-500);margin-top:6px;font-family:var(--mono);letter-spacing:0.04em">Taxi medyczne · 687 zamówień 30d</p>
+      </div>
+
+      <div style="padding:24px 22px;background:var(--paper-2);border:1px solid var(--line);border-radius:4px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--zloto-700);letter-spacing:0.14em;text-transform:uppercase">Partner / 03</div>
+        <div style="font-size:36px;margin-top:12px">🛒</div>
+        <h4 style="font-family:var(--serif);font-size:18px;color:var(--granat-900);font-weight:500;margin-top:8px;letter-spacing:-0.01em">Frisco.pl</h4>
+        <p style="font-size:12px;color:var(--ink-500);margin-top:6px;font-family:var(--mono);letter-spacing:0.04em">Zakupy · 412 zamówień 30d</p>
+      </div>
+
+      <div style="padding:24px 22px;background:var(--paper-2);border:1px solid var(--line);border-radius:4px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--zloto-700);letter-spacing:0.14em;text-transform:uppercase">Partner / 04</div>
+        <div style="font-size:36px;margin-top:12px">👨‍⚕️</div>
+        <h4 style="font-family:var(--serif);font-size:18px;color:var(--granat-900);font-weight:500;margin-top:8px;letter-spacing:-0.01em">Dr Chmielewska POZ</h4>
+        <p style="font-size:12px;color:var(--ink-500);margin-top:6px;font-family:var(--mono);letter-spacing:0.04em">Lekarz domowy · Wilda + Jeżyce</p>
+      </div>
+
+      <div style="padding:24px 22px;background:var(--paper-2);border:1px solid var(--line);border-radius:4px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--zloto-700);letter-spacing:0.14em;text-transform:uppercase">Partner / 05</div>
+        <div style="font-size:36px;margin-top:12px">🧑‍⚕️</div>
+        <h4 style="font-family:var(--serif);font-size:18px;color:var(--granat-900);font-weight:500;margin-top:8px;letter-spacing:-0.01em">Pielęgniarka M.L.</h4>
+        <p style="font-size:12px;color:var(--ink-500);margin-top:6px;font-family:var(--mono);letter-spacing:0.04em">Iniekcje · opatrunki · pobrania</p>
+      </div>
+
+      <div style="grid-column:span 2;padding:32px 28px;background:var(--granat-900);color:var(--paper);border-radius:4px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--zloto-500),transparent);opacity:0.5"></div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--zloto-400);letter-spacing:0.14em;text-transform:uppercase">Manifest partnerski</div>
+        <p style="font-family:var(--serif);font-style:italic;font-size:22px;color:var(--paper);font-weight:400;margin-top:16px;line-height:1.35;font-variation-settings:'opsz' 36">„Każdy partner zostaje w ekosystemie tylko dopóki utrzymuje ocenę <em style="color:var(--zloto-400)">powyżej 4.5★</em> i zero skarg krytycznych. Bez wyjątków."</p>
+        <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--granat-700);font-family:var(--mono);font-size:11px;color:var(--zloto-400);letter-spacing:0.08em;text-transform:uppercase">SilverTech · Zasada #4 · Ekosystem</div>
+      </div>
+
+      <div style="padding:24px 22px;background:var(--paper-2);border:1px solid var(--line);border-radius:4px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--zloto-700);letter-spacing:0.14em;text-transform:uppercase">Partner / 06</div>
+        <div style="font-size:36px;margin-top:12px">🧹</div>
+        <h4 style="font-family:var(--serif);font-size:18px;color:var(--granat-900);font-weight:500;margin-top:8px;letter-spacing:-0.01em">CleanPoznań</h4>
+        <p style="font-size:12px;color:var(--ink-500);margin-top:6px;font-family:var(--mono);letter-spacing:0.04em">Sprzątanie · dedykowane seniorom</p>
+      </div>
+
+      <div style="padding:24px 22px;background:var(--paper-2);border:1px solid var(--line);border-radius:4px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--zloto-700);letter-spacing:0.14em;text-transform:uppercase">Partner / 07</div>
+        <div style="font-size:36px;margin-top:12px">💪</div>
+        <h4 style="font-family:var(--serif);font-size:18px;color:var(--granat-900);font-weight:500;margin-top:8px;letter-spacing:-0.01em">FizjoDom</h4>
+        <p style="font-size:12px;color:var(--ink-500);margin-top:6px;font-family:var(--mono);letter-spacing:0.04em">Rehabilitant · fizjoterapia</p>
+      </div>
+
+      <div style="padding:24px 22px;background:var(--paper-2);border:1px solid var(--line);border-radius:4px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--zloto-700);letter-spacing:0.14em;text-transform:uppercase">Partner / 08</div>
+        <div style="font-size:36px;margin-top:12px">💬</div>
+        <h4 style="font-family:var(--serif);font-size:18px;color:var(--granat-900);font-weight:500;margin-top:8px;letter-spacing:-0.01em">Psycholog M.N.</h4>
+        <p style="font-size:12px;color:var(--ink-500);margin-top:6px;font-family:var(--mono);letter-spacing:0.04em">Wsparcie psychologiczne</p>
+      </div>
+    </div>
+
+    <!-- Stats footer editorial -->
+    <div style="margin-top:60px;padding-top:32px;border-top:1px solid var(--line-strong);display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center">
+      <div>
+        <div style="font-family:var(--serif);font-size:52px;color:var(--zloto-700);font-weight:400;line-height:1;letter-spacing:-0.025em;font-variation-settings:'opsz' 100">80<span style="font-size:24px;color:var(--ink-500);font-style:italic">+</span></div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--ink-500);letter-spacing:0.14em;text-transform:uppercase;margin-top:8px">Partnerów</div>
+      </div>
+      <div>
+        <div style="font-family:var(--serif);font-size:52px;color:var(--zloto-700);font-weight:400;line-height:1;letter-spacing:-0.025em">64<span style="font-size:22px;color:var(--ink-500)">/80</span></div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--ink-500);letter-spacing:0.14em;text-transform:uppercase;margin-top:8px">Lokalni Poznańscy</div>
+      </div>
+      <div>
+        <div style="font-family:var(--serif);font-size:52px;color:var(--zloto-700);font-weight:400;line-height:1;letter-spacing:-0.025em">100<span style="font-size:22px;color:var(--ink-500)">%</span></div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--ink-500);letter-spacing:0.14em;text-transform:uppercase;margin-top:8px">OC ważne · NIP zweryfikowane</div>
+      </div>
+      <div>
+        <div style="font-family:var(--serif);font-size:52px;color:var(--zloto-700);font-weight:400;line-height:1;letter-spacing:-0.025em">4.7<span style="font-size:22px;color:var(--zloto-500);font-style:italic"> ★</span></div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--ink-500);letter-spacing:0.14em;text-transform:uppercase;margin-top:8px">Średnia ocena</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIAL -->
+<section class="testimonial">
+  <div class="testimonial-content">
+    <div class="test-mark">"</div>
+    <div class="test-quote">Trzy miesiące używamy Adama. Mama myśli, że to <em>miły pan</em> z centrali telefonicznej. Ja wiem, że to system. Oboje jesteśmy <em>szczęśliwi</em>.</div>
+    <div class="test-attr">
+      <div class="av">MC</div>
+      <div class="who">
+        <div class="name">Magdalena C.</div>
+        <div class="role">Córka · Warszawa · Adam od kwietnia 2026</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="chapter" id="cennik" style="background:var(--paper)">
+  <div class="container-tight">
+    <div class="pricing-hd">
+      <div class="chapter-num" style="font-size:64px;text-align:center">04</div>
+      <div class="chapter-label" style="text-align:center">Cennik · Trzy pakiety</div>
+      <h2 class="chapter-h" style="margin-top:20px">Bez umowy.<br/><em>Zawsze</em> możesz odejść.</h2>
+    </div>
+
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="price-name">Podstawowy</div>
+        <div class="price-h">Codzienna rozmowa<br/>i raport.</div>
+        <div class="price-amt">49<span class="cur">zł</span><span class="per">/ miesiąc</span></div>
+        <p class="price-desc">Dla rodzin, które chcą wiedzieć, że u mamy wszystko dobrze — bez alarmów krytycznych.</p>
+        <div class="price-cta"><button class="btn btn-ghost">Zacznij 14 dni gratis</button></div>
+        <ul class="price-list">
+          <li>Welfare check 2×dziennie</li>
+          <li>Panel Opiekuna (2 osoby)</li>
+          <li>Semafor Green / Yellow</li>
+          <li>Raport tygodniowy PDF</li>
+          <li>Przypomnienia o lekach</li>
+        </ul>
+      </div>
+
+      <div class="price-card hero">
+        <div class="tag">NAJPOPULARNIEJSZY</div>
+        <div class="price-name">Rodzinny</div>
+        <div class="price-h">Pełna ochrona<br/>+ alerty krytyczne.</div>
+        <div class="price-amt">79<span class="cur">zł</span><span class="per">/ miesiąc</span></div>
+        <p class="price-desc">Wybór 7 na 10 rodzin. Semafor Red i Purple + integracja z opaską.</p>
+        <div class="price-cta"><button class="btn btn-accent">Zacznij 14 dni gratis <span class="arrow">→</span></button></div>
+        <ul class="price-list">
+          <li>Wszystko z Podstawowego</li>
+          <li>Semafor Red + Purple + auto-112</li>
+          <li>Xiaomi / Apple / Garmin</li>
+          <li>Do 5 opiekunów</li>
+          <li>SMS alarm w 18s</li>
+          <li>Aplikacja iOS + Android</li>
+        </ul>
+      </div>
+
+      <div class="price-card">
+        <div class="price-name">Premium</div>
+        <div class="price-h">Concierge<br/>i koordynator.</div>
+        <div class="price-amt">119<span class="cur">zł</span><span class="per">/ miesiąc</span></div>
+        <p class="price-desc">Dla rodzin z seniorem samotnym lub przewlekle chorym. Człowiek 24/7.</p>
+        <div class="price-cta"><button class="btn btn-ghost">Umów konsultację</button></div>
+        <ul class="price-list">
+          <li>Wszystko z Rodzinnego</li>
+          <li>Concierge — zamawianie usług</li>
+          <li>Dedykowany koordynator</li>
+          <li>Raport dla lekarza</li>
+          <li>Nielimitowani opiekunowie</li>
+          <li>Priorytetowe SLA</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL -->
+<section class="final">
+  <div class="container-tight">
+    <div class="chapter-num" style="text-align:center;color:var(--zloto-500)">Fin.</div>
+    <h2>Twój bliski zasługuje<br/>na codzienną <em>rozmowę.</em></h2>
+    <p class="lead">14 dni gratis. Bez karty. Bez umowy. Adam dzwoni jutro rano.</p>
+    <div class="final-cta">
+      <button class="btn btn-primary btn-lg">Zamów Adama <span class="arrow">→</span></button>
+      <button class="btn btn-ghost btn-lg">Umów konsultację</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="kontakt">
+  <div class="container">
+    <div class="foot-top">
+      <div>
+        <div class="logo" style="color:white">
+          <div class="logo-mark"><span>A</span></div>
+          <div class="logo-txt" style="color:var(--paper)">Adam<span class="sub" style="color:var(--granat-300)">SilverTech · Poznań</span></div>
+        </div>
+        <p class="foot-tag">„Adam nie jest aplikacją. Jest codzienną praktyką opieki."</p>
+      </div>
+      <div>
+        <h5>Produkt</h5>
+        <div class="flinks">
+          <a href="#">Jak to działa</a>
+          <a href="#">Funkcje</a>
+          <a href="#">Cennik</a>
+          <a href="#">iOS · Android</a>
+        </div>
+      </div>
+      <div>
+        <h5>SilverTech</h5>
+        <div class="flinks">
+          <a href="#">O nas</a>
+          <a href="#">Zespół medyczny</a>
+          <a href="#">Prasa</a>
+          <a href="#">Kariera</a>
+        </div>
+      </div>
+      <div>
+        <h5>Prawo</h5>
+        <div class="flinks">
+          <a href="#">Regulamin</a>
+          <a href="#">Prywatność</a>
+          <a href="#">RODO · ISO 27001</a>
+          <a href="#">Reklamacje</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 SilverTech Sp. z o.o. · ul. Święty Marcin 24, Poznań</span>
+      <span>Nr 01 · Lipiec 2026</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1440" />
+<title>Adam — Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ============================================
+     ADAM DESIGN TOKENS
+     Nordic humanism × Medical-premium
+     ============================================ */
+  :root {
+    /* Granat scale — the fortress */
+    --granat-950: #08111f;
+    --granat-900: #0e1a2e;
+    --granat-800: #14213d;
+    --granat-700: #1a2744;   /* PRIMARY brand */
+    --granat-600: #243352;
+    --granat-500: #3b4a6b;
+    --granat-400: #5a6a8a;
+    --granat-300: #8b98b3;
+    --granat-200: #c2cad9;
+    --granat-100: #e4e8f0;
+    --granat-50:  #f2f4f8;
+
+    /* Złoto scale — the accent, matte not shiny */
+    --zloto-900: #6b4d1a;
+    --zloto-800: #8a6524;
+    --zloto-700: #a67c2e;
+    --zloto-600: #b88a35;
+    --zloto-500: #c8963e;   /* PRIMARY accent */
+    --zloto-400: #d4a75d;
+    --zloto-300: #dfba82;
+    --zloto-200: #ebd0ac;
+    --zloto-100: #f5e6cf;
+    --zloto-50:  #faf3e6;
+
+    /* Semafor 4-color — safety-critical, tuned for WCAG AA */
+    --sem-green:   #2d6a4f;
+    --sem-green-bg:#e8f2ec;
+    --sem-yellow:  #b8830d;   /* darkened from #e6a817 for AA on white */
+    --sem-yellow-bg:#fbf0d9;
+    --sem-red:     #a5121a;   /* darkened from #c1121f for AA */
+    --sem-red-bg:  #fbe7e9;
+    --sem-purple:  #5a0561;
+    --sem-purple-bg:#f3e6f5;
+
+    /* Neutrals — off-white, not clinical */
+    --paper:       #fbfaf7;   /* editorial off-white bg */
+    --paper-2:     #f5f3ee;
+    --ink-900:     #0e1a2e;   /* body text */
+    --ink-700:     #2a3654;
+    --ink-500:     #5a6a8a;
+    --ink-400:     #8b98b3;
+    --ink-300:     #c2cad9;
+    --line:        #e4e0d5;   /* warm border, not cold gray */
+    --line-strong: #cfc9b8;
+
+    /* Type */
+    --serif: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+    --sans:  'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --mono:  'Geist Mono', 'SF Mono', Menlo, monospace;
+
+    /* Spacing scale */
+    --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px;
+    --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 64px; --s-9: 96px;
+
+    /* Radius */
+    --r-sm: 4px; --r-md: 8px; --r-lg: 12px; --r-xl: 16px; --r-2xl: 24px;
+
+    /* Elevation — subtle, not floating */
+    --e-1: 0 1px 2px rgba(14,26,46,0.04), 0 0 0 1px rgba(14,26,46,0.05);
+    --e-2: 0 2px 8px rgba(14,26,46,0.06), 0 0 0 1px rgba(14,26,46,0.05);
+    --e-3: 0 8px 24px rgba(14,26,46,0.08), 0 0 0 1px rgba(14,26,46,0.06);
+    --e-4: 0 20px 48px rgba(14,26,46,0.12), 0 0 0 1px rgba(14,26,46,0.08);
+
+    /* Motion */
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--paper); color: var(--ink-900); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+
+  /* ============================================
+     LAYOUT
+     ============================================ */
+  .page { max-width: 1280px; margin: 0 auto; padding: 80px 64px 160px; }
+  .hero-band { border-bottom: 1px solid var(--line); padding: 96px 64px 72px; }
+  .hero-band .inner { max-width: 1280px; margin: 0 auto; }
+  .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--zloto-700); margin-bottom: 20px; }
+  .eyebrow .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--zloto-500); vertical-align: middle; margin-right: 10px; margin-bottom: 2px; }
+  .h-display { font-family: var(--serif); font-weight: 400; font-size: 84px; line-height: 0.95; letter-spacing: -0.03em; color: var(--granat-900); font-variation-settings: 'opsz' 144; }
+  .h-display em { font-style: italic; color: var(--zloto-700); }
+  .lead { font-family: var(--sans); font-weight: 400; font-size: 20px; line-height: 1.55; color: var(--ink-700); max-width: 720px; margin-top: 24px; }
+
+  h2.section-h { font-family: var(--serif); font-weight: 400; font-size: 40px; line-height: 1.05; letter-spacing: -0.02em; color: var(--granat-900); }
+  h3.sub-h { font-family: var(--sans); font-weight: 500; font-size: 15px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-500); }
+
+  section { margin-top: 96px; }
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+  .section-head .num { font-family: var(--mono); font-size: 12px; color: var(--zloto-700); letter-spacing: 0.1em; }
+
+  /* ============================================
+     COLOR SWATCHES
+     ============================================ */
+  .swatch-row { display: grid; gap: 16px; }
+  .swatch-row.granat { grid-template-columns: repeat(11, 1fr); }
+  .swatch-row.zloto  { grid-template-columns: repeat(11, 1fr); }
+  .swatch { border-radius: var(--r-md); overflow: hidden; box-shadow: var(--e-1); }
+  .swatch .chip { height: 96px; }
+  .swatch .meta { padding: 10px 12px; background: white; }
+  .swatch .name { font-family: var(--mono); font-size: 10px; color: var(--ink-500); letter-spacing: 0.05em; }
+  .swatch .hex  { font-family: var(--mono); font-size: 11px; color: var(--ink-900); margin-top: 2px; font-weight: 500; }
+
+  .semafor-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 24px; }
+  .sem-card { border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--e-2); background: white; }
+  .sem-card .band { height: 6px; }
+  .sem-card .body { padding: 24px 24px 28px; }
+  .sem-card .label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--ink-500); text-transform: uppercase; }
+  .sem-card .name  { font-family: var(--serif); font-size: 24px; margin-top: 8px; color: var(--granat-900); }
+  .sem-card .desc  { font-size: 14px; line-height: 1.5; color: var(--ink-700); margin-top: 8px; }
+  .sem-card .hex   { font-family: var(--mono); font-size: 11px; color: var(--ink-500); margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .sem-card.green  .band { background: var(--sem-green); }
+  .sem-card.yellow .band { background: var(--sem-yellow); }
+  .sem-card.red    .band { background: var(--sem-red); }
+  .sem-card.purple .band { background: var(--sem-purple); }
+
+  /* ============================================
+     TYPOGRAPHY specimens
+     ============================================ */
+  .type-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px 48px; align-items: baseline; padding: 24px 0; border-bottom: 1px solid var(--line); }
+  .type-grid:last-child { border-bottom: none; }
+  .type-meta { font-family: var(--mono); font-size: 11px; color: var(--ink-500); letter-spacing: 0.05em; padding-top: 12px; }
+  .type-meta strong { display: block; color: var(--ink-900); font-weight: 500; margin-bottom: 6px; font-size: 12px; }
+  .type-sample { color: var(--granat-900); }
+  .ts-display  { font-family: var(--serif); font-weight: 400; font-size: 72px; line-height: 0.95; letter-spacing: -0.03em; font-variation-settings: 'opsz' 144; }
+  .ts-h1       { font-family: var(--serif); font-weight: 400; font-size: 56px; line-height: 1.02; letter-spacing: -0.025em; font-variation-settings: 'opsz' 100; }
+  .ts-h2       { font-family: var(--serif); font-weight: 400; font-size: 40px; line-height: 1.1; letter-spacing: -0.02em; font-variation-settings: 'opsz' 60; }
+  .ts-h3       { font-family: var(--serif); font-weight: 500; font-size: 28px; line-height: 1.2; letter-spacing: -0.015em; font-variation-settings: 'opsz' 36; }
+  .ts-h4       { font-family: var(--sans); font-weight: 600; font-size: 20px; line-height: 1.3; letter-spacing: -0.01em; color: var(--granat-900); }
+  .ts-body-l   { font-family: var(--sans); font-weight: 400; font-size: 18px; line-height: 1.55; color: var(--ink-700); }
+  .ts-body     { font-family: var(--sans); font-weight: 400; font-size: 15px; line-height: 1.6; color: var(--ink-700); }
+  .ts-label    { font-family: var(--sans); font-weight: 500; font-size: 13px; letter-spacing: 0.02em; color: var(--ink-900); }
+  .ts-caption  { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-500); }
+  .ts-numeric  { font-family: var(--serif); font-weight: 500; font-size: 64px; line-height: 1; color: var(--granat-900); font-variation-settings: 'opsz' 144; letter-spacing: -0.02em; }
+
+  /* ============================================
+     SEMAFOR — the signature element
+     ============================================ */
+  .semafor-demo { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; }
+  .demo-block { background: white; border: 1px solid var(--line); border-radius: var(--r-lg); padding: 32px; }
+  .demo-block h4 { font-family: var(--sans); font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-500); margin-bottom: 20px; font-weight: 600; }
+
+  .senior-card {
+    background: white;
+    border: 1px solid var(--line);
+    border-left-width: 3px;
+    border-radius: var(--r-md);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: relative;
+    margin-bottom: 12px;
+    transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+  }
+  .senior-card:last-child { margin-bottom: 0; }
+  .senior-card.green  { border-left-color: var(--sem-green); }
+  .senior-card.yellow { border-left-color: var(--sem-yellow); }
+  .senior-card.red    { border-left-color: var(--sem-red); background: linear-gradient(90deg, var(--sem-red-bg) 0%, white 40%); }
+  .senior-card.purple { border-left-color: var(--sem-purple); background: linear-gradient(90deg, var(--sem-purple-bg) 0%, white 40%); }
+
+  .avatar-wrap { position: relative; flex-shrink: 0; }
+  .avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--granat-600), var(--granat-800));
+    display: grid; place-items: center;
+    color: var(--zloto-300);
+    font-family: var(--serif); font-weight: 500; font-size: 18px;
+    box-shadow: inset 0 0 0 1px rgba(200,150,62,0.2);
+  }
+  .avatar-wrap.pulse::before, .avatar-wrap.pulse::after {
+    content: ''; position: absolute; inset: -4px; border-radius: 50%;
+    border: 2px solid currentColor;
+    animation: pulse 2s var(--ease-out) infinite;
+  }
+  .avatar-wrap.pulse::after { animation-delay: 1s; }
+  .avatar-wrap.pulse-red { color: var(--sem-red); }
+  .avatar-wrap.pulse-purple { color: var(--sem-purple); }
+  @keyframes pulse {
+    0%   { transform: scale(1); opacity: 0.7; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+
+  .sc-info { flex: 1; min-width: 0; }
+  .sc-name { font-family: var(--serif); font-size: 18px; font-weight: 500; color: var(--granat-900); font-variation-settings: 'opsz' 24; }
+  .sc-name .age { font-family: var(--mono); font-size: 12px; color: var(--ink-500); margin-left: 8px; font-weight: 400; }
+  .sc-status { font-size: 13px; color: var(--ink-500); margin-top: 4px; }
+  .sc-status.alarm { color: var(--sem-red); font-weight: 500; }
+  .sc-status.critical { color: var(--sem-purple); font-weight: 600; }
+  .sc-meta { text-align: right; font-family: var(--mono); font-size: 11px; color: var(--ink-500); letter-spacing: 0.04em; }
+  .sc-meta strong { display: block; font-family: var(--serif); font-size: 20px; color: var(--granat-900); font-weight: 500; margin-bottom: 2px; }
+
+  .alarm-banner {
+    display: flex; align-items: center; gap: 16px;
+    padding: 14px 20px 14px 16px;
+    border-radius: var(--r-md);
+    margin-top: 14px;
+    font-size: 14px;
+  }
+  .alarm-banner.red { background: var(--sem-red); color: white; }
+  .alarm-banner.purple { background: var(--sem-purple); color: white; }
+  .alarm-banner .icon { width: 20px; height: 20px; flex-shrink: 0; }
+  .alarm-banner .text { flex: 1; }
+  .alarm-banner .text strong { font-weight: 600; font-family: var(--sans); letter-spacing: 0.02em; }
+  .alarm-banner .text .sub { display: block; font-size: 12px; opacity: 0.85; margin-top: 2px; font-family: var(--mono); }
+  .alarm-banner .cta { padding: 6px 14px; border-radius: 6px; background: rgba(255,255,255,0.15); color: white; font-family: var(--sans); font-weight: 500; font-size: 13px; border: 1px solid rgba(255,255,255,0.25); }
+
+  /* ============================================
+     BUTTONS
+     ============================================ */
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: var(--r-md); font-family: var(--sans); font-weight: 500; font-size: 14px; letter-spacing: -0.005em; border: none; cursor: pointer; transition: all 0.15s var(--ease-out); }
+  .btn-primary { background: var(--granat-700); color: white; }
+  .btn-primary:hover { background: var(--granat-800); }
+  .btn-accent { background: var(--zloto-500); color: var(--granat-900); }
+  .btn-accent:hover { background: var(--zloto-400); }
+  .btn-ghost { background: transparent; color: var(--granat-700); border: 1px solid var(--line-strong); }
+  .btn-ghost:hover { background: var(--paper-2); }
+  .btn-danger { background: var(--sem-red); color: white; }
+  .btn-lg { padding: 16px 28px; font-size: 15px; }
+  .btn-sm { padding: 8px 14px; font-size: 13px; }
+
+  /* ============================================
+     COMPONENT SHOWCASE
+     ============================================ */
+  .comp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .comp-cell { background: white; border: 1px solid var(--line); border-radius: var(--r-lg); padding: 32px 28px; }
+  .comp-cell .cell-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-500); margin-bottom: 20px; }
+  .comp-cell .cell-stack > * + * { margin-top: 12px; }
+
+  /* Mood chart mini */
+  .mood-chart { width: 100%; height: 120px; }
+  .mood-chart path { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+  .mood-chart .area { opacity: 0.15; }
+  .mood-chart .grid { stroke: var(--line); stroke-width: 1; }
+
+  /* Medication ring */
+  .med-ring { display: flex; align-items: center; gap: 20px; }
+  .med-ring svg { flex-shrink: 0; }
+  .med-ring .track { stroke: var(--granat-100); }
+  .med-ring .fill  { stroke: var(--sem-green); stroke-linecap: round; }
+  .med-ring .pct { font-family: var(--serif); font-size: 24px; font-weight: 500; fill: var(--granat-900); }
+  .med-ring .info .lbl { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-500); }
+  .med-ring .info .val { font-family: var(--serif); font-size: 18px; color: var(--granat-900); margin-top: 4px; }
+  .med-ring .info .sub { font-size: 13px; color: var(--ink-500); margin-top: 4px; }
+
+  /* Alert timeline */
+  .timeline { position: relative; padding-left: 20px; }
+  .timeline::before { content: ''; position: absolute; left: 5px; top: 6px; bottom: 6px; width: 1px; background: var(--line); }
+  .tl-item { position: relative; padding-bottom: 20px; }
+  .tl-item:last-child { padding-bottom: 0; }
+  .tl-item::before { content: ''; position: absolute; left: -19px; top: 4px; width: 11px; height: 11px; border-radius: 50%; background: white; border: 2px solid var(--granat-400); }
+  .tl-item.red::before { border-color: var(--sem-red); background: var(--sem-red); }
+  .tl-item.yellow::before { border-color: var(--sem-yellow); background: var(--sem-yellow); }
+  .tl-item.green::before { border-color: var(--sem-green); background: var(--sem-green); }
+  .tl-time { font-family: var(--mono); font-size: 11px; color: var(--ink-500); letter-spacing: 0.05em; }
+  .tl-title { font-family: var(--sans); font-size: 14px; font-weight: 500; color: var(--granat-900); margin-top: 2px; }
+  .tl-desc { font-size: 13px; color: var(--ink-500); margin-top: 2px; line-height: 1.4; }
+
+  /* Inputs */
+  .input {
+    display: block; width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-md);
+    font-family: var(--sans); font-size: 14px;
+    background: white; color: var(--ink-900);
+    transition: border-color 0.15s var(--ease-out), box-shadow 0.15s var(--ease-out);
+  }
+  .input:focus { outline: none; border-color: var(--granat-600); box-shadow: 0 0 0 3px rgba(26,39,68,0.1); }
+  .field-label { font-family: var(--sans); font-size: 12px; letter-spacing: 0.04em; color: var(--ink-500); margin-bottom: 6px; font-weight: 500; }
+
+  /* Badges */
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-family: var(--sans); font-size: 11px; font-weight: 500; letter-spacing: 0.02em; }
+  .badge .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .badge.green { background: var(--sem-green-bg); color: var(--sem-green); }
+  .badge.green .dot { background: var(--sem-green); }
+  .badge.yellow { background: var(--sem-yellow-bg); color: var(--sem-yellow); }
+  .badge.yellow .dot { background: var(--sem-yellow); }
+  .badge.red { background: var(--sem-red-bg); color: var(--sem-red); }
+  .badge.red .dot { background: var(--sem-red); }
+  .badge.neutral { background: var(--granat-100); color: var(--granat-700); }
+
+  /* Elevation & radius specimens */
+  .spec-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+  .spec-tile { aspect-ratio: 1; background: white; border-radius: var(--r-md); display: grid; place-items: center; font-family: var(--mono); font-size: 11px; color: var(--ink-500); letter-spacing: 0.05em; }
+
+  /* Principles */
+  .principle-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px; }
+  .principle { padding: 32px 24px; background: white; border: 1px solid var(--line); border-radius: var(--r-lg); position: relative; }
+  .principle .num { font-family: var(--mono); font-size: 11px; color: var(--zloto-700); letter-spacing: 0.1em; }
+  .principle h4 { font-family: var(--serif); font-size: 22px; font-weight: 500; color: var(--granat-900); margin-top: 12px; letter-spacing: -0.01em; line-height: 1.15; }
+  .principle p { font-size: 13px; color: var(--ink-700); margin-top: 10px; line-height: 1.5; }
+
+  /* Nav */
+  .top-nav { position: sticky; top: 0; z-index: 50; background: rgba(251,250,247,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  .top-nav .inner { max-width: 1280px; margin: 0 auto; padding: 16px 64px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-mark { width: 28px; height: 28px; background: var(--granat-700); border-radius: 6px; position: relative; display: grid; place-items: center; }
+  .logo-mark::after { content: ''; position: absolute; inset: 4px; border: 1px solid var(--zloto-500); border-radius: 3px; }
+  .logo-mark span { font-family: var(--serif); color: var(--zloto-500); font-size: 14px; font-weight: 500; z-index: 1; letter-spacing: -0.02em; }
+  .logo-txt { font-family: var(--serif); font-size: 18px; letter-spacing: -0.02em; color: var(--granat-900); font-weight: 500; }
+  .logo-txt .sub { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; color: var(--ink-500); text-transform: uppercase; display: block; line-height: 1; margin-top: 2px; }
+  .nav-links { display: flex; gap: 28px; font-size: 13px; color: var(--ink-700); }
+  .nav-links a { color: inherit; text-decoration: none; }
+  .nav-links a.active { color: var(--granat-900); font-weight: 500; }
+
+  /* Footer notes */
+  .footnote { font-family: var(--mono); font-size: 11px; color: var(--ink-500); letter-spacing: 0.04em; line-height: 1.6; margin-top: 12px; }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="inner">
+    <div class="logo">
+      <div class="logo-mark"><span>A</span></div>
+      <div class="logo-txt">Adam<span class="sub">SilverTech Design System · v1.0</span></div>
+    </div>
+    <div class="nav-links">
+      <a href="#foundations" class="active">Foundations</a>
+      <a href="#color">Color</a>
+      <a href="#type">Type</a>
+      <a href="#semafor">Semafor</a>
+      <a href="#components">Components</a>
+      <a href="Strategy Deck.html">Strategy →</a>
+    </div>
+  </div>
+</nav>
+
+<div class="hero-band">
+  <div class="inner">
+    <div class="eyebrow"><span class="dot"></span>Design System · Version 1.0 · Lipiec 2026</div>
+    <h1 class="h-display">Spokój,<br/>który ma <em>dowody.</em></h1>
+    <p class="lead">System projektowy Adam łączy powagę instytucji medycznej z ciepłem, którego oczekuje rodzina. Powstał, aby rozmowa o zdrowiu bliskiego brzmiała jak zaufana konsultacja — nie jak alert z systemu.</p>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- PRINCIPLES -->
+  <section id="foundations" style="margin-top: 40px;">
+    <div class="section-head">
+      <h2 class="section-h">Pięć zasad projektowych</h2>
+      <span class="num">01 / FOUNDATION</span>
+    </div>
+    <div class="principle-grid">
+      <div class="principle">
+        <div class="num">01</div>
+        <h4>Powaga bez chłodu</h4>
+        <p>Granat jako fortyfikacja. Off-white zamiast klinicznej bieli. Rodzina musi czuć instytucję, ale nie szpital.</p>
+      </div>
+      <div class="principle">
+        <div class="num">02</div>
+        <h4>Dowód przed obietnicą</h4>
+        <p>Każda liczba ma być cytowalna. Cyfry w serifie, nie w sans — jak w Financial Times, nie w start-upie.</p>
+      </div>
+      <div class="principle">
+        <div class="num">03</div>
+        <h4>Alarm ma siłę</h4>
+        <p>Semafor jest progresywny. Zieleń szepcze, purpura krzyczy. Nigdy odwrotnie. Nigdy w tej samej intensywności.</p>
+      </div>
+      <div class="principle">
+        <div class="num">04</div>
+        <h4>Człowiek, nie stock</h4>
+        <p>Fotografia editorialna tylko na landingu. W produkcie — tylko typografia i dane. Zero grandmy-z-uśmiechem.</p>
+      </div>
+      <div class="principle">
+        <div class="num">05</div>
+        <h4>Dwie gęstości, jeden język</h4>
+        <p>Opiekun potrzebuje powietrza. Koordynator potrzebuje danych. Jeden system komponentów, dwa tryby.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLOR -->
+  <section id="color">
+    <div class="section-head">
+      <h2 class="section-h">Kolor</h2>
+      <span class="num">02 / COLOR SYSTEM</span>
+    </div>
+
+    <h3 class="sub-h" style="margin-bottom: 20px;">Granat — the fortress</h3>
+    <div class="swatch-row granat">
+      <div class="swatch"><div class="chip" style="background:var(--granat-50)"></div><div class="meta"><div class="name">granat / 50</div><div class="hex">#F2F4F8</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--granat-100)"></div><div class="meta"><div class="name">granat / 100</div><div class="hex">#E4E8F0</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--granat-200)"></div><div class="meta"><div class="name">granat / 200</div><div class="hex">#C2CAD9</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--granat-300)"></div><div class="meta"><div class="name">granat / 300</div><div class="hex">#8B98B3</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--granat-400)"></div><div class="meta"><div class="name">granat / 400</div><div class="hex">#5A6A8A</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--granat-500)"></div><div class="meta"><div class="name">granat / 500</div><div class="hex">#3B4A6B</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--granat-600)"></div><div class="meta"><div class="name">granat / 600</div><div class="hex">#243352</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--granat-700);position:relative"><div style="position:absolute;top:8px;right:8px;font-family:var(--mono);font-size:9px;color:var(--zloto-300);letter-spacing:0.1em">BRAND</div></div><div class="meta"><div class="name">granat / 700</div><div class="hex">#1A2744</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--granat-800)"></div><div class="meta"><div class="name">granat / 800</div><div class="hex">#14213D</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--granat-900)"></div><div class="meta"><div class="name">granat / 900</div><div class="hex">#0E1A2E</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--granat-950)"></div><div class="meta"><div class="name">granat / 950</div><div class="hex">#08111F</div></div></div>
+    </div>
+
+    <h3 class="sub-h" style="margin: 48px 0 20px;">Złoto — the accent (matowe, nigdy błyszczące)</h3>
+    <div class="swatch-row zloto">
+      <div class="swatch"><div class="chip" style="background:var(--zloto-50)"></div><div class="meta"><div class="name">zloto / 50</div><div class="hex">#FAF3E6</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--zloto-100)"></div><div class="meta"><div class="name">zloto / 100</div><div class="hex">#F5E6CF</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--zloto-200)"></div><div class="meta"><div class="name">zloto / 200</div><div class="hex">#EBD0AC</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--zloto-300)"></div><div class="meta"><div class="name">zloto / 300</div><div class="hex">#DFBA82</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--zloto-400)"></div><div class="meta"><div class="name">zloto / 400</div><div class="hex">#D4A75D</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--zloto-500);position:relative"><div style="position:absolute;top:8px;right:8px;font-family:var(--mono);font-size:9px;color:var(--granat-900);letter-spacing:0.1em">ACCENT</div></div><div class="meta"><div class="name">zloto / 500</div><div class="hex">#C8963E</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--zloto-600)"></div><div class="meta"><div class="name">zloto / 600</div><div class="hex">#B88A35</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--zloto-700)"></div><div class="meta"><div class="name">zloto / 700</div><div class="hex">#A67C2E</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--zloto-800)"></div><div class="meta"><div class="name">zloto / 800</div><div class="hex">#8A6524</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--zloto-900)"></div><div class="meta"><div class="name">zloto / 900</div><div class="hex">#6B4D1A</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--paper);border:1px solid var(--line)"></div><div class="meta"><div class="name">paper</div><div class="hex">#FBFAF7</div></div></div>
+    </div>
+
+    <p class="footnote" style="margin-top: 24px; max-width: 720px;">Uwaga: złoto nigdy nie występuje w gradientach ani w metalicznych efektach. Używane jako: (1) 1px linia akcentu na kartach premium, (2) kolor cyfr KPI w Fraunces, (3) hover-state dla drugorzędnych linków. Nigdy jako duże wypełnienie płaskie — to spycha markę w rejestr "casino gold".</p>
+
+    <h3 class="sub-h" style="margin: 64px 0 20px;">Semafor — safety-critical, 4 poziomy</h3>
+    <div class="semafor-grid">
+      <div class="sem-card green">
+        <div class="band"></div>
+        <div class="body">
+          <div class="label">Level 1</div>
+          <div class="name">Spokojnie</div>
+          <div class="desc">Wszystko w normie. Adam odbył welfare check, mood ≥0.6, leki wzięte, brak niepokoju.</div>
+          <div class="hex">#2D6A4F · AA 5.8:1</div>
+        </div>
+      </div>
+      <div class="sem-card yellow">
+        <div class="band"></div>
+        <div class="body">
+          <div class="label">Level 2</div>
+          <div class="name">Uważaj</div>
+          <div class="desc">Mood &lt;0.5, samotność, pominięta dawka. Wymaga uwagi rodziny w ciągu doby.</div>
+          <div class="hex">#B8830D · AA 4.6:1</div>
+        </div>
+      </div>
+      <div class="sem-card red">
+        <div class="band"></div>
+        <div class="body">
+          <div class="label">Level 3</div>
+          <div class="name">Alarm</div>
+          <div class="desc">Wykryto upadek, HR &gt;140, ból w klatce piersiowej. Rodzina powiadamiana natychmiast.</div>
+          <div class="hex">#A5121A · AA 6.1:1</div>
+        </div>
+      </div>
+      <div class="sem-card purple">
+        <div class="band"></div>
+        <div class="body">
+          <div class="label">Level 4</div>
+          <div class="name">Krytyczne</div>
+          <div class="desc">Zagrożenie życia. Adam wykonał połączenie do 112 automatycznie. Rodzina + koordynator.</div>
+          <div class="hex">#5A0561 · AA 8.9:1</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TYPOGRAPHY -->
+  <section id="type">
+    <div class="section-head">
+      <h2 class="section-h">Typografia</h2>
+      <span class="num">03 / TYPE SYSTEM</span>
+    </div>
+
+    <p class="lead" style="margin-top: -20px; margin-bottom: 48px;">Serif w nagłówkach nadaje wagę editorialną. 95% konkurencji health-tech używa sans-serif — dla Adama to okazja odróżnić się bez krzyczenia.</p>
+
+    <div class="type-grid">
+      <div class="type-meta"><strong>Display</strong>Fraunces 400 · 84px<br/>opsz 144 · -0.03em</div>
+      <div class="type-sample"><div class="ts-display">Spokój dla rodziny.</div></div>
+    </div>
+    <div class="type-grid">
+      <div class="type-meta"><strong>H1</strong>Fraunces 400 · 56px<br/>opsz 100 · -0.025em</div>
+      <div class="type-sample"><div class="ts-h1">Codzienna rozmowa z Twoim bliskim</div></div>
+    </div>
+    <div class="type-grid">
+      <div class="type-meta"><strong>H2</strong>Fraunces 400 · 40px<br/>opsz 60 · -0.02em</div>
+      <div class="type-sample"><div class="ts-h2">Adam sprawdza samopoczucie dwa razy dziennie</div></div>
+    </div>
+    <div class="type-grid">
+      <div class="type-meta"><strong>H3</strong>Fraunces 500 · 28px<br/>opsz 36 · -0.015em</div>
+      <div class="type-sample"><div class="ts-h3">Panel Opiekuna — pełny obraz stanu</div></div>
+    </div>
+    <div class="type-grid">
+      <div class="type-meta"><strong>H4 / UI</strong>Geist 600 · 20px</div>
+      <div class="type-sample"><div class="ts-h4">Historia rozmów</div></div>
+    </div>
+    <div class="type-grid">
+      <div class="type-meta"><strong>Body L</strong>Geist 400 · 18px · 1.55</div>
+      <div class="type-sample"><div class="ts-body-l">Adam każdego dnia rozmawia z Twoją mamą przez telefon. Sprawdza samopoczucie, przypomina o lekach, dzwoni po pomoc, gdy coś jest nie tak.</div></div>
+    </div>
+    <div class="type-grid">
+      <div class="type-meta"><strong>Body</strong>Geist 400 · 15px · 1.6</div>
+      <div class="type-sample"><div class="ts-body">Otrzymujesz raporty tygodniowe na e-mail. W razie sytuacji krytycznej dostajesz SMS w ciągu 18 sekund. Miesięcznie od 49 zł — bez umowy na czas określony.</div></div>
+    </div>
+    <div class="type-grid">
+      <div class="type-meta"><strong>Label</strong>Geist 500 · 13px</div>
+      <div class="type-sample"><div class="ts-label">Numer telefonu bliskiego</div></div>
+    </div>
+    <div class="type-grid">
+      <div class="type-meta"><strong>Caption / eyebrow</strong>Geist Mono · 11px<br/>0.06em · uppercase</div>
+      <div class="type-sample"><div class="ts-caption">Ostatni kontakt · 12 lipca, 08:14</div></div>
+    </div>
+    <div class="type-grid">
+      <div class="type-meta"><strong>Numeric KPI</strong>Fraunces 500 · 64px<br/><em>Podpis Adama</em></div>
+      <div class="type-sample"><div class="ts-numeric" style="display:flex;align-items:baseline;gap:8px">96<span style="font-size:24px;color:var(--zloto-700);font-weight:400">%</span><span style="font-family:var(--mono);font-size:11px;color:var(--ink-500);letter-spacing:0.08em;text-transform:uppercase;margin-left:12px">adherence leków, 30 dni</span></div></div>
+    </div>
+  </section>
+
+  <!-- SEMAFOR — the signature -->
+  <section id="semafor">
+    <div class="section-head">
+      <h2 class="section-h">Semafor progresywny</h2>
+      <span class="num">04 / SIGNATURE ELEMENT</span>
+    </div>
+
+    <p class="lead" style="margin-top: -20px; margin-bottom: 40px;">Kluczowa decyzja projektowa: nie każdy stan ma być tak samo głośny. Zieleń i żółty są ambientowe (statyczna wstęga). Czerwony i purpurowy eskalują (pulsujący pierścień + banner). Zapobiega alarm fatigue.</p>
+
+    <div class="semafor-demo">
+      <div class="demo-block">
+        <h4>Stany ambientowe · szept</h4>
+        <div class="senior-card green">
+          <div class="avatar-wrap"><div class="avatar">HW</div></div>
+          <div class="sc-info">
+            <div class="sc-name">Halina Wójcik <span class="age">78 lat · Wilda</span></div>
+            <div class="sc-status">Ostatnia rozmowa: dzisiaj 08:14 · mood 0.72</div>
+          </div>
+          <div class="sc-meta"><strong>96%</strong>adherence</div>
+        </div>
+        <div class="senior-card yellow">
+          <div class="avatar-wrap"><div class="avatar">JK</div></div>
+          <div class="sc-info">
+            <div class="sc-name">Janusz Kowalski <span class="age">82 lata · Jeżyce</span></div>
+            <div class="sc-status">Wspomina o samotności · mood 0.42</div>
+          </div>
+          <div class="sc-meta"><strong>81%</strong>adherence</div>
+        </div>
+        <p class="footnote" style="margin-top: 20px;">3px wstęga po lewej stronie karty + subtelna ikona statusu. Nic nie pulsuje, nic nie krzyczy — codzienny stan nie zabiera uwagi.</p>
+      </div>
+
+      <div class="demo-block">
+        <h4>Stany krytyczne · krzyk</h4>
+        <div class="senior-card red">
+          <div class="avatar-wrap pulse pulse-red"><div class="avatar">MN</div></div>
+          <div class="sc-info">
+            <div class="sc-name">Maria Nowak <span class="age">74 lata · Grunwald</span></div>
+            <div class="sc-status alarm">Wykryto upadek · Xiaomi Band 8</div>
+          </div>
+          <div class="sc-meta"><strong style="color:var(--sem-red)">3m</strong>temu</div>
+        </div>
+        <div class="alarm-banner red">
+          <svg class="icon" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1L1 18h18L10 1zm0 5v6m0 2v1" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+          <div class="text"><strong>UWAGA — potencjalny upadek</strong><span class="sub">Adam próbuje się dodzwonić · zadzwoń do Marii</span></div>
+          <button class="cta">Zadzwoń</button>
+        </div>
+
+        <div class="senior-card purple" style="margin-top: 20px;">
+          <div class="avatar-wrap pulse pulse-purple"><div class="avatar">SZ</div></div>
+          <div class="sc-info">
+            <div class="sc-name">Stanisław Zieliński <span class="age">85 lat · Stare Miasto</span></div>
+            <div class="sc-status critical">112 wezwane automatycznie · 00:42</div>
+          </div>
+          <div class="sc-meta"><strong style="color:var(--sem-purple)">LIVE</strong>trwa</div>
+        </div>
+        <div class="alarm-banner purple">
+          <svg class="icon" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1a9 9 0 100 18 9 9 0 000-18zm-1 5h2v6H9V6zm0 8h2v2H9v-2z"/></svg>
+          <div class="text"><strong>ALARM — 112 w drodze</strong><span class="sub">Zgłoszenie: ból w klatce piersiowej · ETA karetka: 8 min</span></div>
+          <button class="cta">Śledź na żywo</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPONENTS -->
+  <section id="components">
+    <div class="section-head">
+      <h2 class="section-h">Komponenty produktowe</h2>
+      <span class="num">05 / COMPONENT LIBRARY</span>
+    </div>
+
+    <div class="comp-grid">
+      <!-- Buttons -->
+      <div class="comp-cell">
+        <div class="cell-label">Buttons</div>
+        <div class="cell-stack">
+          <div><button class="btn btn-primary btn-lg">Zamów Adama</button></div>
+          <div><button class="btn btn-accent">Zobacz demo</button></div>
+          <div><button class="btn btn-ghost">Anuluj</button></div>
+          <div><button class="btn btn-danger">Wezwij pomoc</button></div>
+          <div><button class="btn btn-primary btn-sm">Szczegóły →</button></div>
+        </div>
+      </div>
+
+      <!-- Inputs -->
+      <div class="comp-cell">
+        <div class="cell-label">Form fields</div>
+        <div class="cell-stack">
+          <div>
+            <div class="field-label">Numer telefonu bliskiego</div>
+            <input class="input" value="+48 606 123 456" />
+          </div>
+          <div>
+            <div class="field-label">Kod dostępu SMS</div>
+            <input class="input" placeholder="6 cyfr" style="font-family:var(--mono);letter-spacing:0.3em" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Badges -->
+      <div class="comp-cell">
+        <div class="cell-label">Status badges</div>
+        <div class="cell-stack">
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <span class="badge green"><span class="dot"></span>Spokojnie</span>
+            <span class="badge yellow"><span class="dot"></span>Uważaj</span>
+            <span class="badge red"><span class="dot"></span>Alarm</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <span class="badge neutral">Metformina · 2×dziennie</span>
+            <span class="badge neutral">Wilda, Poznań</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <span class="badge green">Wzięte 07:22</span>
+            <span class="badge red">Pominięte 20:00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mood chart -->
+      <div class="comp-cell">
+        <div class="cell-label">Mood chart · 14 dni</div>
+        <svg class="mood-chart" viewBox="0 0 300 120" preserveAspectRatio="none">
+          <line class="grid" x1="0" y1="30" x2="300" y2="30" />
+          <line class="grid" x1="0" y1="60" x2="300" y2="60" />
+          <line class="grid" x1="0" y1="90" x2="300" y2="90" />
+          <path class="area" fill="var(--zloto-500)" d="M0,45 L23,38 L46,52 L69,42 L92,55 L115,48 L138,65 L161,70 L184,58 L207,50 L230,42 L253,38 L276,32 L300,28 L300,120 L0,120 Z"/>
+          <path stroke="var(--granat-700)" d="M0,45 L23,38 L46,52 L69,42 L92,55 L115,48 L138,65 L161,70 L184,58 L207,50 L230,42 L253,38 L276,32 L300,28"/>
+          <circle cx="300" cy="28" r="4" fill="var(--zloto-500)" stroke="white" stroke-width="2"/>
+        </svg>
+        <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--ink-500);letter-spacing:0.05em;margin-top:8px">
+          <span>29 CZE</span><span>05 LIP</span><span>DZIŚ · 0.78</span>
+        </div>
+      </div>
+
+      <!-- Medication ring -->
+      <div class="comp-cell">
+        <div class="cell-label">Medication adherence</div>
+        <div class="med-ring">
+          <svg width="88" height="88" viewBox="0 0 88 88">
+            <circle class="track" cx="44" cy="44" r="36" fill="none" stroke-width="8"/>
+            <circle class="fill" cx="44" cy="44" r="36" fill="none" stroke-width="8" stroke-dasharray="217 226" transform="rotate(-90 44 44)"/>
+            <text class="pct" x="44" y="52" text-anchor="middle">96%</text>
+          </svg>
+          <div class="info">
+            <div class="lbl">Ostatnie 30 dni</div>
+            <div class="val">Metformina + Amlodypina</div>
+            <div class="sub">86 z 90 dawek</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alert timeline -->
+      <div class="comp-cell">
+        <div class="cell-label">Alert timeline</div>
+        <div class="timeline">
+          <div class="tl-item green">
+            <div class="tl-time">DZIŚ · 08:14</div>
+            <div class="tl-title">Welfare check poranny</div>
+            <div class="tl-desc">Mood 0.72, leki wzięte, samopoczucie dobre</div>
+          </div>
+          <div class="tl-item yellow">
+            <div class="tl-time">WCZORAJ · 20:03</div>
+            <div class="tl-title">Wzmianka o samotności</div>
+            <div class="tl-desc">"Wnuki dawno nie dzwoniły"</div>
+          </div>
+          <div class="tl-item green">
+            <div class="tl-time">WCZORAJ · 08:12</div>
+            <div class="tl-title">Welfare check poranny</div>
+            <div class="tl-desc">Mood 0.68, wszystko w normie</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Elevation -->
+    <h3 class="sub-h" style="margin: 64px 0 20px;">Elevation</h3>
+    <div class="spec-grid">
+      <div class="spec-tile" style="box-shadow:var(--e-1)"><span>e/1 · card at rest</span></div>
+      <div class="spec-tile" style="box-shadow:var(--e-2)"><span>e/2 · card hover</span></div>
+      <div class="spec-tile" style="box-shadow:var(--e-3)"><span>e/3 · modal · popover</span></div>
+      <div class="spec-tile" style="box-shadow:var(--e-4)"><span>e/4 · critical alert</span></div>
+      <div class="spec-tile" style="background:var(--granat-700);color:var(--zloto-300);border:1px solid var(--zloto-800)"><span style="color:var(--zloto-300)">premium accent · gold hairline</span></div>
+    </div>
+
+    <!-- Radius -->
+    <h3 class="sub-h" style="margin: 64px 0 20px;">Radius</h3>
+    <div class="spec-grid">
+      <div class="spec-tile" style="border-radius:var(--r-sm);background:var(--granat-100)"><span>r/sm · 4px · inputs micro</span></div>
+      <div class="spec-tile" style="border-radius:var(--r-md);background:var(--granat-100)"><span>r/md · 8px · buttons · inputs</span></div>
+      <div class="spec-tile" style="border-radius:var(--r-lg);background:var(--granat-100)"><span>r/lg · 12px · cards default</span></div>
+      <div class="spec-tile" style="border-radius:var(--r-xl);background:var(--granat-100)"><span>r/xl · 16px · modals</span></div>
+      <div class="spec-tile" style="border-radius:var(--r-2xl);background:var(--granat-100)"><span>r/2xl · 24px · hero surfaces</span></div>
+    </div>
+  </section>
+
+  <!-- Logo lockup detail -->
+  <section id="brand">
+    <div class="section-head">
+      <h2 class="section-h">Znak identyfikacyjny</h2>
+      <span class="num">06 / BRAND MARK</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:stretch">
+      <div style="background:white;border:1px solid var(--line);border-radius:var(--r-lg);padding:80px 48px;display:flex;align-items:center;justify-content:center;gap:20px">
+        <div style="width:72px;height:72px;background:var(--granat-700);border-radius:16px;position:relative;display:grid;place-items:center;box-shadow:inset 0 0 0 1px var(--zloto-500)">
+          <div style="position:absolute;inset:8px;border:1.5px solid var(--zloto-500);border-radius:10px"></div>
+          <span style="font-family:var(--serif);color:var(--zloto-500);font-size:38px;font-weight:500;letter-spacing:-0.03em;z-index:1;font-variation-settings:'opsz' 60">A</span>
+        </div>
+        <div>
+          <div style="font-family:var(--serif);font-size:44px;color:var(--granat-900);letter-spacing:-0.03em;font-weight:500;line-height:1;font-variation-settings:'opsz' 60">Adam</div>
+          <div style="font-family:var(--mono);font-size:11px;letter-spacing:0.18em;color:var(--ink-500);text-transform:uppercase;margin-top:6px">SilverTech · Poznań</div>
+        </div>
+      </div>
+
+      <div style="background:var(--granat-900);border-radius:var(--r-lg);padding:80px 48px;display:flex;align-items:center;justify-content:center;gap:20px">
+        <div style="width:72px;height:72px;background:var(--zloto-500);border-radius:16px;position:relative;display:grid;place-items:center">
+          <div style="position:absolute;inset:8px;border:1.5px solid var(--granat-900);border-radius:10px"></div>
+          <span style="font-family:var(--serif);color:var(--granat-900);font-size:38px;font-weight:500;letter-spacing:-0.03em;z-index:1">A</span>
+        </div>
+        <div>
+          <div style="font-family:var(--serif);font-size:44px;color:var(--paper);letter-spacing:-0.03em;font-weight:500;line-height:1">Adam</div>
+          <div style="font-family:var(--mono);font-size:11px;letter-spacing:0.18em;color:var(--zloto-400);text-transform:uppercase;margin-top:6px">SilverTech · Poznań</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="footnote" style="margin-top: 24px; max-width: 720px;">Monogram "A" w prostokątnej kartuszy (wzór pieczęci instytucjonalnej), złota linia jako subtelne obramowanie. Nazwa produktowa w Fraunces — nadaje personalny, ludzki charakter (Adam to imię, nie akronim). Podpis "SilverTech · Poznań" w monospaced — sygnał inżynierskiej precyzji, nadaje wiarygodności technologicznej.</p>
+  </section>
+
+  <div style="margin-top: 120px; padding-top: 40px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; font-family: var(--mono); font-size: 11px; color: var(--ink-500); letter-spacing: 0.05em;">
+    <span>Adam Design System · v1.0 · Lipiec 2026</span>
+    <span>Nordic humanism × Medical-premium · Fraunces + Geist</span>
+  </div>
+
+</div>
+
+</body>
+</html>
