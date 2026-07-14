@@ -154,6 +154,7 @@ def create_app(*, init_db: bool = True) -> FastAPI:
         consents as consents_router,
         emergency as emergency_router,
         qa as qa_router,
+        admin as admin_router,
     )
 
     app.include_router(auth_router.router)
@@ -170,6 +171,7 @@ def create_app(*, init_db: bool = True) -> FastAPI:
     app.include_router(consents_router.router)
     app.include_router(emergency_router.router)
     app.include_router(qa_router.router)
+    app.include_router(admin_router.router)
 
     return app
 

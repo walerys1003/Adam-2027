@@ -82,5 +82,6 @@ def create_all():
     from adam_modules.compliance import models as _compliance_models  # noqa: F401
     from adam_modules.emergency import models as _emergency_models  # noqa: F401
     from adam_modules.qa import models as _qa_models  # noqa: F401
+    from adam_modules.admin import models as _admin_models  # noqa: F401
 
     Base.metadata.create_all(_engine)
