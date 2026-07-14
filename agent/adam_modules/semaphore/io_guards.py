@@ -57,15 +57,24 @@ class OutputGuardResult:
 
 # Wzorce prób manipulacji / jailbreak (PL + typowe EN, bo modele bywają wielojęzyczne)
 _INJECTION_PATTERNS = [
-    r"zignoruj\s+(wszystkie\s+)?(poprzednie\s+)?(instrukcje|polecenia|zasady)",
-    r"udawaj[,\s]+(że\s+)?(jesteś|że jesteś)\s+(lekarz|doktor|człowiek|kim)",
+    # „zignoruj/pomiń … (wszystkie/poprzednie/wcześniejsze) instrukcje/polecenia/zasady"
+    r"(zignoruj|pomiń|olej)\s+(wszystkie\s+)?(poprzednie|wcześniejsze|dotychczasowe)?\s*"
+    r"(instrukcje|polecenia|zasady|wytyczne|ograniczenia)",
+    # „udawaj, że jesteś …" (dowolna rola po „jesteś", nie tylko lekarz)
+    r"udawaj[,\s]+(że\s+)?jesteś\b",
+    # „graj rolę / wciel się w …"
+    r"(graj\s+rolę|wciel\s+się\s+w|zachowuj\s+się\s+jak)\b",
     r"zapomnij\s+(o\s+)?(swoich\s+)?(instrukcj|zasad|regu)",
     r"nie\s+jesteś\s+(już\s+)?(ai|sztuczn|asystent)",
     r"od\s+teraz\s+(jesteś|będziesz)\b",
-    r"przełącz\s+się\s+w\s+tryb",
+    r"(przełącz\s+się\s+w\s+tryb|tryb\s+(deweloper|developer|dev|debug|bez\s+ograniczeń))",
+    # próba podszycia się pod wiadomość systemową
+    r"^\s*system\s*[:\-]",
+    r"\bsystem\s*:\s*(jesteś|you\s+are|od\s+teraz)",
     r"ignore\s+(all\s+)?(previous\s+)?(instructions|rules)",
     r"you\s+are\s+(now\s+)?(a\s+)?(doctor|human|dan)\b",
     r"pretend\s+(to\s+be|you\s+are)",
+    r"(act\s+as|roleplay\s+as|jailbreak|developer\s+mode)",
     r"system\s*prompt",
     r"reveal\s+your\s+(instructions|prompt|system)",
     r"pokaż\s+(swój\s+)?(prompt|instrukcj|system)",
