@@ -171,10 +171,10 @@ Struktura: `agent/adam_modules/` (nowy pakiet obok AVA src/), FastAPI-style rout
 - [x] E8.1.3 SeniorService CRUD + Pydantic schemas (walidacja PESEL/telefon, maskowanie PII w SeniorOut)
 - [x] E8.1.4 FieldCipher (Fernet + blind index) + 13 testów pytest (100% pass)
 
-### 8.2 F2 — Scheduler welfare-check
-- [ ] E8.2.1 Model call_attempts + campaigns
-- [ ] E8.2.2 APScheduler jobs (rano/wieczór) + ARI originate wrapper
-- [ ] E8.2.3 Retry logic (3× / 20s) + API scheduling + testy
+### 8.2 F2 — Scheduler welfare-check ✅
+- [x] E8.2.1 Modele Campaign + CallAttempt (CampaignKind, CallStatus, retry config) + migracja 0002
+- [x] E8.2.2 WelfareScheduler (APScheduler cron per kampania, Europe/Warsaw) + AriOriginator wrapper (NullOriginator do testów)
+- [x] E8.2.3 run_with_retries (3×/20s, każda próba osobny rekord audytu, exhausted→eskalacja) + SchedulerService + 7 testów
 
 ### 8.3 F3+F4+F5 — Semafor + Guardrails + System Prompt (bezpieczeństwo razem)
 - [ ] E8.3.1 SemaphoreEngine (TRIGGERS→level, state machine) + tabela semaphore_events

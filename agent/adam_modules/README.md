@@ -54,7 +54,7 @@ python3 -m pytest adam_modules/tests/ -q
 | # | Funkcja | Status |
 |---|---------|--------|
 | F1 | Profile seniorów (PII szyfrowane) | ✅ modele + schematy + serwis + migracja + testy |
-| F2 | Scheduler welfare-check | ⏳ |
+| F2 | Scheduler welfare-check | ✅ kampanie + retry 3×/20s + APScheduler + ARI wrapper + 7 testów |
 | F3–F5 | Semafor + eskalacja + guardrails + prompt | ⏳ |
 | F6 | Medication tracker | ⏳ |
 | F7 | Pamięć semantyczna (RAG) | ⏳ |

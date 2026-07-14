@@ -64,5 +64,6 @@ def create_all():
     assert _engine is not None
     # import modeli, by zarejestrowały się w Base.metadata
     from adam_modules.seniors import models as _senior_models  # noqa: F401
+    from adam_modules.scheduler import models as _sched_models  # noqa: F401
 
     Base.metadata.create_all(_engine)
