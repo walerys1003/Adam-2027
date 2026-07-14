@@ -93,11 +93,13 @@ class DialogEngine:
         detector: CrisisDetector | None = None,
         use_consensus: bool = True,
         memory_context: str | None = None,
+        regional_dialect: bool = False,
     ):
         self.llm = llm
         self.senior_name = senior_name
         self.senior_age = senior_age
-        self._detector = detector or CrisisDetector()
+        # F13 (ETAP 29): regional_dialect=True → detektor rozumie gwarę wielkopolską.
+        self._detector = detector or CrisisDetector(regional=regional_dialect)
         # Konsensus kryzysowy (ETAP 17): detektor regułowy + głos LLM → fail-safe.
         # Gdy wyłączony, spadamy do samego detektora (zachowanie z ETAP 12).
         self._use_consensus = use_consensus

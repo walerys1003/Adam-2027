@@ -118,11 +118,22 @@ def _normalize(text: str) -> str:
 class CrisisDetector:
     """Regułowy detektor sygnałów kryzysowych i obserwacyjnych."""
 
-    def __init__(self, phrase_map: dict[Trigger, list[str]] | None = None):
+    def __init__(
+        self,
+        phrase_map: dict[Trigger, list[str]] | None = None,
+        *,
+        regional: bool = False,
+    ):
         self.phrase_map = phrase_map or _PHRASE_TRIGGERS
+        # F13 (ETAP 29): opcjonalna normalizacja gwary wielkopolskiej przed detekcją,
+        # tak by regionalizmy kryzysowe (np. „nie mogę dychać") trafiały w reguły.
+        self.regional = regional
 
     def detect_text(self, text: str) -> list[Detection]:
         """Wykrywa wszystkie triggery obecne w tekście wypowiedzi."""
+        if self.regional and text:
+            from adam_modules.speech.wielkopolska import normalize_regional
+            text = normalize_regional(text).normalized
         norm = _normalize(text)
         found: list[Detection] = []
         for trigger, phrases in self.phrase_map.items():
