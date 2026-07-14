@@ -7,6 +7,7 @@ import {
   moodTrend,
   mapSenior,
   mapOrder,
+  mapRole,
   createRealApi,
   type BackendSenior,
   type BackendSeniorList,
@@ -179,5 +180,69 @@ describe('createRealApi', () => {
       expect(p.value).toBeGreaterThanOrEqual(0)
       expect(p.value).toBeLessThanOrEqual(1)
     }
+  })
+})
+
+/* ---------- ETAP 21: auth (login/refresh/me + mapRole) ---------- */
+
+describe('mapRole', () => {
+  it('mapuje role backendu na frontend', () => {
+    expect(mapRole('admin')).toBe('admin')
+    expect(mapRole('coordinator')).toBe('caregiver')
+    expect(mapRole('family')).toBe('family_member')
+  })
+  it('fallback dla nieznanej roli → caregiver', () => {
+    expect(mapRole('nieznana')).toBe('caregiver')
+  })
+})
+
+describe('createRealApi.login', () => {
+  it('mapuje TokenOut → LoginResult (tokeny + user)', async () => {
+    let sent: { path: string; body: any } | null = null
+    const api = createRealApi(async (path, init) => {
+      sent = { path, body: init?.body ? JSON.parse(init.body as string) : null }
+      return {
+        access_token: 'acc-1', refresh_token: 'ref-1', token_type: 'bearer',
+        expires_in: 900, role: 'coordinator', senior_ids: ['SR-1'],
+      }
+    })
+    const res = await api.login({ email: 'Anna@silvertech.pl', password: 'x' })
+    expect(sent!.path).toBe('/api/auth/login')
+    expect(sent!.body).toEqual({ email: 'Anna@silvertech.pl', password: 'x' })
+    expect(res.accessToken).toBe('acc-1')
+    expect(res.refreshToken).toBe('ref-1')
+    expect(res.user.role).toBe('caregiver')
+    expect(res.user.email).toBe('anna@silvertech.pl')
+    expect(res.user.name).toBe('anna')
+  })
+})
+
+describe('createRealApi.refresh', () => {
+  it('wysyła refresh_token i zwraca nową parę', async () => {
+    let sent: any = null
+    const api = createRealApi(async (path, init) => {
+      sent = { path, body: JSON.parse((init!.body as string)) }
+      return {
+        access_token: 'acc-2', refresh_token: 'ref-2', token_type: 'bearer',
+        expires_in: 900, role: 'admin', senior_ids: [],
+      }
+    })
+    const res = await api.refresh('old-refresh')
+    expect(sent.path).toBe('/api/auth/refresh')
+    expect(sent.body).toEqual({ refresh_token: 'old-refresh' })
+    expect(res).toEqual({ accessToken: 'acc-2', refreshToken: 'ref-2' })
+  })
+})
+
+describe('createRealApi.me', () => {
+  it('mapuje MeOut → User', async () => {
+    const api = createRealApi(async (path) => {
+      expect(path).toBe('/api/auth/me')
+      return { email: 'admin@silvertech.pl', role: 'admin', senior_ids: [] }
+    })
+    const user = await api.me()
+    expect(user.email).toBe('admin@silvertech.pl')
+    expect(user.role).toBe('admin')
+    expect(user.name).toBe('admin')
   })
 })

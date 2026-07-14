@@ -52,8 +52,13 @@ export async function realFetch(path: string, init?: RequestInit) {
 const real = createRealApi(realFetch)
 
 export const api = {
-  // Auth — backend nie ma jeszcze /auth (placeholder X-API-Key); mock zawsze.
-  login: (payload: LoginPayload) => mock.login(payload),
+  // Auth — ETAP 21: realne /api/auth/login|refresh|me gdy VITE_API_URL ustawione.
+  login: (payload: LoginPayload) => (USE_MOCK ? mock.login(payload) : real.login(payload)),
+  refresh: (refreshToken: string) =>
+    USE_MOCK
+      ? Promise.resolve({ accessToken: 'refresh-demo', refreshToken: 'refresh-demo' })
+      : real.refresh(refreshToken),
+  me: () => (USE_MOCK ? Promise.resolve(null) : real.me()),
   decodeToken: mock.decodeToken,
 
   // Seniors — obsłużone przez adapter realApi (F1 + adherence F6).
@@ -73,7 +78,7 @@ export const api = {
   cancelOrder: (id: string) => (USE_MOCK ? mock.cancelOrder(id) : real.cancelOrder(id)),
   listOrders: () => (USE_MOCK ? mock.listOrders() : real.listOrders()),
 
-  // Messages / Account — backend nie wystawia tych zasobów; mock (do ETAP 11+).
+  // Messages / Account — backend nie wystawia jeszcze tych zasobów (planowane ETAP 22); mock.
   listThreads: () => mock.listThreads(),
   sendMessage: (threadId: string, body: string) => mock.sendMessage(threadId, body),
   listInvoices: () => mock.listInvoices(),

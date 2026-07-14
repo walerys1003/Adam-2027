@@ -19,7 +19,10 @@ import type {
   Package,
   SemaphoreLevel,
   Order,
+  User,
+  Role,
 } from '@/types/domain'
+import type { LoginPayload, LoginResult } from './mockApi'
 
 /* ---------- surowe kształty backendu (ETAP 9) ---------- */
 
@@ -65,6 +68,33 @@ export interface BackendOrder {
   note?: string | null
   cancellable_until?: string | null
   can_cancel: boolean
+}
+
+/** Kontrakt backendu ETAP 11 — /api/auth/login|refresh (TokenOut). */
+export interface BackendTokenOut {
+  access_token: string
+  refresh_token: string
+  token_type: string
+  expires_in: number
+  role: string
+  senior_ids: string[]
+}
+
+/** Kontrakt backendu ETAP 11 — GET /api/auth/me (MeOut). */
+export interface BackendMe {
+  email: string
+  role: string
+  senior_ids: string[]
+}
+
+/** Backend Role (family|coordinator|admin) → frontend Role. */
+export function mapRole(backendRole: string): Role {
+  switch (backendRole) {
+    case 'admin': return 'admin'
+    case 'coordinator': return 'caregiver'
+    case 'family': return 'family_member'
+    default: return 'caregiver'
+  }
 }
 
 /* ---------- helpery mapujące ---------- */
@@ -146,6 +176,44 @@ export function mapOrder(b: BackendOrder): Order {
 type Fetcher = (path: string, init?: RequestInit) => Promise<any>
 
 export function createRealApi(fetcher: Fetcher) {
+  /* ---------- Auth (ETAP 21 — realne /api/auth) ---------- */
+
+  async function login(payload: LoginPayload): Promise<LoginResult> {
+    const tok: BackendTokenOut = await fetcher('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email: payload.email, password: payload.password }),
+    })
+    const role = mapRole(tok.role)
+    // Backend nie zwraca name w TokenOut → używamy email jako etykiety
+    // (pełny profil dostępny przez /api/auth/me po zalogowaniu).
+    const email = payload.email.toLowerCase()
+    const user: User = {
+      id: email,
+      email,
+      name: email.split('@')[0],
+      role,
+    }
+    return { accessToken: tok.access_token, refreshToken: tok.refresh_token, user }
+  }
+
+  async function refresh(refreshToken: string): Promise<{ accessToken: string; refreshToken: string }> {
+    const tok: BackendTokenOut = await fetcher('/api/auth/refresh', {
+      method: 'POST',
+      body: JSON.stringify({ refresh_token: refreshToken }),
+    })
+    return { accessToken: tok.access_token, refreshToken: tok.refresh_token }
+  }
+
+  async function me(): Promise<User> {
+    const m: BackendMe = await fetcher('/api/auth/me')
+    return {
+      id: m.email,
+      email: m.email,
+      name: m.email.split('@')[0],
+      role: mapRole(m.role),
+    }
+  }
+
   async function getMySeniors(): Promise<{ seniors: Senior[]; total: number }> {
     const list: BackendSeniorList = await fetcher('/api/seniors?limit=200')
     const seniors = list.items.map((b) => mapSenior(b))
@@ -199,7 +267,7 @@ export function createRealApi(fetcher: Fetcher) {
     return { ok: true }
   }
 
-  return { getMySeniors, getSenior, getMood, listOrders, cancelOrder }
+  return { login, refresh, me, getMySeniors, getSenior, getMood, listOrders, cancelOrder }
 }
 
 export type RealApi = ReturnType<typeof createRealApi>
