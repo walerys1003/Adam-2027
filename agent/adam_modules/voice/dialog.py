@@ -82,6 +82,8 @@ class CallOutcome:
     needs_review: bool = False          # konsensus F16 zgłosił rozbieżność/braki (ETAP 17)
     guard_flags: list[str] = field(default_factory=list)  # F4 (ETAP 24): zdarzenia guardrails I/O
     decisions: list[DecisionEvent] = field(default_factory=list)  # F16 (ETAP 30): telemetria decyzji
+    silence_reprompts: int = 0          # ETAP 33: liczba ponagleń przy ciszy
+    no_contact: bool = False            # ETAP 33: eskalacja braku kontaktu (cisza)
 
     def transcript(self) -> str:
         return "\n".join(f"{t.speaker.value}: {t.text}" for t in self.turns)
@@ -271,3 +273,33 @@ class DialogEngine:
             return self.outcome.turns[-1]
         self.state = DialogState.CLOSED
         return self._adam_turn("Dziękuję za rozmowę. Proszę o siebie dbać. Do usłyszenia!")
+
+    # ---- ETAP 33: funkcje głosowe AVA (cisza → ponaglenie → eskalacja) ----
+    def reprompt_silence(self) -> DialogTurn:
+        """Ponaglenie po wydłużonej ciszy seniora (Silence Watchdog).
+
+        Nie zmienia stanu rozmowy — Adam delikatnie sprawdza kontakt i słucha
+        dalej. Zliczane w `outcome.silence_reprompts` (telemetria QA/audyt).
+        """
+        if self.state == DialogState.CLOSED:
+            raise ValueError("Rozmowa zakończona.")
+        self.outcome.silence_reprompts += 1
+        return self._adam_turn(
+            "Czy mnie Pan/Pani słyszy? Jestem tutaj i słucham — proszę śmiało mówić."
+        )
+
+    def escalate_no_contact(self) -> DialogTurn:
+        """Brak kontaktu utrzymuje się mimo ponagleń — eskalacja braku kontaktu.
+
+        Przechodzi w stan ESCALATING i oznacza `no_contact=True` oraz
+        `escalated=True` (rodzina/opiekun zostaną powiadomieni poza kanałem).
+        Fail-safe: przedłużona cisza u seniora traktowana jest jako sygnał ryzyka.
+        """
+        self.state = DialogState.ESCALATING
+        self.outcome.escalated = True
+        self.outcome.no_contact = True
+        return self._adam_turn(
+            "Nie mogę się z Panem/Panią skontaktować. Dla bezpieczeństwa powiadomię "
+            "bliską osobę. Proszę się nie martwić — pomoc jest w drodze.",
+            level=SemaphoreLevel.yellow,
+        )

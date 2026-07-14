@@ -18,6 +18,12 @@ from .ports import (
 )
 from .dialog import DialogEngine, DialogState, DialogTurn, CallOutcome, Speaker, DecisionEvent
 from .ari import AriChannel, FakeChannel, CallSession
+from .watchdog import (
+    SilenceWatchdog, SilenceConfig, SilenceAction, SilenceEvent,
+    BargeInController, BargeInConfig, BargeInResult,
+    RecordingRegistry, RecordingRef,
+    DualStt, DualSttResult,
+)
 from .consensus import CrisisConsensus, CrisisVoteResult
 from .asterisk import AsteriskAriChannel
 from .prod_ports import WhisperASR, OpenAITTS, ElevenLabsTTS, OpenAILLM
@@ -32,6 +38,11 @@ __all__ = [
     "EchoASR", "RuleLLM", "TextTTS",
     "DialogEngine", "DialogState", "DialogTurn", "CallOutcome", "Speaker", "DecisionEvent",
     "AriChannel", "FakeChannel", "CallSession",
+    # ETAP 33 — funkcje głosowe AVA
+    "SilenceWatchdog", "SilenceConfig", "SilenceAction", "SilenceEvent",
+    "BargeInController", "BargeInConfig", "BargeInResult",
+    "RecordingRegistry", "RecordingRef",
+    "DualStt", "DualSttResult",
     "CrisisConsensus", "CrisisVoteResult",
     "AsteriskAriChannel",
     # ETAP 18 — produkcyjne adaptery I/O głosu
