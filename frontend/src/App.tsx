@@ -14,21 +14,37 @@ import { ReportsPage } from '@/pages/panel/ReportsPage'
 import { AccountPage } from '@/pages/panel/AccountPage'
 import { SettingsPage } from '@/pages/panel/SettingsPage'
 import { HelpPage } from '@/pages/panel/HelpPage'
+import { AdminLayout } from '@/components/admin'
+import {
+  AdminDashboard,
+  AdminSeniors,
+  AdminSeniorDetail,
+  AdminCalls,
+  AdminScheduling,
+  AdminAlerts,
+  AdminMarketplace,
+  AdminWizard,
+  AdminAgents,
+  AdminAgentDetail,
+  AdminProviders,
+  AdminPipelines,
+  AdminContexts,
+  AdminAudio,
+  AdminTools,
+  AdminMCP,
+  AdminFleet,
+  AdminFleetDetail,
+  AdminEnvironment,
+  AdminDocker,
+  AdminAsterisk,
+  AdminModels,
+  AdminLogs,
+  AdminTerminal,
+} from '@/pages/admin'
 
 function LandingRoute() {
   const navigate = useNavigate()
   return <LandingPage onLogin={() => navigate('/login')} onOrder={() => navigate('/login')} />
-}
-
-function AdminPlaceholder() {
-  return (
-    <div className="min-h-screen grid place-items-center bg-paper">
-      <div className="text-center">
-        <span className="eyebrow">Panel Admina</span>
-        <h1 className="font-serif text-h2 text-granat-900 mt-1">Wkrótce (ETAP 5)</h1>
-      </div>
-    </div>
-  )
 }
 
 export default function App() {
@@ -61,14 +77,44 @@ export default function App() {
             <Route path="*" element={<Navigate to="/panel" replace />} />
           </Route>
 
+          {/* Panel Admina — 23 ekranów nested pod AdminLayout (light-only) */}
           <Route
-            path="/admin/*"
+            path="/admin"
             element={
               <RequireAuth permission="panel:admin">
-                <AdminPlaceholder />
+                <AdminLayout />
               </RequireAuth>
             }
-          />
+          >
+            {/* Overview */}
+            <Route index element={<AdminDashboard />} />
+            <Route path="seniors" element={<AdminSeniors />} />
+            <Route path="seniors/:id" element={<AdminSeniorDetail />} />
+            <Route path="calls" element={<AdminCalls />} />
+            <Route path="scheduling" element={<AdminScheduling />} />
+            <Route path="alerts" element={<AdminAlerts />} />
+            <Route path="marketplace" element={<AdminMarketplace />} />
+            <Route path="wizard" element={<AdminWizard />} />
+            {/* Konfiguracja / Core Config */}
+            <Route path="agents" element={<AdminAgents />} />
+            <Route path="agents/:id" element={<AdminAgentDetail />} />
+            <Route path="providers" element={<AdminProviders />} />
+            <Route path="pipelines" element={<AdminPipelines />} />
+            <Route path="contexts" element={<AdminContexts />} />
+            <Route path="audio" element={<AdminAudio />} />
+            <Route path="tools" element={<AdminTools />} />
+            <Route path="mcp" element={<AdminMCP />} />
+            <Route path="fleet" element={<AdminFleet />} />
+            <Route path="fleet/:id" element={<AdminFleetDetail />} />
+            {/* System */}
+            <Route path="environment" element={<AdminEnvironment />} />
+            <Route path="docker" element={<AdminDocker />} />
+            <Route path="asterisk" element={<AdminAsterisk />} />
+            <Route path="models" element={<AdminModels />} />
+            <Route path="logs" element={<AdminLogs />} />
+            <Route path="terminal" element={<AdminTerminal />} />
+            <Route path="*" element={<Navigate to="/admin" replace />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </AuthProvider>

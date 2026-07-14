@@ -101,45 +101,45 @@
 
 ---
 
-## ETAP 5 — Panel Admina (23 ekrany) 🟡
+## ETAP 5 — Panel Admina (23 ekrany) ✅
 
 ### 5.1 Fundament admin
-- [ ] E5.1.1 AdminLayout (sidebar 3 sekcje: Overview/Core config/System) + topbar + ThemeToggle
-- [ ] E5.1.2 Dark mode tokens (data-theme="dark" + zmienne CSS)
-- [ ] E5.1.3 Mock danych admina (SENIORS 1247, AGENTS 12, ORDERS, PARTNERS 80, DEVICES 941, ENV 78…)
+- [x] E5.1.1 AdminLayout (sidebar 3 sekcje: Overview/Core config/System) + topbar (BEZ ThemeToggle — light-only wg dyrektywy)
+- [~] E5.1.2 Dark mode — POMINIĘTE świadomie (dyrektywa użytkownika: „nie rób dark mode, wszystko zgodnie z design system adam", light-only)
+- [x] E5.1.3 Mock danych admina (SENIORS 1247, AGENTS 12, ORDERS, PARTNERS 80, DEVICES 941, ENV 78…)
 
 ### 5.2 Sekcja OVERVIEW (8 ekranów)
-- [ ] E5.2.1 Dashboard (metryki systemowe + seniorzy z alertami)
-- [ ] E5.2.2 Seniorzy (lista 1247 + filtry + paginacja)
-- [ ] E5.2.3 Senior detail (DETAIL_RENDERERS.senior)
-- [ ] E5.2.4 Call History (18.4K, tabela + filtry + wyszukiwanie transkryptów)
-- [ ] E5.2.5 Call Scheduling (4 kampanie + heatmap 24×7)
-- [ ] E5.2.6 Alerty (aktywne + escalation ladder + historia)
-- [ ] E5.2.7 Marketplace 4 taby (Zamówienia/Katalog/Partnerzy/Service Gaps) ← NOWE
-- [ ] E5.2.8 Setup Wizard (5 kroków)
+- [x] E5.2.1 Dashboard (metryki systemowe + seniorzy z alertami)
+- [x] E5.2.2 Seniorzy (lista 1247 + filtry + paginacja)
+- [x] E5.2.3 Senior detail (DETAIL_RENDERERS.senior)
+- [x] E5.2.4 Call History (18.4K, tabela + filtry + wyszukiwanie transkryptów)
+- [x] E5.2.5 Call Scheduling (4 kampanie + heatmap 24×7)
+- [x] E5.2.6 Alerty (aktywne + escalation ladder + historia)
+- [x] E5.2.7 Marketplace 4 taby (Zamówienia/Katalog/Partnerzy/Service Gaps) ← NOWE
+- [x] E5.2.8 Setup Wizard (5 kroków)
 
 ### 5.3 Sekcja CORE CONFIG (9 ekranów)
-- [ ] E5.3.1 Agenci (12) + detail (7 tabów: Prompt YAML/Tools/Voice/Guardrails/A-B/Metryki/Deploy)
-- [ ] E5.3.2 Providers (7 kart + edit)
-- [ ] E5.3.3 Pipelines (4 STT→LLM→TTS routing)
-- [ ] E5.3.4 Contexts (legacy + migracja banner)
-- [ ] E5.3.5 Audio Profiles (3 + skuteczność F13)
-- [ ] E5.3.6 Tools (47, 4 fazy)
-- [ ] E5.3.7 MCP Servers (3 + katalog 6)
-- [ ] E5.3.8 Wearables Fleet (4 providery + tabela 941 + detail z audit trail) ← NOWE
+- [x] E5.3.1 Agenci (12) + detail (7 tabów: Prompt YAML/Tools/Voice/Guardrails/A-B/Metryki/Deploy)
+- [x] E5.3.2 Providers (7 kart + edit)
+- [x] E5.3.3 Pipelines (4 STT→LLM→TTS routing)
+- [x] E5.3.4 Contexts (legacy + migracja banner)
+- [x] E5.3.5 Audio Profiles (3 + skuteczność F13)
+- [x] E5.3.6 Tools (47, 4 fazy)
+- [x] E5.3.7 MCP Servers (3 + katalog 6)
+- [x] E5.3.8 Wearables Fleet (4 providery + tabela 941 + detail z audit trail) ← NOWE
 
 ### 5.4 Sekcja SYSTEM (6 ekranów)
-- [ ] E5.4.1 Environment (78 vars + kategorie + modified badge)
-- [ ] E5.4.2 Docker Services (4 kontenery + Images + Volumes)
-- [ ] E5.4.3 Asterisk (ARI status + moduły + dialplan)
-- [ ] E5.4.4 Models (STT/TTS/LLM catalog)
-- [ ] E5.4.5 Live Logs (Troubleshoot/Raw + streaming mock)
-- [ ] E5.4.6 Terminal (Web CLI `adam ...`)
+- [x] E5.4.1 Environment (78 vars + kategorie + modified badge)
+- [x] E5.4.2 Docker Services (4 kontenery + Images + Volumes)
+- [x] E5.4.3 Asterisk (ARI status + moduły + dialplan)
+- [x] E5.4.4 Models (STT/TTS/LLM catalog)
+- [x] E5.4.5 Live Logs (Troubleshoot/Raw + streaming mock)
+- [x] E5.4.6 Terminal (Web CLI `adam ...`)
 
 ### 5.5 Domknięcie
-- [ ] E5.5.1 Routing 23 ekranów + RBAC (permission panel:admin)
-- [ ] E5.5.2 localStorage persistence stanu sidebar/theme
-- [ ] E5.5.3 Build + weryfikacja + commit/push
+- [x] E5.5.1 Routing 23 ekranów + RBAC (permission panel:admin)
+- [~] E5.5.2 localStorage persistence sidebar (theme pominięty — light-only)
+- [x] E5.5.3 Build + weryfikacja + commit/push
 
 ---
 

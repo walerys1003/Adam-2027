@@ -11,6 +11,8 @@ export default defineConfig({
     server: {
         host: '0.0.0.0',
         port: 3000,
+        // Zezwól na hosty sandboxa/podglądu (novita/e2b) + dowolne subdomeny
+        allowedHosts: ['.sandbox.novita.ai', '.e2b.dev', '.e2b.app', 'localhost'],
     },
     build: {
         outDir: 'dist',
