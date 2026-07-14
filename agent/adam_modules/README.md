@@ -70,14 +70,16 @@ python3 -m pytest adam_modules/tests/ -q
 | F17 | Integracja 112 | ✅ EmergencyService (payload: adres/wiek/leki/vitals + dispatch_summary) + 5 testów |
 | F18 | Testy E2E + CI | ✅ pełny przepływ PURPLE (detekcja→consensus→guardrails→semafor→eskalacja→rodzina→112→disclosure→RODO) + scenariusze GREEN/state-machine + GitHub Actions CI (`.github/workflows/backend-ci.yml`) + 6 testów E2E |
 | **API** | Warstwa REST (FastAPI) — ETAP 9 | ✅ `adam_modules/api` — 33 endpointy F1–F18 (seniorzy/safety/leki/wearables/rodzina+SSE/marketplace/RODO/compliance) + OpenAPI `/docs` + maskowanie PII + guardrails + 23 testy (TestClient). Szczegóły: `docs/API.md` |
+| **Głos** | Warstwa głosowa (ARI ↔ dialog) — ETAP 12 | ✅ `adam_modules/voice` — `DialogEngine` (maszyna stanów INIT→DISCLOSED→ACTIVE→ESCALATING→CLOSED) integruje F5 (prompt+ujawnienie AI) + F14 (profil mowy→TTS) + F3 (detekcja kryzysu/tura); porty ASR/LLM/TTS/ARI (Protocol) + impl. dev (Echo/Rule/Text/Fake); `POST /api/voice/simulate-call` + 19 testów. Szczegóły: `docs/API.md` |
 
-**Łącznie: 210 testów (154 backend + 23 API + 33 auth/notify/obserwowalność), 7 migracji (0001–0007), CI (pytest + Alembic upgrade/downgrade). Backend F1–F18 + warstwa API + auth/RBAC + integracje + hardening kompletne.**
+**Łącznie: 229 testów (154 backend + 23 API + 33 auth/notify/obserwowalność + 19 głos), 7 migracji (0001–0007), CI (pytest + Alembic upgrade/downgrade). Backend F1–F18 + API + auth/RBAC + integracje + hardening + warstwa głosowa + artefakty wdrożeniowe kompletne.**
 
-## API (ETAP 9 + 11/13/14)
+## API (ETAP 9 + 11/12/13/14)
 
 Warstwa `adam_modules/api` (FastAPI) wystawia funkcje F1–F18 przez REST/JSON,
-plus uwierzytelnianie JWT + RBAC (ETAP 11), realne adaptery powiadomień (ETAP 13)
-oraz obserwowalność/rate-limit/`/metrics` (ETAP 14). Szczegóły: `docs/API.md`.
+plus uwierzytelnianie JWT + RBAC (ETAP 11), warstwę głosową `/api/voice` (ETAP 12),
+realne adaptery powiadomień (ETAP 13) oraz obserwowalność/rate-limit/`/metrics`
+(ETAP 14). Szczegóły: `docs/API.md`.
 
 ```bash
 cd agent
@@ -88,3 +90,17 @@ ADAM_PII_KEY=dev ADAM_PII_PEPPER=dev \
 ```
 
 Pełna mapa endpointów, zmienne środowiskowe i uwagi bezpieczeństwa: **`docs/API.md`**.
+
+## Wdrożenie (ETAP 15)
+
+Adam API to **osobny** deploy od agenta głosowego AVA. Artefakty w
+`adam_modules/deploy/` (`Dockerfile.adam-api`, `entrypoint.sh`,
+`docker-compose.adam.yml`, `.env.adam.example`) uruchamiają stack
+`adam-api` + `adam-postgres` + `adam-redis` (Frankfurt DC, non-root,
+gunicorn+uvicorn, migracje Alembic przy starcie). Runbook: **`docs/DEPLOY-ADAM.md`**.
+
+```bash
+cd agent/adam_modules/deploy
+cp .env.adam.example .env.adam   # uzupełnij sekrety (PII/JWT/PG)
+docker compose -f docker-compose.adam.yml --env-file .env.adam up -d --build
+```

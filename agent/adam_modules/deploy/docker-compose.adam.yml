@@ -1,0 +1,83 @@
+# ==================================================================
+# Adam API — stack produkcyjny (ETAP 15.1)
+# api (FastAPI/gunicorn) + PostgreSQL + Redis.
+# Uruchomienie docelowe: Frankfurt DC. NIE Cloudflare (to backend stanowy).
+#
+# Użycie (z katalogu `agent/`):
+#   cp adam_modules/deploy/.env.adam.example .env.adam
+#   # uzupełnij sekrety w .env.adam
+#   docker compose --env-file .env.adam -f adam_modules/deploy/docker-compose.adam.yml up -d --build
+# ==================================================================
+
+name: adam-api
+
+services:
+  adam-postgres:
+    image: postgres:16-alpine
+    container_name: adam-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-adam}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?ustaw POSTGRES_PASSWORD w .env.adam}
+      POSTGRES_DB: ${POSTGRES_DB:-adam}
+    volumes:
+      - adam-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-adam} -d ${POSTGRES_DB:-adam}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # brak portów na zewnątrz — dostęp tylko z sieci compose (bezpieczeństwo)
+
+  adam-redis:
+    image: redis:7-alpine
+    container_name: adam-redis
+    restart: unless-stopped
+    command: ["redis-server", "--save", "60", "1", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  adam-api:
+    build:
+      context: ../..            # katalog `agent/`
+      dockerfile: adam_modules/deploy/Dockerfile.adam-api
+    image: adam-api:latest
+    container_name: adam-api
+    restart: unless-stopped
+    depends_on:
+      adam-postgres:
+        condition: service_healthy
+      adam-redis:
+        condition: service_healthy
+    environment:
+      # baza + PII
+      ADAM_DATABASE_URL: "postgresql+psycopg://${POSTGRES_USER:-adam}:${POSTGRES_PASSWORD}@adam-postgres:5432/${POSTGRES_DB:-adam}"
+      ADAM_PII_KEY: ${ADAM_PII_KEY:?ustaw ADAM_PII_KEY}
+      ADAM_PII_PEPPER: ${ADAM_PII_PEPPER:?ustaw ADAM_PII_PEPPER}
+      # auth
+      ADAM_JWT_SECRET: ${ADAM_JWT_SECRET:?ustaw ADAM_JWT_SECRET}
+      ADAM_API_KEY: ${ADAM_API_KEY:-}
+      # integracje (opcjonalne)
+      ADAM_NOTIFY_PROVIDER: ${ADAM_NOTIFY_PROVIDER:-memory}
+      ADAM_TWILIO_SID: ${ADAM_TWILIO_SID:-}
+      ADAM_TWILIO_TOKEN: ${ADAM_TWILIO_TOKEN:-}
+      ADAM_TWILIO_FROM: ${ADAM_TWILIO_FROM:-}
+      ADAM_SENDGRID_KEY: ${ADAM_SENDGRID_KEY:-}
+      ADAM_SENDGRID_FROM: ${ADAM_SENDGRID_FROM:-}
+      ADAM_FCM_KEY: ${ADAM_FCM_KEY:-}
+      # redis (kolejka eskalacji / rate-limit rozproszony — F3.2)
+      ADAM_REDIS_URL: "redis://adam-redis:6379/0"
+      # CORS + runtime
+      ADAM_CORS_ORIGINS: ${ADAM_CORS_ORIGINS:-https://panel.adam.silvertech.pl}
+      ADAM_API_WORKERS: ${ADAM_API_WORKERS:-4}
+      ADAM_RATE_LIMIT: ${ADAM_RATE_LIMIT:-120}
+      ADAM_RATE_WINDOW: ${ADAM_RATE_WINDOW:-60}
+      TZ: ${TZ:-Europe/Warsaw}
+    ports:
+      - "${ADAM_API_PORT:-8787}:8787"
+
+volumes:
+  adam-pgdata:

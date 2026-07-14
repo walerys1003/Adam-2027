@@ -107,6 +107,7 @@ def create_app(*, init_db: bool = True) -> FastAPI:
         marketplace as marketplace_router,
         rodo as rodo_router,
         compliance as compliance_router,
+        voice as voice_router,
     )
 
     app.include_router(auth_router.router)
@@ -118,6 +119,7 @@ def create_app(*, init_db: bool = True) -> FastAPI:
     app.include_router(marketplace_router.router)
     app.include_router(rodo_router.router)
     app.include_router(compliance_router.router)
+    app.include_router(voice_router.router)
 
     return app
 

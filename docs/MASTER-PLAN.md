@@ -348,6 +348,43 @@ Warstwa `api/observability.py` (stdlib — bez prometheus-client) dokłada middl
 - [x] E14.3.1 33 nowe testy (`test_auth` 19 + `test_notify_adapters` 7 + `test_middleware` 7) — **210 testów total**
 - [x] E14.3.2 requirements (adnotacja ENV, zero nowych zależności) + docs/API.md (auth/notify/obserwowalność, 40 endpointów) — commit/push
 
+## ETAP 12 — Warstwa głosowa (ARI ↔ DialogEngine) ✅ (kod tu, telefonia = Frankfurt DC)
+
+Pakiet `adam_modules/voice/` — czysta, testowalna logika rozmowy (bez sieci/audio).
+Porty ASR/LLM/TTS/ARI to `Protocol`; dev = Echo/Rule/Text/Fake, prod = Whisper/GPT/ElevenLabs/Asterisk.
+
+### 12.1 Porty (ASR/LLM/TTS) ✅
+- [x] E12.1.1 `ports.py`: `ASRPort/LLMPort/TTSPort` (Protocol) + typy `Transcript/LLMReply/Utterance`
+- [x] E12.1.2 impl. dev bez sieci: `EchoASR` (konwencja `say:<tekst>`), `RuleLLM` (intencje: bye/good/meds/reprompt/followup), `TextTTS`
+
+### 12.2 DialogEngine (maszyna stanów) ✅
+- [x] E12.2.1 stany `INIT→DISCLOSED→ACTIVE→ESCALATING→CLOSED`; `open()` = ujawnienie AI (art. 50), `handle_user()`, `close()`
+- [x] E12.2.2 integracja F5 (System Prompt) + F14 (profil mowy → `rate_wpm=round(140*speech_rate)`, `volume_db`) + F3 (CrisisDetector na każdej turze)
+- [x] E12.2.3 PURPLE/RED przerywa Q&A → eskalacja; trigger zapisywany tylko poza zielonym
+
+### 12.3 Kanał ARI + CallSession ✅
+- [x] E12.3.1 `AriChannel` (Protocol: play/record_utterance/hangup) + `FakeChannel` sterowany skryptem
+- [x] E12.3.2 `CallSession.run()`: open → pętla record/ASR/handle/TTS/play → close + hangup (break na CLOSED/ESCALATING, `max_turns`)
+
+### 12.4 Endpoint + testy ✅
+- [x] E12.4.1 `POST /api/voice/simulate-call` (404 gdy brak seniora; zwraca transkrypcję + poziom + parametry mowy) — wpięty w `create_app`
+- [x] E12.4.2 `test_voice.py` — **19 testów** (porty, stany silnika, profil mowy, kryzys, FakeChannel/CallSession, endpoint 200/404) → **229 testów total**
+
+## ETAP 15 — Przygotowanie wdrożenia Adam API (Docker/compose/runbook) ✅
+
+Adam API jako **osobny** deploy od agenta głosowego AVA (`agent/adam_modules/deploy/`).
+
+### 15.1 Obraz + stack ✅
+- [x] E15.1.1 `Dockerfile.adam-api`: multi-stage (venv builder → slim runtime), non-root uid 10001, gunicorn+UvicornWorker, HEALTHCHECK `/health`, EXPOSE 8787
+- [x] E15.1.2 `docker-compose.adam.yml`: `adam-api` + `adam-postgres` (bez portów zewn.) + `adam-redis`, depends_on healthy, wolumen `adam-pgdata`
+
+### 15.2 Entrypoint + konfiguracja ✅
+- [x] E15.2.1 `entrypoint.sh`: `alembic upgrade head` (env.py czyta `ADAM_DATABASE_URL`) → gunicorn; toggle `ADAM_RUN_MIGRATIONS`
+- [x] E15.2.2 `.env.adam.example`: PII/JWT/notify/CORS/runtime + komendy generowania sekretów
+
+### 15.3 Runbook ✅
+- [x] E15.3.1 `docs/DEPLOY-ADAM.md` (Frankfurt DC): sekrety, migracje, smoke test, skalowanie gunicorn, monitoring `/metrics`, backup PG, checklista bezpieczeństwa — komplementarny do `BACKEND-DEPLOY.md`
+
 ---
 
 ## Zasada realizacji

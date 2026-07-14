@@ -1,0 +1,56 @@
+# ==================================================================
+# Adam API — obraz produkcyjny (ETAP 15.1)
+# Warstwa REST panelu opiekuna/admina (adam_modules/api).
+# Multi-stage: builder (venv) → slim runtime (non-root, gunicorn/uvicorn).
+#
+# Build (z katalogu `agent/`):
+#   docker build -f adam_modules/deploy/Dockerfile.adam-api -t adam-api:latest .
+#
+# Uruchomienie docelowe: Frankfurt DC (patrz docs/DEPLOY-ADAM.md).
+# ==================================================================
+
+# --- Stage 1: builder ---
+FROM python:3.11-slim-bookworm AS builder
+WORKDIR /usr/src/app
+
+RUN apt-get -o Acquire::Retries=5 update \
+    && apt-get install -y --no-install-recommends build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Zależności backendu Adama (F1–F18 + API + auth/obserwowalność)
+COPY adam_modules/requirements.txt ./requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt \
+    && pip install --no-cache-dir "gunicorn>=21.2"
+
+# --- Stage 2: runtime ---
+FROM python:3.11-slim-bookworm
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PATH="/opt/venv/bin:$PATH"
+
+# tzdata dla poprawnych stref czasowych (harmonogram welfare-check F2)
+RUN apt-get -o Acquire::Retries=5 update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# użytkownik nie-root
+RUN useradd --create-home --uid 10001 adam
+WORKDIR /app
+
+COPY --from=builder /opt/venv /opt/venv
+# kod: pakiet adam_modules + alembic
+COPY adam_modules /app/adam_modules
+COPY --chown=adam:adam adam_modules/deploy/entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+USER adam
+EXPOSE 8787
+
+# healthcheck: /health musi zwracać 200
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+    CMD curl -fsS http://localhost:8787/health || exit 1
+
+ENTRYPOINT ["/app/entrypoint.sh"]
