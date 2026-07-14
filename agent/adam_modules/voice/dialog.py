@@ -15,6 +15,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
+from typing import Callable
 
 from adam_modules.semaphore.detector import CrisisDetector
 from adam_modules.semaphore.models import SemaphoreLevel
@@ -55,6 +56,22 @@ class DialogTurn:
 
 
 @dataclass
+class DecisionEvent:
+    """Ślad decyzji konsensusu na turze seniora (F14/F16, ETAP 30).
+
+    Emitowany przez DialogEngine na każdej ocenionej wypowiedzi. Caller (warstwa
+    I/O / API) może go utrwalić przez QAService.record_decision i — dla ESCALATE
+    — wywołać EmergencyService.dispatch. Silnik pozostaje bez zależności od DB.
+    """
+    decision: str                       # EXECUTE/DEFER/ESCALATE/ABSTAIN (wartość ConsensusDecision)
+    level: str                          # kolor semafora
+    trigger: str | None = None
+    confidence: float | None = None
+    needs_review: bool = False
+    text: str = ""                      # oryginalna wypowiedź seniora (do telemetrii/nastroju)
+
+
+@dataclass
 class CallOutcome:
     senior_external_id: str | None
     turns: list[DialogTurn] = field(default_factory=list)
@@ -64,6 +81,7 @@ class CallOutcome:
     disclosure_said: bool = False
     needs_review: bool = False          # konsensus F16 zgłosił rozbieżność/braki (ETAP 17)
     guard_flags: list[str] = field(default_factory=list)  # F4 (ETAP 24): zdarzenia guardrails I/O
+    decisions: list[DecisionEvent] = field(default_factory=list)  # F16 (ETAP 30): telemetria decyzji
 
     def transcript(self) -> str:
         return "\n".join(f"{t.speaker.value}: {t.text}" for t in self.turns)
@@ -94,6 +112,7 @@ class DialogEngine:
         use_consensus: bool = True,
         memory_context: str | None = None,
         regional_dialect: bool = False,
+        on_decision: Callable[[DecisionEvent], None] | None = None,
     ):
         self.llm = llm
         self.senior_name = senior_name
@@ -107,6 +126,8 @@ class DialogEngine:
             llm, detector=self._detector, use_llm=use_consensus,
         )
         self.state = DialogState.INIT
+        # F16 (ETAP 30): hook telemetrii decyzji — caller utrwala/dispatch 112.
+        self._on_decision = on_decision
 
         # profil mowy (F14) → parametry TTS
         self.profile = build_speech_profile(
@@ -169,10 +190,16 @@ class DialogEngine:
         llm_input_text = in_guard.text
 
         # zapisz turę seniora + ocena kryzysu
+        decision_str = "EXECUTE"
+        confidence: float | None = None
+        needs_review = False
         if self._use_consensus:
             assessment = self._consensus.assess(text)
             level = assessment.level
             trigger_enum = assessment.trigger
+            decision_str = assessment.decision.value
+            confidence = assessment.confidence
+            needs_review = assessment.needs_review
             if assessment.needs_review:
                 self.outcome.needs_review = True
         else:
@@ -180,8 +207,19 @@ class DialogEngine:
             classification = self._detector.to_classification(detections)
             level = classification.level
             trigger_enum = classification.trigger
+            confidence = getattr(classification, "confidence", None)
         # trigger istotny tylko poza zielonym (zielony = routine_ok)
         trigger = trigger_enum.value if level != SemaphoreLevel.green else None
+
+        # F16 (ETAP 30) — telemetria decyzji: emitujemy zdarzenie i (opcjonalnie)
+        # przekazujemy je do callera (QAService.record_decision + dispatch 112).
+        event = DecisionEvent(
+            decision=decision_str, level=level.value, trigger=trigger,
+            confidence=confidence, needs_review=needs_review, text=text,
+        )
+        self.outcome.decisions.append(event)
+        if self._on_decision is not None:
+            self._on_decision(event)
         self._history.append({"role": "user", "content": text})
         self.outcome.turns.append(DialogTurn(
             speaker=Speaker.SENIOR, text=text, state=self.state,

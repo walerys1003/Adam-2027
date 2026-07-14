@@ -50,6 +50,16 @@ class DecisionKind(str, enum.Enum):
     escalate = "ESCALATE"
     abstain = "ABSTAIN"
 
+    @classmethod
+    def from_consensus(cls, value: str) -> "DecisionKind":
+        """Mapuje ConsensusDecision.value (małe litery) → DecisionKind (ETAP 30).
+
+        ConsensusDecision używa wartości 'execute'/'defer'/'escalate'/'abstain',
+        a tabela telemetrii przechowuje wersje wielkimi literami — ta metoda
+        domyka most między warstwą logiki (F14) a warstwą danych (F16).
+        """
+        return cls[value.lower()]
+
 
 class QAEvaluation(Base):
     __tablename__ = "qa_evaluations"

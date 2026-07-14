@@ -404,3 +404,56 @@ def test_emergency_history_and_dialplan(client):
     rd = client.get(f"/api/seniors/{s['id']}/emergency/dialplan")
     assert rd.status_code == 200
     assert "[adam-emergency]" in rd.json()["dialplan"]
+
+
+# ---- QA Loop F16 (ETAP 30) ----
+def test_qa_evaluate_endpoint(client):
+    s = _make_senior(client)
+    r = client.post("/api/qa/evaluate", json={
+        "senior_id": s["id"], "conversation_ref": "c1",
+        "turns": [
+            {"role": "adam", "text": "Jestem cyfrowym asystentem Adam"},
+            {"role": "senior", "text": "Dzień dobry, dziękuję"},
+        ],
+    })
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert 0 <= body["score"] <= 100
+    assert "id" in body
+
+
+def test_qa_audit_creates_improvement(client):
+    r = client.post("/api/qa/audits", json={
+        "auditor": "koordynator", "verdict": "unsafe",
+        "note": "pominięto eskalację", "auto_improvements": True,
+    })
+    assert r.status_code == 200, r.text
+    assert len(r.json()["improvements_created"]) == 1
+    rb = client.get("/api/qa/improvements")
+    assert rb.status_code == 200 and len(rb.json()) == 1
+
+
+def test_qa_sentiment_endpoint(client):
+    s = _make_senior(client)
+    r = client.post("/api/qa/sentiment", json={
+        "senior_id": s["id"], "text": "jestem samotny i smutno mi",
+        "semaphore_level": "yellow",
+    })
+    assert r.status_code == 200, r.text
+    assert r.json()["label"] == "distressed"
+    rt = client.get(f"/api/qa/sentiment/{s['id']}")
+    assert rt.status_code == 200
+    assert rt.json()["average"] is not None
+
+
+def test_qa_decision_telemetry_endpoint(client):
+    s = _make_senior(client)
+    r = client.post("/api/qa/decisions", json={
+        "decision": "ESCALATE", "senior_id": s["id"], "level": "red",
+        "trigger": "chest_pain", "escalated_112": True,
+    })
+    assert r.status_code == 200, r.text
+    assert r.json()["escalated_112"] is True
+    rs = client.get("/api/qa/stats/escalations")
+    assert rs.status_code == 200
+    assert rs.json()["escalated_112"] == 1

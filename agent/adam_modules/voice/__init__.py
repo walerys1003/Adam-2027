@@ -16,7 +16,7 @@ from .ports import (
     Transcript, LLMReply, LLMClassification, Utterance,
     EchoASR, RuleLLM, TextTTS,
 )
-from .dialog import DialogEngine, DialogState, DialogTurn, CallOutcome, Speaker
+from .dialog import DialogEngine, DialogState, DialogTurn, CallOutcome, Speaker, DecisionEvent
 from .ari import AriChannel, FakeChannel, CallSession
 from .consensus import CrisisConsensus, CrisisVoteResult
 from .asterisk import AsteriskAriChannel
@@ -30,7 +30,7 @@ __all__ = [
     "ASRPort", "LLMPort", "TTSPort",
     "Transcript", "LLMReply", "LLMClassification", "Utterance",
     "EchoASR", "RuleLLM", "TextTTS",
-    "DialogEngine", "DialogState", "DialogTurn", "CallOutcome", "Speaker",
+    "DialogEngine", "DialogState", "DialogTurn", "CallOutcome", "Speaker", "DecisionEvent",
     "AriChannel", "FakeChannel", "CallSession",
     "CrisisConsensus", "CrisisVoteResult",
     "AsteriskAriChannel",
