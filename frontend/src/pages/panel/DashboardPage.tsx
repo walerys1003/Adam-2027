@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { Users, Phone, Pill, Siren } from 'lucide-react'
 import type { Senior } from '@/types/domain'
 import { api } from '@/lib/api/client'
-import { PanelLayout } from '@/components/panel/PanelLayout'
 import { PageHead } from '@/components/panel/PageHead'
 import { CriticalAlertBanner } from '@/components/panel/CriticalAlertBanner'
 import { SeniorCard } from '@/components/senior'
@@ -27,7 +26,7 @@ export function DashboardPage() {
   const alerts30d = seniors.filter((s) => s.semaphore === 'red' || s.semaphore === 'purple').length
 
   return (
-    <PanelLayout>
+    <>
       <PageHead eyebrow="Wtorek, 12 lipca" title="Dzień dobry, Anno" subtitle="Podsumowanie Twoich bliskich" />
 
       <CriticalAlertBanner seniors={seniors} />
@@ -59,6 +58,6 @@ export function DashboardPage() {
           ))}
         </div>
       )}
-    </PanelLayout>
+    </>
   )
 }

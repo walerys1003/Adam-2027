@@ -61,6 +61,17 @@ export const api = {
   cancelOrder: (id: string) =>
     USE_MOCK ? mock.cancelOrder(id) : realFetch(`/api/orders/${id}`, { method: 'DELETE' }),
   listOrders: () => (USE_MOCK ? mock.listOrders() : realFetch('/api/orders')),
+
+  // Messages
+  listThreads: () => (USE_MOCK ? mock.listThreads() : realFetch('/api/threads')),
+  sendMessage: (threadId: string, body: string) =>
+    USE_MOCK
+      ? mock.sendMessage(threadId, body)
+      : realFetch(`/api/threads/${threadId}/messages`, { method: 'POST', body: JSON.stringify({ body }) }),
+
+  // Account
+  listInvoices: () => (USE_MOCK ? mock.listInvoices() : realFetch('/api/billing/invoices')),
+  listSessions: () => (USE_MOCK ? mock.listSessions() : realFetch('/api/account/sessions')),
 }
 
 export type { LoginPayload }

@@ -173,6 +173,53 @@ export interface Order {
   createdAt: string
 }
 
+export interface OrderCategory {
+  id: string
+  label: string
+  icon: string // lucide icon name
+  examples: string
+}
+
+/* ---------- Messages ---------- */
+
+export interface Message {
+  id: string
+  from: 'adam' | 'coordinator' | 'system' | 'me'
+  authorName: string
+  body: string
+  timestamp: string
+  read: boolean
+}
+
+export interface Thread {
+  id: string
+  subject: string
+  seniorId?: string
+  seniorName?: string
+  category: 'alert' | 'report' | 'coordinator' | 'system'
+  lastMessageAt: string
+  unread: number
+  messages: Message[]
+}
+
+/* ---------- Account ---------- */
+
+export interface Invoice {
+  id: string
+  period: string
+  amount: string
+  status: 'paid' | 'pending' | 'overdue'
+  pdfUrl?: string
+}
+
+export interface Session {
+  id: string
+  device: string
+  location: string
+  lastActive: string
+  current: boolean
+}
+
 /* ---------- Auth ---------- */
 
 export interface User {

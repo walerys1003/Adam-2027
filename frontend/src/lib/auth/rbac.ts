@@ -14,6 +14,7 @@ export type Permission =
   | 'order:create'
   | 'order:cancel'
   | 'wearable:threshold:edit' // coordinator/doctor only — NOT caregiver
+  | 'family:invite' // caregiver/admin — NOT family_member
   | 'admin:users:manage'
   | 'admin:marketplace:manage'
   | 'admin:reports:view'
@@ -28,12 +29,13 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'order:create',
     'order:cancel',
     'wearable:threshold:edit',
+    'family:invite',
     'admin:users:manage',
     'admin:marketplace:manage',
     'admin:reports:view',
     'admin:fleet:manage',
   ],
-  caregiver: ['panel:caregiver', 'senior:view', 'senior:call', 'order:create', 'order:cancel'],
+  caregiver: ['panel:caregiver', 'senior:view', 'senior:call', 'order:create', 'order:cancel', 'family:invite'],
   family_member: ['panel:caregiver', 'senior:view', 'senior:call', 'order:create'],
 }
 

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate, Outlet } from 'react-router-dom'
 import type { ReactNode } from 'react'
 import {
   LayoutDashboard,
@@ -17,6 +17,7 @@ import {
 import { cn } from '@/lib/cn'
 import { useAuth } from '@/lib/auth/AuthContext'
 import { ROLE_LABEL } from '@/lib/auth/rbac'
+import { useSSE } from '@/lib/hooks/useSSE'
 import { Avatar } from '@/components/ui'
 
 interface NavItem {
@@ -69,10 +70,14 @@ function SidebarLink({ item, onClick }: { item: NavItem; onClick?: () => void })
   )
 }
 
-export function PanelLayout({ children }: { children: ReactNode }) {
+export function PanelLayout({ children }: { children?: ReactNode }) {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const { connected, events } = useSSE()
+  const lastEventTime = events[0]
+    ? new Date(events[0].timestamp).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })
+    : '—'
 
   const doLogout = () => {
     logout()
@@ -138,8 +143,8 @@ export function PanelLayout({ children }: { children: ReactNode }) {
             <Menu size={24} />
           </button>
           <div className="hidden lg:flex items-center gap-2 text-label text-ink-500">
-            <span className="w-1.5 h-1.5 rounded-full bg-sem-green animate-sem-dot-pulse" />
-            Live · Odświeżenie 14:22
+            <span className={cn('w-1.5 h-1.5 rounded-full', connected ? 'bg-sem-green animate-sem-dot-pulse' : 'bg-ink-300')} />
+            {connected ? `Live · ostatnie zdarzenie ${lastEventTime}` : 'Offline'}
           </div>
           <div className="flex items-center gap-3">
             <div className="text-right leading-tight hidden sm:block">
@@ -150,7 +155,7 @@ export function PanelLayout({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        <main className="flex-1 p-4 lg:p-8 pb-24 lg:pb-8">{children}</main>
+        <main className="flex-1 p-4 lg:p-8 pb-24 lg:pb-8">{children ?? <Outlet />}</main>
       </div>
 
       {/* Mobile bottom nav */}

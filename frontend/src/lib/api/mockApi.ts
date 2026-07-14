@@ -13,6 +13,9 @@ import type {
   Order,
   User,
   Role,
+  Thread,
+  Invoice,
+  Session,
 } from '@/types/domain'
 import {
   MOCK_SENIORS,
@@ -20,6 +23,7 @@ import {
   MOCK_MOOD_30D,
   MOCK_MOOD_MARKERS,
 } from '@/data/mockSeniors'
+import { SEED_ORDERS, MOCK_THREADS, MOCK_INVOICES, MOCK_SESSIONS } from '@/data/mockPanel'
 
 const LATENCY = 260 // ms — simulate network
 
@@ -103,7 +107,7 @@ export async function getMood(
 
 /* ---------- Orders (Marketplace) ---------- */
 
-const orders: Order[] = []
+const orders: Order[] = [...SEED_ORDERS]
 
 export async function createOrder(input: {
   seniorId: string
@@ -141,4 +145,34 @@ export async function cancelOrder(id: string): Promise<{ ok: boolean }> {
 
 export async function listOrders(): Promise<Order[]> {
   return delay([...orders])
+}
+
+/* ---------- Messages ---------- */
+
+export async function listThreads(): Promise<Thread[]> {
+  return delay([...MOCK_THREADS])
+}
+
+export async function sendMessage(threadId: string, body: string): Promise<Thread> {
+  const thread = MOCK_THREADS.find((t) => t.id === threadId) ?? MOCK_THREADS[0]
+  thread.messages.push({
+    id: 'm-' + Date.now(),
+    from: 'me',
+    authorName: 'Ja',
+    body,
+    timestamp: new Date().toISOString(),
+    read: true,
+  })
+  thread.lastMessageAt = new Date().toISOString()
+  return delay({ ...thread })
+}
+
+/* ---------- Account ---------- */
+
+export async function listInvoices(): Promise<Invoice[]> {
+  return delay([...MOCK_INVOICES])
+}
+
+export async function listSessions(): Promise<Session[]> {
+  return delay([...MOCK_SESSIONS])
 }

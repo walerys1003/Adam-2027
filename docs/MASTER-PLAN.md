@@ -51,53 +51,53 @@
 - [x] E4.1.4 DashboardPage (KPI strip + lista SeniorCard)
 
 ### 4.2 Ekran 2: Widok seniora + 8 tabów (`/panel/senior/:id`)
-- [ ] E4.2.1 SeniorDetailHead (avatar 88px, semafor, 5 quick stats, akcje: Zadzwoń/Notatka/Kontakt)
-- [ ] E4.2.2 Tabs (komponent ui/ z 8 zakładkami, deep-link `?tab=`)
-- [ ] E4.2.3 Tab Przegląd: MoodChart 14d + RecentCalls(3) + MedList summary + AI Observations + EmergencyContacts
-- [ ] E4.2.4 Tab Rozmowy: tabela transkryptów + tools + audio playback (mock)
-- [ ] E4.2.5 Tab Leki: harmonogram rano/południe/wieczór + heatmap adherence 30d (7×5)
-- [ ] E4.2.6 Tab Wearable: live vitals 4× + HR chart 24h (threshold band) + sleep phases + steps 7d + progi READ-ONLY + notatki kontekstowe
-- [ ] E4.2.7 Tab Alerty: timeline historii z poziomami semafora
-- [ ] E4.2.8 Tab Raporty: karty tygodniowy/miesięczny PDF
-- [ ] E4.2.9 Tab Rodzina (RBAC): kontakty alarmowe z rolami (Opiekun Główny/Opiekun/Lekarz/112)
-- [ ] E4.2.10 Tab RODO: zgody + retencja + prawo do usunięcia
+- [x] E4.2.1 SeniorDetailHead (avatar 88px, semafor, 5 quick stats, akcje: Zadzwoń/Notatka/Kontakt)
+- [x] E4.2.2 Tabs (komponent ui/ z 8 zakładkami, deep-link `?tab=`)
+- [x] E4.2.3 Tab Przegląd: MoodChart 14d + RecentCalls(3) + MedList summary + AI Observations + EmergencyContacts
+- [x] E4.2.4 Tab Rozmowy: tabela transkryptów + tools + audio playback (mock)
+- [x] E4.2.5 Tab Leki: harmonogram rano/południe/wieczór + heatmap adherence 30d (7×5)
+- [x] E4.2.6 Tab Wearable: live vitals 4× + HR chart 24h (threshold band) + sleep phases + steps 7d + progi READ-ONLY + notatki kontekstowe
+- [x] E4.2.7 Tab Alerty: timeline historii z poziomami semafora
+- [x] E4.2.8 Tab Raporty: karty tygodniowy/miesięczny PDF
+- [x] E4.2.9 Tab Rodzina (RBAC): kontakty alarmowe z rolami (Opiekun Główny/Opiekun/Lekarz/112)
+- [x] E4.2.10 Tab RODO: zgody + retencja + prawo do usunięcia
 
 ### 4.3 Ekran 3: Zamówienia (`/panel/orders`)
-- [ ] E4.3.1 Info banner „30-min okno anulowania"
-- [ ] E4.3.2 OrderCard + useCancellationCountdown (countdown 27:00)
-- [ ] E4.3.3 Sekcje: aktywne (złoty/zielony/żółty pasek), historia 30d
-- [ ] E4.3.4 CategoryPicker (10 kategorii AUTO/HYBRID/MANUAL) + createOrder/cancelOrder
+- [x] E4.3.1 Info banner „30-min okno anulowania"
+- [x] E4.3.2 OrderCard + useCancellationCountdown (countdown 27:00)
+- [x] E4.3.3 Sekcje: aktywne (złoty/zielony/żółty pasek), historia 30d
+- [x] E4.3.4 CategoryPicker (10 kategorii AUTO/HYBRID/MANUAL) + createOrder/cancelOrder
 
 ### 4.4 Ekran 4: Wiadomości (`/panel/messages`)
-- [ ] E4.4.1 3-kolumnowy inbox: InboxFilters (Adam/Koordynator/Rodzina/Partnerzy)
-- [ ] E4.4.2 MessageList (avatary, preview, badges)
-- [ ] E4.4.3 MessageThread (header + body + reply box + audio)
+- [x] E4.4.1 3-kolumnowy inbox: InboxFilters (Adam/Koordynator/Rodzina/Partnerzy)
+- [x] E4.4.2 MessageList (avatary, preview, badges)
+- [x] E4.4.3 MessageThread (header + body + reply box + audio)
 
 ### 4.5 Ekran 5: Raporty (`/panel/reports`)
-- [ ] E4.5.1 5 KPI + ReportsTrendChart 90d (mood+adherence overlay + markery)
-- [ ] E4.5.2 FeaturedReport (4 sparkline + timeline 7 dni + akcje PDF/Share/Lekarz)
-- [ ] E4.5.3 ReportsCalendarHeatmap (26 tygodni) + FHIRExportInfo + retencja
+- [x] E4.5.1 5 KPI + ReportsTrendChart 90d (mood+adherence overlay + markery)
+- [x] E4.5.2 FeaturedReport (4 sparkline + timeline 7 dni + akcje PDF/Share/Lekarz)
+- [x] E4.5.3 ReportsCalendarHeatmap (26 tygodni) + FHIRExportInfo + retencja
 
 ### 4.6 Ekran 6: Konto (`/panel/account`)
-- [ ] E4.6.1 SubscriptionHero (Rodzinny 79zł + CTA Upgrade)
-- [ ] E4.6.2 LoyaltyProgress + ReferralCard
-- [ ] E4.6.3 Banner roli + dane osobowe + „Twoi bliscy 1/5"
-- [ ] E4.6.4 SessionCard (3 urządzenia) + InvoiceTable
+- [x] E4.6.1 SubscriptionHero (Rodzinny 79zł + CTA Upgrade)
+- [x] E4.6.2 LoyaltyProgress + ReferralCard
+- [x] E4.6.3 Banner roli + dane osobowe + „Twoi bliscy 1/5"
+- [x] E4.6.4 SessionCard (3 urządzenia) + InvoiceTable
 
 ### 4.7 Ekran 7: Ustawienia (`/panel/settings`)
-- [ ] E4.7.1 Sticky sidebar 6 sekcji + status „12/12"
-- [ ] E4.7.2 NotificationMatrix 5×4 (Push/SMS/Email/Telefon × Green/Yellow/Red/Purple), Purple×Telefon locked
-- [ ] E4.7.3 QuietHours + Language + Security(2FA) + GDPR(4 karty)
+- [x] E4.7.1 Sticky sidebar 6 sekcji + status „12/12"
+- [x] E4.7.2 NotificationMatrix 5×4 (Push/SMS/Email/Telefon × Green/Yellow/Red/Purple), Purple×Telefon locked
+- [x] E4.7.3 QuietHours + Language + Security(2FA) + GDPR(4 karty)
 
 ### 4.8 Ekran 8: Pomoc (`/panel/help`)
-- [ ] E4.8.1 SupportStatusBar (4 KPI) + EmergencyBox (24/7)
-- [ ] E4.8.2 3 kanały (Chat/Telefon/Email) + VideoTutorial×4
-- [ ] E4.8.3 FAQAccordion(6) + kontakt zespół + społeczność
+- [x] E4.8.1 SupportStatusBar (4 KPI) + EmergencyBox (24/7)
+- [x] E4.8.2 3 kanały (Chat/Telefon/Email) + VideoTutorial×4
+- [x] E4.8.3 FAQAccordion(6) + kontakt zespół + społeczność
 
 ### 4.9 Domknięcie
-- [ ] E4.9.1 Routing wszystkich 8 ekranów + guards
-- [ ] E4.9.2 useSSE hook (mock event stream alertów)
-- [ ] E4.9.3 Build + Playwright weryfikacja + commit/push
+- [x] E4.9.1 Routing wszystkich 8 ekranów + guards
+- [x] E4.9.2 useSSE hook (mock event stream alertów)
+- [x] E4.9.3 Build + Playwright weryfikacja + commit/push
 
 ---
 
