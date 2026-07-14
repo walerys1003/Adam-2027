@@ -12,6 +12,7 @@ from .engine import SemaphoreEngine, Classification
 from .escalation import EscalationLadder, EscalationStep
 from .guardrails import Guardrails, GuardrailResult
 from .prompt import build_system_prompt, AI_ACT_DISCLOSURE
+from .detector import CrisisDetector, Detection, HARD_CRISIS_TRIGGERS
 
 __all__ = [
     "SemaphoreEvent", "Trigger",
@@ -19,4 +20,5 @@ __all__ = [
     "EscalationLadder", "EscalationStep",
     "Guardrails", "GuardrailResult",
     "build_system_prompt", "AI_ACT_DISCLOSURE",
+    "CrisisDetector", "Detection", "HARD_CRISIS_TRIGGERS",
 ]

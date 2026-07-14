@@ -191,9 +191,9 @@ Struktura: `agent/adam_modules/` (nowy pakiet obok AVA src/), FastAPI-style rout
 - [x] E8.5.1 MemoryChunk (embedding JSON) + pluggable Embedder + context injection do promptu (F5) (migracja 0005)
 - [x] E8.5.2 retrieve() (cosine top-k, filtr kind, scope per senior) + build_context() + forget_senior (RODO) + 13 testów
 
-### 8.6 F8 — Crisis detection
-- [ ] E8.6.1 Detektor 14+ sygnałów (chest_pain, suicide_ideation, fall…) + mapowanie na semafor
-- [ ] E8.6.2 Testy scenariuszy kryzysowych
+### 8.6 F8 — Crisis detection ✅
+- [x] E8.6.1 CrisisDetector: 15 triggerów z fraz PL + vitals (HR/SpO2/BP) → mapowanie na semafor + to_classification (przez Guardrails)
+- [x] E8.6.2 Testy scenariuszy kryzysowych (12 testów, integracja z Guardrails)
 
 ### 8.7 F9 — Dashboard rodzinny + notyfikacje
 - [ ] E8.7.1 SSE endpoint /api/events + SMS/email adapters (interfejsy)

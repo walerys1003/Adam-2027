@@ -58,7 +58,7 @@ python3 -m pytest adam_modules/tests/ -q
 | F3–F5 | Semafor + eskalacja + guardrails + prompt | ✅ SemaphoreEngine (17 triggerów, state machine) + EscalationLadder (RED/PURPLE) + Guardrails (anty-halucynacja) + System Prompt (AI Act disclosure) + migracja 0003 + 26 testów |
 | F6 | Medication tracker | ✅ leki + harmonogram (days_mask) + dose_logs + adherence (F6.2) + MedGuard flag (F6.3) + migracja 0004 + 11 testów |
 | F7 | Pamięć semantyczna (RAG) | ✅ MemoryChunk + pluggable Embedder (HashingEmbedder offline) + retrieve cosine top-k + build_context (inject do promptu F5) + forget_senior (RODO) + migracja 0005 + 13 testów |
-| F8 | Crisis detection | ⏳ |
+| F8 | Crisis detection | ✅ CrisisDetector (15 triggerów z fraz PL + vitals HR/SpO2/BP) → Classification przez Guardrails + 12 testów |
 | F9 | Dashboard rodzinny + notyfikacje | ⏳ |
 | F10 | Wearables | ⏳ |
 | F11 | Marketplace | ⏳ |
