@@ -19,6 +19,10 @@ from enum import Enum
 from adam_modules.semaphore.detector import CrisisDetector
 from adam_modules.semaphore.models import SemaphoreLevel
 from adam_modules.semaphore.prompt import build_system_prompt, AI_ACT_DISCLOSURE
+from adam_modules.semaphore.io_guards import (
+    InputGuard, OutputGuard, GuardAction,
+    SAFE_INJECTION_REPLACEMENT,
+)
 from adam_modules.speech.profile import (
     build_speech_profile, HearingLevel, CognitivePace,
 )
@@ -59,6 +63,7 @@ class CallOutcome:
     escalated: bool = False
     disclosure_said: bool = False
     needs_review: bool = False          # konsensus F16 zgłosił rozbieżność/braki (ETAP 17)
+    guard_flags: list[str] = field(default_factory=list)  # F4 (ETAP 24): zdarzenia guardrails I/O
 
     def transcript(self) -> str:
         return "\n".join(f"{t.speaker.value}: {t.text}" for t in self.turns)
@@ -148,6 +153,14 @@ class DialogEngine:
         if self.state == DialogState.CLOSED:
             raise ValueError("Rozmowa zakończona.")
 
+        # F4 (ETAP 24) — WARSTWA 1: input guard (pre-LLM).
+        # Detekcja kryzysu działa na ORYGINALNYM tekście (maskowanie PII nie może
+        # ukryć wołania o pomoc), ale do LLM trafia tekst zsanityzowany.
+        in_guard = InputGuard.sanitize(text)
+        if in_guard.flags:
+            self.outcome.guard_flags.extend(f"in:{f}" for f in in_guard.flags)
+        llm_input_text = in_guard.text
+
         # zapisz turę seniora + ocena kryzysu
         if self._use_consensus:
             assessment = self._consensus.assess(text)
@@ -180,11 +193,28 @@ class DialogEngine:
             )
             return self._adam_turn(msg, level=level, trigger=trigger)
 
-        # normalny tok — odpowiedź LLM
+        # normalny tok
         self.state = DialogState.ACTIVE
+
+        # F4 — jeśli wykryto próbę manipulacji (prompt-injection), NIE wołamy LLM:
+        # odpowiadamy bezpiecznie i zgodnie z rolą (fail-safe), by nie dać się „przełamać".
+        if in_guard.injection_detected:
+            turn = self._adam_turn(SAFE_INJECTION_REPLACEMENT, level=level, trigger=trigger)
+            return turn
+
         reply: LLMReply = self.llm.reply(
-            system_prompt=self.system_prompt, history=list(self._history), user_text=text,
+            system_prompt=self.system_prompt, history=list(self._history),
+            user_text=llm_input_text,
         )
+
+        # F4 (ETAP 24) — WARSTWA 3: output guard (post-LLM).
+        out_guard = OutputGuard.review(reply.text)
+        if out_guard.action == GuardAction.BLOCKED:
+            self.outcome.guard_flags.extend(f"out:{f}" for f in out_guard.flags)
+            # nadpisujemy niebezpieczną treść bezpiecznym zamiennikiem
+            turn = self._adam_turn(out_guard.text, level=level, trigger=trigger)
+            return turn
+
         turn = self._adam_turn(reply.text, level=level, trigger=trigger)
         if reply.finished:
             self.state = DialogState.CLOSED
