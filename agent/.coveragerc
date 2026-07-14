@@ -1,6 +1,6 @@
 # Coverage configuration for pytest-cov
 [run]
-source = src
+source = adam_modules
 omit =
     */tests/*
     */test_*.py
@@ -11,9 +11,8 @@ omit =
     */scripts/*
 
 [report]
-# Minimum coverage threshold: 60% initially
-# Plan to raise incrementally (65%, 70%, 75%, 80%)
-fail_under = 60
+# Minimum coverage threshold (ETAP 20): 85% — aktualne pokrycie ~95%.
+fail_under = 85
 precision = 2
 show_missing = True
 skip_covered = False

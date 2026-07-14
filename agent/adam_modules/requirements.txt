@@ -34,3 +34,4 @@ redis>=5.0                 # kolejka/cache eskalacji i timerów (F3.2)
 
 # --- dev / test ---
 pytest>=8.0
+pytest-cov>=5.0   # ETAP 20: gate pokrycia w CI

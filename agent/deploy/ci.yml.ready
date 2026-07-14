@@ -1,0 +1,86 @@
+name: ADAM-2027 CI
+
+# ETAP 20 — aktywne CI (backend + frontend).
+# Backend: pełny pytest (F1–F18 + ETAP 16/17/18/19) z gate pokrycia + migracje Alembic.
+# Frontend: typecheck + testy vitest + build produkcyjny.
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  backend:
+    name: Backend — pytest + coverage gate + Alembic
+    runs-on: ubuntu-latest
+    env:
+      ADAM_PII_KEY: ci-test-key-adam-2027
+      ADAM_PII_PEPPER: ci-test-pepper
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        working-directory: agent
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r adam_modules/requirements.txt
+
+      - name: Run test suite with coverage gate (>=85%)
+        working-directory: agent
+        run: |
+          python -m pytest adam_modules/tests/ -q \
+            --cov=adam_modules \
+            --cov-report=term-missing \
+            --cov-fail-under=85
+
+      - name: Verify security & voice-prod tests explicitly present
+        working-directory: agent
+        run: |
+          python -m pytest \
+            adam_modules/tests/test_security.py \
+            adam_modules/tests/test_voice_prod.py \
+            adam_modules/tests/test_voice_io.py \
+            adam_modules/tests/test_voice_stasis.py \
+            -q
+
+      - name: Verify Alembic migrations (0001–0007, SQLite)
+        working-directory: agent/adam_modules/migrations
+        run: |
+          python -m alembic upgrade head
+          python -m alembic current | grep -q '0007' || (echo "head != 0007" && exit 1)
+          python -m alembic downgrade base
+          python -m alembic upgrade head
+
+  frontend:
+    name: Frontend — typecheck + vitest + build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Typecheck
+        working-directory: frontend
+        run: npx tsc --noEmit
+
+      - name: Unit tests (vitest)
+        working-directory: frontend
+        run: npm test
+
+      - name: Production build
+        working-directory: frontend
+        run: npm run build
