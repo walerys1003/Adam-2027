@@ -261,7 +261,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     - ADAM_RATE_WINDOW  — okno w sekundach, domyślnie 60,
     - ADAM_RATE_ENABLED — '0' wyłącza (domyślnie włączony),
     - ADAM_REDIS_URL    — jeśli ustawione, limit globalny w Redis (fail-open).
-    Ścieżki wyłączone: /health, /metrics, /.
+    Ścieżki wyłączone: /health, /health/live, /health/ready, /metrics, /.
     """
 
     def __init__(self, app, capacity: float | None = None, window_s: float | None = None,
@@ -271,7 +271,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         self.window_s = float(window_s or os.getenv("ADAM_RATE_WINDOW", "60"))
         self.enabled = os.getenv("ADAM_RATE_ENABLED", "1") != "0"
         self._backend = backend or _build_rate_backend(self.capacity, self.window_s)
-        self._exempt = {"/health", "/metrics", "/"}
+        self._exempt = {"/health", "/health/live", "/health/ready", "/metrics", "/"}
 
     def _key(self, request: Request) -> str:
         client = request.client.host if request.client else "unknown"

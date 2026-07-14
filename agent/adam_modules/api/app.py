@@ -79,10 +79,47 @@ def create_app(*, init_db: bool = True) -> FastAPI:
         # Błędy walidacji domenowej (np. zły PESEL/NIP) → 422.
         return JSONResponse(status_code=422, content={"detail": str(exc)})
 
-    # ---- health ----
+    # ---- health (ETAP 23: liveness + readiness dla load balancera / k8s) ----
     @app.get("/health", tags=["system"])
     async def health():
+        """Liveness — proces żyje. Nie sprawdza zależności (szybkie, dla LB)."""
         return {"status": "ok", "service": "adam-api", "version": API_VERSION}
+
+    @app.get("/health/live", tags=["system"])
+    async def health_live():
+        """Alias liveness (konwencja k8s /health/live)."""
+        return {"status": "ok", "service": "adam-api", "version": API_VERSION}
+
+    @app.get("/health/ready", tags=["system"])
+    async def health_ready():
+        """Readiness — sprawdza realną dostępność bazy (SELECT 1).
+
+        200 = gotowy do obsługi ruchu; 503 = zależność niedostępna (DB).
+        Fail-safe: wyjątek łapany i mapowany na 503 (nigdy nie wywala procesu).
+        """
+        from sqlalchemy import text as _sql_text
+        from ..common.db import get_session
+
+        checks: dict[str, str] = {}
+        healthy = True
+        try:
+            session = get_session()
+            try:
+                session.execute(_sql_text("SELECT 1"))
+                checks["database"] = "ok"
+            finally:
+                session.close()
+        except Exception as exc:  # fail-safe → 503
+            checks["database"] = f"error: {type(exc).__name__}"
+            healthy = False
+
+        payload = {
+            "status": "ready" if healthy else "not-ready",
+            "service": "adam-api",
+            "version": API_VERSION,
+            "checks": checks,
+        }
+        return JSONResponse(status_code=200 if healthy else 503, content=payload)
 
     @app.get("/", tags=["system"])
     async def root():

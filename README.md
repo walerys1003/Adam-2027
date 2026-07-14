@@ -81,18 +81,29 @@ Szczegóły: [`rag/README.md`](rag/README.md).
 ## 🗺️ Roadmapa i status
 
 Pełna roadmapa z krytyczną analizą: **[`docs/ROADMAP.md`](docs/ROADMAP.md)**.
+Praktyczna checklista wdrożeniowa: **[`docs/DEPLOY-CHECKLIST.md`](docs/DEPLOY-CHECKLIST.md)**.
+
+**Stan kodu (2026-07):** backend **295 testów** ✅ · **51 endpointów** (12 routerów) ·
+18 modeli · 7 migracji Alembic · frontend **29 testów** adaptera · panel w pełni na żywym API.
+Pozostałe ~11% to infrastruktura + konta + klucze po stronie SilverTech (🔧 w checkliście).
 
 | Etap | Zakres | Status |
 |---|---|---|
-| 0 | Fundament repo + RAG + roadmapa | ✅ w toku |
-| 1 | Design System w kodzie (React) | ⏳ następny |
-| 2 | Landing Page (Wariant B) | ⏳ |
-| 3 | Kontrakty danych + mock API + RBAC | ⏳ |
-| 4 | Panel Opiekuna (8 ekranów, mobile-first) | ⏳ |
-| 5 | Panel Admina (redesign + nowe zakładki) | ⏳ |
-| 6 | PWA | ⏳ |
-| 7 | Capacitor iOS + Android | ⏳ (wymaga kont Apple/Google) |
-| 8+ | Moduły backendu F1–F18 | ⏳ (wymaga infra docelowej) |
+| 0 | Fundament repo + RAG + roadmapa | ✅ |
+| 1 | Design System w kodzie (React) | ✅ |
+| 2 | Landing Page (Wariant B) | ✅ |
+| 3 | Kontrakty danych + mock API + RBAC | ✅ |
+| 4 | Panel Opiekuna (8 ekranów, mobile-first) | ✅ |
+| 5 | Panel Admina (redesign + nowe zakładki) | ✅ |
+| 6 | PWA | ✅ |
+| 7 | Capacitor iOS + Android | ✅ kod (build wymaga kont Apple/Google) |
+| 8–17 | Moduły backendu F1–F18 + auth/RBAC + obserwowalność + konsensus | ✅ |
+| 18 | Realne adaptery voice (Whisper/GPT/TTS/ElevenLabs) | ✅ |
+| 19 | ARI Stasis (event layer + call-start webhook) | ✅ |
+| 20 | CI (pytest+cov ≥85% + Alembic, frontend) — gotowe do aktywacji | ✅ |
+| 21 | Frontend auth (login/refresh/me) na żywym API | ✅ |
+| 22 | Messages + Account (threads/messages/invoices/sessions) | ✅ |
+| 23 | Deploy-readiness (healthchecks + checklista + finalizacja) | ✅ |
 
 ## ⚠️ Ważne uwarunkowania techniczne
 

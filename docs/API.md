@@ -49,10 +49,13 @@ ADAM_API_KEY="$API_KEY" ADAM_CORS_ORIGINS="https://panel.adam.silvertech.pl" \
 > Uwaga SQLite: dla `:memory:` API używa `StaticPool` (współdzielone połączenie),
 > bo każde żądanie otwiera nową sesję. Produkcja to PostgreSQL — bez tego zastrzeżenia.
 
-## Mapa endpointów (41)
+## Mapa endpointów (51)
 
 ### System
-- `GET /health`, `GET /`, `GET /docs`, `GET /openapi.json`, `GET /metrics`
+- `GET /health` — liveness (zawsze 200, bez API-key, bez rate-limitu)
+- `GET /health/live` — alias liveness (konwencja k8s)
+- `GET /health/ready` — readiness (sprawdza DB `SELECT 1` → `503` gdy niedostępna)
+- `GET /`, `GET /docs`, `GET /openapi.json`, `GET /metrics`
 
 ### Auth (ETAP 11) `/api/auth`
 | Metoda | Ścieżka | Opis |
@@ -118,6 +121,15 @@ ADAM_API_KEY="$API_KEY" ADAM_CORS_ORIGINS="https://panel.adam.silvertech.pl" \
 | Metoda | Ścieżka | Opis |
 |--------|---------|------|
 | POST | `/api/voice/simulate-call` | symulacja pełnej rozmowy tura-po-turze (FakeChannel + RuleLLM): ujawnienie AI → Q&A → ew. eskalacja; zwraca transkrypcję, poziom semafora, `rate_wpm`/`volume_db` profilu mowy |
+| POST | `/api/voice/call-start` | webhook Stasis (ETAP 19) — start rozmowy z ARI; w dev bez originatora zwraca `accepted=false` (fail-safe) |
+
+### Konto/Wiadomości (ETAP 22) `/api/account`
+| Metoda | Ścieżka | Opis |
+|--------|---------|------|
+| GET | `/api/account/threads` | wątki wiadomości (agregacja `Notification` per senior) |
+| POST | `/api/account/threads/{senior_ext}/messages` | wyślij wiadomość (trwały `Notification` koordynatora) |
+| GET | `/api/account/invoices` | faktury (pochodne z cen pakietów × aktywni seniorzy × okresy) |
+| GET | `/api/account/sessions` | sesje zalogowanego użytkownika (z JWT) |
 
 > **Warstwa głosowa (F5+F14+F3):** `DialogEngine` to czysta maszyna stanów
 > (`INIT → DISCLOSED → ACTIVE → ESCALATING → CLOSED`), integrująca System Prompt
@@ -170,7 +182,7 @@ ADAM_API_KEY="$API_KEY" ADAM_CORS_ORIGINS="https://panel.adam.silvertech.pl" \
 - **Request-ID** (`X-Request-ID`, propagowany z żądania lub generowany) + **czas odpowiedzi** (`X-Response-Time-ms`).
 - **Log strukturalny** (`adam.api`): metoda, ścieżka, status, req_id, czas.
 - **Rate-limit** token-bucket per-klient (`ADAM_RATE_LIMIT`/`WINDOW`) → `429` + `Retry-After`;
-  `/health`, `/metrics`, `/` wyłączone.
+  `/health`, `/health/live`, `/health/ready`, `/metrics`, `/` wyłączone.
 - **`GET /metrics`** — ekspozycja w formacie Prometheus (liczniki wg metody/kodu, średnia latencja, odrzucenia rate-limit).
 
 ### Bezpieczeństwo i rate-limit rozproszony (ETAP 16)
@@ -201,7 +213,10 @@ python3 -m pytest adam_modules/tests/test_middleware.py -q   # 7 testów obserwo
 python3 -m pytest adam_modules/tests/test_voice.py -q        # 19 testów warstwy głosowej (ETAP 12)
 python3 -m pytest adam_modules/tests/test_security.py -q     # 12 testów bezpieczeństwa/rate-limit (ETAP 16)
 python3 -m pytest adam_modules/tests/test_voice_prod.py -q   # 15 testów konsensusu + ARI (ETAP 17)
-python3 -m pytest adam_modules/tests/ -q                     # 292 testów (F1–F18 + API + 11/12/13/14/16/17)
+python3 -m pytest adam_modules/tests/test_voice_io.py -q     # 17 testów realnych adapterów voice (ETAP 18)
+python3 -m pytest adam_modules/tests/test_voice_stasis.py -q # 11 testów Stasis/ARI (ETAP 19)
+python3 -m pytest adam_modules/tests/test_account.py -q      # 7 testów konta/wiadomości (ETAP 22)
+python3 -m pytest adam_modules/tests/ -q                     # 295 testów (F1–F18 + API + 11/12/13/14/16/17/18/19/22/23)
 ```
 
 ## Integracja z frontendem (ETAP 10)
@@ -250,6 +265,6 @@ ADAM_DATABASE_URL="sqlite:////tmp/adam_live.db" \
 
 # 2. frontend — testy adaptera + build
 cd frontend
-npx vitest run src/lib/api/realApi.test.ts   # 17 testów adaptera
+npx vitest run src/lib/api/realApi.test.ts   # 29 testów adaptera (auth + seniors/orders + messages/account)
 npm run build                                 # tsc -b && vite build (weryfikacja typów)
 ```

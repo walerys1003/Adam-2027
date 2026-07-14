@@ -38,6 +38,28 @@ def test_health(client):
     assert r.json()["status"] == "ok"
 
 
+def test_health_live(client):
+    r = client.get("/health/live")
+    assert r.status_code == 200
+    assert r.json()["status"] == "ok"
+
+
+def test_health_ready_ok_with_db(client):
+    """Readiness zwraca 200 + database:ok gdy baza dostępna (ETAP 23)."""
+    r = client.get("/health/ready")
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["status"] == "ready"
+    assert body["checks"]["database"] == "ok"
+
+
+def test_health_endpoints_no_api_key_needed(client):
+    """Health musi być dostępny bez X-API-Key (dla load balancera / k8s)."""
+    for path in ("/health", "/health/live", "/health/ready"):
+        r = client.get(path)
+        assert r.status_code in (200, 503), f"{path} → {r.status_code}"
+
+
 def test_openapi_available(client):
     r = client.get("/openapi.json")
     assert r.status_code == 200
