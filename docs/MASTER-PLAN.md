@@ -161,7 +161,7 @@
 
 ---
 
-## ETAP 8+ — Backend F1–F18 (Python) 🟡/🔴 (kod tu, uruchomienie = Frankfurt DC)
+## ETAP 8+ — Backend F1–F18 (Python) ✅ (kod tu, uruchomienie = Frankfurt DC)
 
 Struktura: `agent/adam_modules/` (nowy pakiet obok AVA src/), FastAPI-style routery + SQLAlchemy modele + serwisy + Alembic migracje + testy pytest.
 
@@ -211,17 +211,17 @@ Struktura: `agent/adam_modules/` (nowy pakiet obok AVA src/), FastAPI-style rout
 - [x] E8.10.1 Retencja (nagrania 30d/transkrypty 365d/raporty 730d) + soft-delete + DataProcessingLog (art.30)
 - [x] E8.10.2 Export danych (art.15/20) + prawo do zapomnienia (art.17, erase cross-module + anonimizacja) + 8 testów
 
-### 8.11 F13–F18
-- [ ] E8.11.1 F13 AI Act compliance (rejestr, disclosure log)
-- [ ] E8.11.2 F14 Optymalizacja mowy senioralnej (audio profile senior)
-- [ ] E8.11.3 F15 QA (metryki jakości rozmów)
-- [ ] E8.11.4 F16 Multi-model consensus (klasyfikacja krytyczna 2+ modele)
-- [ ] E8.11.5 F17 Integracja 112 (payload adres/wiek/leki)
-- [ ] E8.11.6 F18 Testy E2E + suite pytest + CI
+### 8.11 F13–F18 ✅
+- [x] E8.11.1 F13 AI Act compliance (SYSTEM_REGISTER + DisclosureLog, migracja 0007, 5 testów)
+- [x] E8.11.2 F14 Optymalizacja mowy senioralnej (build_speech_profile: niedosłuch/tempo/wiek → parametry TTS, 6 testów)
+- [x] E8.11.3 F15 QA (QAEvaluator: score 0-100 + flagi + needs_human_review, 6 testów)
+- [x] E8.11.4 F16 Multi-model consensus (fail-safe: wyższy poziom przy rozbieżności, MIN 2 źródła dla krytycznych, 6 testów)
+- [x] E8.11.5 F17 Integracja 112 (EmergencyService: payload adres/wiek/leki/vitals + dispatch_summary, 5 testów)
+- [x] E8.11.6 F18 Testy E2E (pełny flow kryzys→112, rutyna, state machine, 3 testy) — 154 testy total
 
-### 8.12 Domknięcie backendu
-- [ ] E8.12.1 requirements.txt modułów + README uruchomienia (docker-compose docelowy)
-- [ ] E8.12.2 docs/BACKEND-DEPLOY.md (Frankfurt DC, Asterisk, PG, Redis)
+### 8.12 Domknięcie backendu ✅
+- [x] E8.12.1 requirements.txt modułów (F1–F18: rdzeń + prod PG/Redis + adaptery opcjonalne)
+- [x] E8.12.2 docs/BACKEND-DEPLOY.md (Frankfurt DC, Asterisk ARI, PostgreSQL, Redis, docker-compose, adaptery prod)
 
 ---
 

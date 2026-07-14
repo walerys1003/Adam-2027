@@ -1,11 +1,21 @@
-# Backend Adam (adam_modules) — zależności F1+
+# Backend Adam (adam_modules) — zależności F1–F18
 # Uruchomienie docelowe: Frankfurt DC (patrz docs/BACKEND-DEPLOY.md)
 
-SQLAlchemy>=2.0,<2.1
-alembic>=1.13
-cryptography>=42.0
-pydantic>=2.5,<3.0
-APScheduler>=3.10
+# --- rdzeń ---
+SQLAlchemy>=2.0,<2.1        # ORM (DeclarativeBase, Mapped/mapped_column)
+alembic>=1.13              # migracje (0001–0007, autogenerate)
+cryptography>=42.0         # Fernet (szyfrowanie PII) + blind index
+pydantic>=2.5,<3.0         # schematy walidacyjne (Pydantic v2)
+APScheduler>=3.10          # harmonogram welfare-check (F2)
 
-# Dev / test
+# --- produkcja (Frankfurt DC) ---
+psycopg[binary]>=3.1       # sterownik PostgreSQL (prod; dev używa SQLite)
+redis>=5.0                 # kolejka/cache eskalacji i timerów (F3.2)
+
+# --- opcjonalne (podmieniane adaptery, patrz docs) ---
+# twilio            # adapter SMS/telefon (F9)
+# sentence-transformers / openai  # embeddery pamięci semantycznej (F7)
+# httpx             # klienci REST wearables (F10) i modeli consensus (F16)
+
+# --- dev / test ---
 pytest>=8.0

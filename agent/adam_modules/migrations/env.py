@@ -23,6 +23,7 @@ from adam_modules.family import models as _family  # noqa: E402,F401
 from adam_modules.wearables import models as _wearables  # noqa: E402,F401
 from adam_modules.marketplace import models as _marketplace  # noqa: E402,F401
 from adam_modules.rodo import models as _rodo  # noqa: E402,F401
+from adam_modules.compliance import models as _compliance  # noqa: E402,F401
 
 config = context.config
 

@@ -72,5 +72,6 @@ def create_all():
     from adam_modules.wearables import models as _wear_models  # noqa: F401
     from adam_modules.marketplace import models as _market_models  # noqa: F401
     from adam_modules.rodo import models as _rodo_models  # noqa: F401
+    from adam_modules.compliance import models as _compliance_models  # noqa: F401
 
     Base.metadata.create_all(_engine)

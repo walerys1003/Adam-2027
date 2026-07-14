@@ -63,4 +63,11 @@ python3 -m pytest adam_modules/tests/ -q
 | F10 | Wearables | ✅ adaptery Xiaomi/Apple/Garmin/Fitbit + threshold engine (auto+override) + audyt SHA-256 + migracja 0006 + 9 testów |
 | F11 | Marketplace | ✅ Partner/Service/Order + 10 kategorii + weryfikacja NIP/OC + anty-fraud (suspend) + okno anulowania 30min + migracja 0006 + 15 testów |
 | F12 | RODO (retencja, prawo do zapomnienia) | ✅ retencja + soft-delete + export (art.15/20) + erase cross-module (art.17) + DataProcessingLog (art.30) + migracja 0006 + 8 testów |
-| F13–F18 | AI Act / mowa / QA / consensus / 112 / E2E | ⏳ |
+| F13 | AI Act compliance | ✅ SYSTEM_REGISTER (art.11/zał.IV) + DisclosureLog (art.50) + assert_disclosed + migracja 0007 + 5 testów |
+| F14 | Optymalizacja mowy senioralnej | ✅ build_speech_profile (niedosłuch + tempo + wiek → tempo/głośność/pauzy/ton/powtórzenia) → inject do promptu F5 + 6 testów |
+| F15 | QA (metryki jakości rozmów) | ✅ QAEvaluator (0-100: disclosure/responsiveness/ASR/przerwania/kompletność) + needs_human_review + 6 testów |
+| F16 | Multi-model consensus | ✅ ConsensusEngine (≥2 źródła, fail-safe wyższy poziom przy rozbieżności, needs_review) + 6 testów |
+| F17 | Integracja 112 | ✅ EmergencyService (payload: adres/wiek/leki/vitals + dispatch_summary) + 5 testów |
+| F18 | Testy E2E + CI | ✅ pełny przepływ PURPLE (detekcja→consensus→guardrails→semafor→eskalacja→rodzina→112→disclosure→RODO) + scenariusze GREEN/state-machine + GitHub Actions CI (`.github/workflows/backend-ci.yml`) + 6 testów E2E |
+
+**Łącznie: 154 testy, 7 migracji (0001–0007), CI (pytest + Alembic upgrade/downgrade). Backend F1–F18 kompletny.**
