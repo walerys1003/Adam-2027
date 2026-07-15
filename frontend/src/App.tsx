@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, useNavigate, Navigate } from 'react-router-dom'
 import { AuthProvider } from '@/lib/auth/AuthContext'
+import { LiveAnnouncerProvider } from '@/lib/a11y/LiveAnnouncer'
 import { RequireAuth } from '@/lib/auth/RequireAuth'
 import { LandingPage } from '@/pages/LandingPage'
 import { DesignSystemPage } from '@/pages/DesignSystemPage'
@@ -51,6 +52,7 @@ function LandingRoute() {
 export default function App() {
   return (
     <AuthProvider>
+      <LiveAnnouncerProvider>
       <BrowserRouter>
         <InstallPrompt />
         <Routes>
@@ -119,6 +121,7 @@ export default function App() {
           </Route>
         </Routes>
       </BrowserRouter>
+      </LiveAnnouncerProvider>
     </AuthProvider>
   )
 }

@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -56,5 +57,11 @@ export default defineConfig({
     build: {
         outDir: 'dist',
         sourcemap: true,
+    },
+    // Vitest — testy jednostkowe tylko w src/. Testy E2E (e2e/) należą do
+    // Playwrighta i nie mogą być zbierane przez vitest.
+    test: {
+        include: ['src/**/*.{test,spec}.{ts,tsx}'],
+        exclude: ['e2e/**', 'node_modules/**', 'dist/**'],
     },
 });

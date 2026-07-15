@@ -87,6 +87,14 @@ ETAP 0–35, backlog do 100%, roadmap wdrożenia, rejestr ENV, DoD.
 🛠️ **Plan wykonalności w sandboxie: [`docs/SANDBOX-WORKPLAN.md`](docs/SANDBOX-WORKPLAN.md)** —
 co da się zrobić tu (WP-1…WP-6), symulacja postępu **78% → ~84–88%**, sufit sandboxu, kolejność.
 
+⚙️ **Uruchomienie staging + operacje: [`docs/RUNBOOK.md`](docs/RUNBOOK.md)** —
+docker-compose (WP-5), seed danych demo, smoke test `/health/ready`, diagnostyka, rollback.
+
+**Zrealizowane pakiety WP (sandbox):** WP-1 (spięcie API mock↔real: `VITE_API_MODE`,
+`useApi`, `AsyncBoundary`) · WP-2 (E2E Playwright, 10 testów) · WP-3 (a11y WCAG: skip-link,
+landmarki, aria-live semafora, axe-core) · WP-4 (bramka pokrycia backendu 85%, real 97%) ·
+WP-5 (staging docker-compose + seed + RUNBOOK) · WP-6 (Capacitor: config + scaffold + `cap:*`).
+
 Pełna roadmapa z krytyczną analizą: **[`docs/ROADMAP.md`](docs/ROADMAP.md)**.
 Praktyczna checklista wdrożeniowa: **[`docs/DEPLOY-CHECKLIST.md`](docs/DEPLOY-CHECKLIST.md)**.
 

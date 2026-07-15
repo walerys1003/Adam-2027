@@ -31,6 +31,7 @@ import {
 import { cn } from '@/lib/cn'
 import { useAuth } from '@/lib/auth/AuthContext'
 import { Avatar } from '@/components/ui'
+import { SkipLink } from '@/components/a11y/SkipLink'
 
 interface NavItem {
   to: string
@@ -114,7 +115,7 @@ function SideLink({ item, onClick }: { item: NavItem; onClick?: () => void }) {
 
 function SidebarContent({ onNav }: { onNav?: () => void }) {
   return (
-    <nav className="flex-1 p-3 space-y-5 overflow-y-auto">
+    <nav aria-label="Nawigacja administracyjna" className="flex-1 p-3 space-y-5 overflow-y-auto">
       {SECTIONS.map((sec) => (
         <div key={sec.title}>
           <p className="px-3 mb-1.5 text-caption uppercase tracking-caps text-ink-400">{sec.title}</p>
@@ -141,8 +142,9 @@ export function AdminLayout({ children }: { children?: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-paper flex">
+      <SkipLink />
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex flex-col w-64 shrink-0 border-r border-line bg-white">
+      <aside aria-label="Menu administracyjne" className="hidden lg:flex flex-col w-64 shrink-0 border-r border-line bg-white">
         <div className="flex items-center gap-3 px-5 h-16 border-b border-line">
           <span className="relative grid place-items-center w-8 h-8 rounded-md bg-granat-700">
             <span className="absolute inset-1 border border-zloto-500 rounded-[3px]" />
@@ -207,7 +209,7 @@ export function AdminLayout({ children }: { children?: ReactNode }) {
           </div>
         </header>
 
-        <main className="flex-1 p-4 lg:p-8">{children ?? <Outlet />}</main>
+        <main id="main-content" tabIndex={-1} className="flex-1 p-4 lg:p-8 focus:outline-none">{children ?? <Outlet />}</main>
       </div>
     </div>
   )

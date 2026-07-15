@@ -1,0 +1,99 @@
+# ==================================================================
+# Adam API — stack STAGING (WP-5)
+# Samowystarczalny dla „dry-run”: sensowne wartości domyślne pozwalają
+# uruchomić cały stos bez ręcznego uzupełniania sekretów (NIE dla produkcji).
+#
+#   api (FastAPI/gunicorn) + PostgreSQL + Redis + jednorazowy seed.
+#
+# Użycie (z katalogu `agent/`):
+#   docker compose -f adam_modules/deploy/docker-compose.staging.yml up -d --build
+#   docker compose -f adam_modules/deploy/docker-compose.staging.yml run --rm adam-seed
+#   curl http://localhost:8788/health/ready
+#
+# Walidacja bez uruchamiania (dry-run konfiguracji):
+#   docker compose -f adam_modules/deploy/docker-compose.staging.yml config
+# ==================================================================
+
+name: adam-staging
+
+x-staging-secrets: &staging-secrets
+  # Wartości TESTOWE — wyłącznie staging/dev. Nigdy nie używać na produkcji.
+  ADAM_PII_KEY: "staging-fernet-0123456789abcdef0123456789abcdef"
+  ADAM_PII_PEPPER: "staging-pepper-do-not-use-in-prod"
+  ADAM_JWT_SECRET: "staging-jwt-secret-do-not-use-in-prod"
+
+services:
+  adam-postgres:
+    image: postgres:16-alpine
+    container_name: adam-staging-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: adam
+      POSTGRES_PASSWORD: adam
+      POSTGRES_DB: adam
+    volumes:
+      - adam-staging-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U adam -d adam"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  adam-redis:
+    image: redis:7-alpine
+    container_name: adam-staging-redis
+    restart: unless-stopped
+    command: ["redis-server", "--save", "60", "1", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  adam-api:
+    build:
+      context: ../..
+      dockerfile: adam_modules/deploy/Dockerfile.adam-api
+    image: adam-api:staging
+    container_name: adam-staging-api
+    restart: unless-stopped
+    depends_on:
+      adam-postgres:
+        condition: service_healthy
+      adam-redis:
+        condition: service_healthy
+    environment:
+      <<: *staging-secrets
+      ADAM_DATABASE_URL: "postgresql+psycopg://adam:adam@adam-postgres:5432/adam"
+      ADAM_REDIS_URL: "redis://adam-redis:6379/0"
+      ADAM_NOTIFY_PROVIDER: "memory"     # brak realnych integracji na stagingu
+      ADAM_CORS_ORIGINS: "*"
+      ADAM_API_WORKERS: "2"
+      ADAM_RATE_LIMIT: "240"
+      ADAM_RATE_WINDOW: "60"
+      TZ: "Europe/Warsaw"
+    ports:
+      - "8788:8787"                      # inny port niż prod (8787) — brak kolizji
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8787/health/live')\""]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # Jednorazowy seed danych demonstracyjnych (profil „seed”).
+  adam-seed:
+    image: adam-api:staging
+    container_name: adam-staging-seed
+    profiles: ["seed"]
+    depends_on:
+      adam-postgres:
+        condition: service_healthy
+    environment:
+      <<: *staging-secrets
+      ADAM_DATABASE_URL: "postgresql+psycopg://adam:adam@adam-postgres:5432/adam"
+    entrypoint: ["python", "-m", "adam_modules.deploy.seed_staging"]
+    restart: "no"
+
+volumes:
+  adam-staging-pgdata:

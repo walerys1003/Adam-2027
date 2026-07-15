@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { NavLink, useNavigate, Outlet } from 'react-router-dom'
 import type { ReactNode } from 'react'
 import {
@@ -18,6 +18,8 @@ import { cn } from '@/lib/cn'
 import { useAuth } from '@/lib/auth/AuthContext'
 import { ROLE_LABEL } from '@/lib/auth/rbac'
 import { useSSE } from '@/lib/hooks/useSSE'
+import { useAnnounce } from '@/lib/a11y/LiveAnnouncer'
+import { SkipLink } from '@/components/a11y/SkipLink'
 import { Avatar } from '@/components/ui'
 
 interface NavItem {
@@ -75,9 +77,24 @@ export function PanelLayout({ children }: { children?: ReactNode }) {
   const navigate = useNavigate()
   const [mobileOpen, setMobileOpen] = useState(false)
   const { connected, events } = useSSE()
+  const announce = useAnnounce()
   const lastEventTime = events[0]
     ? new Date(events[0].timestamp).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })
     : '—'
+
+  // WP-3 — alerty semafora RED/PURPLE ogłaszane czytnikom ekranu (assertive),
+  // YELLOW uprzejmie (polite). GREEN nie przerywa użytkownika.
+  const lastEventId = events[0]?.id
+  useEffect(() => {
+    const ev = events[0]
+    if (!ev) return
+    if (ev.level === 'red' || ev.level === 'purple') {
+      announce(`Alarm semafora — ${ev.seniorName}: ${ev.message}`, 'assertive')
+    } else if (ev.level === 'yellow') {
+      announce(`Uwaga — ${ev.seniorName}: ${ev.message}`, 'polite')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lastEventId])
 
   const doLogout = () => {
     logout()
@@ -86,8 +103,9 @@ export function PanelLayout({ children }: { children?: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-paper flex">
+      <SkipLink />
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex flex-col w-60 shrink-0 border-r border-line bg-white">
+      <aside aria-label="Menu główne" className="hidden lg:flex flex-col w-60 shrink-0 border-r border-line bg-white">
         <div className="flex items-center gap-3 px-5 h-16 border-b border-line">
           <span className="relative grid place-items-center w-8 h-8 rounded-md bg-granat-700">
             <span className="absolute inset-1 border border-zloto-500 rounded-[3px]" />
@@ -95,7 +113,7 @@ export function PanelLayout({ children }: { children?: ReactNode }) {
           </span>
           <span className="font-serif text-h4 text-granat-900">Adam</span>
         </div>
-        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+        <nav aria-label="Nawigacja panelu" className="flex-1 p-3 space-y-1 overflow-y-auto">
           {NAV.map((item) => (
             <SidebarLink key={item.to} item={item} />
           ))}
@@ -121,7 +139,7 @@ export function PanelLayout({ children }: { children?: ReactNode }) {
                 <X size={22} className="text-ink-500" />
               </button>
             </div>
-            <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+            <nav aria-label="Nawigacja panelu (mobilna)" className="flex-1 p-3 space-y-1 overflow-y-auto">
               {NAV.map((item) => (
                 <SidebarLink key={item.to} item={item} onClick={() => setMobileOpen(false)} />
               ))}
@@ -155,11 +173,11 @@ export function PanelLayout({ children }: { children?: ReactNode }) {
           </div>
         </header>
 
-        <main className="flex-1 p-4 lg:p-8 pb-24 lg:pb-8">{children ?? <Outlet />}</main>
+        <main id="main-content" tabIndex={-1} className="flex-1 p-4 lg:p-8 pb-24 lg:pb-8 focus:outline-none">{children ?? <Outlet />}</main>
       </div>
 
       {/* Mobile bottom nav */}
-      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-line flex justify-around py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+      <nav aria-label="Nawigacja dolna" className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-line flex justify-around py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
         {MOBILE_NAV.map((item) => (
           <NavLink
             key={item.to}

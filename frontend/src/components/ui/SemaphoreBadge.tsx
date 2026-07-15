@@ -78,6 +78,9 @@ export function SemaphoreBadge({
     <span
       role="status"
       aria-live={live}
+      // WCAG 1.4.1 — poziom nie może być przekazywany wyłącznie kolorem:
+      // gdy etykieta jest ukryta wizualnie, udostępniamy ją czytnikom ekranu.
+      aria-label={showLabel ? undefined : `Semafor: ${text}`}
       className={cn(
         'inline-flex items-center rounded-full font-medium',
         sz.gap,
