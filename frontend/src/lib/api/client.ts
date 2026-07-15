@@ -10,7 +10,26 @@ import * as mock from './mockApi'
 import type { LoginPayload } from './mockApi'
 import { createRealApi } from './realApi'
 
-const USE_MOCK = !import.meta.env.VITE_API_URL
+/* ------------------------------------------------------------------
+   Tryb API (WP-1): jawny przełącznik VITE_API_MODE.
+     - 'mock' → zawsze mock (nawet gdy VITE_API_URL ustawione)
+     - 'real' → zawsze realny backend (wymaga VITE_API_URL)
+     - (brak) → auto: real gdy VITE_API_URL ustawione, w innym wypadku mock
+   Zachowuje kompatybilność wsteczną z dotychczasowym VITE_API_URL.
+   ------------------------------------------------------------------ */
+const API_MODE = (import.meta.env.VITE_API_MODE as 'mock' | 'real' | undefined) ?? undefined
+
+function resolveUseMock(): boolean {
+  if (API_MODE === 'mock') return true
+  if (API_MODE === 'real') return false
+  return !import.meta.env.VITE_API_URL
+}
+
+const USE_MOCK = resolveUseMock()
+
+/** Eksport dla UI/diagnostyki — pozwala ekranom pokazać baner trybu. */
+export const apiMode: 'mock' | 'real' = USE_MOCK ? 'mock' : 'real'
+export const isMockMode = USE_MOCK
 
 // Token storage keys
 const ACCESS_KEY = 'adam.accessToken'

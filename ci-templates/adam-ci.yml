@@ -48,11 +48,21 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r adam_modules/requirements.txt
 
-      - name: Run backend test suite
+      - name: Run backend test suite + coverage gate (WP-4, --cov-fail-under=85)
+        working-directory: agent/adam_modules
         env:
           PYTHONPATH: ${{ github.workspace }}/agent
         run: |
-          python -m pytest adam_modules/tests/ -q --maxfail=1
+          # pytest.ini w adam_modules wymusza --cov-fail-under=85 (realny baseline ~97%)
+          python -m pytest -q --maxfail=1
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: agent/adam_modules/coverage.xml
+          if-no-files-found: ignore
 
   # ============================================================ MIGRACJE (BRAMKA ALEMBIC)
   migrations:
@@ -127,6 +137,9 @@ jobs:
 
       - name: Run vitest
         run: npm run test
+
+      - name: Build (typecheck + vite build)
+        run: npm run build
 
 # ────────────────────────────────────────────────────────────────────
 # INSTALACJA: skopiuj ten plik do .github/workflows/adam-ci.yml

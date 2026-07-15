@@ -10,7 +10,12 @@
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "cap:sync": "npm run build && cap sync",
+    "cap:copy": "npm run build && cap copy",
+    "cap:android": "npm run build && cap sync android && cap open android",
+    "cap:ios": "npm run build && cap sync ios && cap open ios",
+    "cap:update": "cap update"
   },
   "dependencies": {
     "@capacitor/android": "^6.2.1",

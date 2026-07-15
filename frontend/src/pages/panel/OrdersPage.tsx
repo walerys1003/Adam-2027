@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
   Pill,
   ShoppingCart,
@@ -17,10 +17,11 @@ import {
 import type { LucideIcon } from 'lucide-react'
 import type { Order } from '@/types/domain'
 import { api } from '@/lib/api/client'
+import { useApi } from '@/lib/hooks/useApi'
 import { ORDER_CATEGORIES } from '@/data/mockPanel'
 import { MOCK_SENIORS } from '@/data/mockSeniors'
 import { PageHead } from '@/components/panel/PageHead'
-import { Card, CardBody, Badge, Button, Countdown } from '@/components/ui'
+import { Card, CardBody, Badge, Button, Countdown, AsyncBoundary } from '@/components/ui'
 
 const ICONS: Record<string, LucideIcon> = {
   Pill, ShoppingCart, UtensilsCrossed, Car, Sparkles, Wrench, HeartHandshake, Users, Scissors, Package,
@@ -125,24 +126,22 @@ function CategoryPicker({ onPick }: { onPick: (categoryId: string) => void }) {
 }
 
 export function OrdersPage() {
-  const [orders, setOrders] = useState<Order[]>([])
-  const [loading, setLoading] = useState(true)
   const [picking, setPicking] = useState(false)
-
-  const load = () => api.listOrders().then((o) => { setOrders(o); setLoading(false) })
-  useEffect(() => { load() }, [])
+  // WP-1: dane zleceń przez fasadę `api` z jednolitą obsługą stanów (useApi).
+  const { data, loading, error, empty, refetch } = useApi<Order[]>(() => api.listOrders())
 
   const cancel = async (id: string) => {
     await api.cancelOrder(id)
-    load()
+    refetch()
   }
 
   const createFor = async (categoryId: string) => {
     await api.createOrder({ seniorId: MOCK_SENIORS[0].id, categoryId, requestSource: 'caregiver-panel' })
     setPicking(false)
-    load()
+    refetch()
   }
 
+  const orders = data ?? []
   const active = orders.filter((o) => o.status !== 'cancelled')
   const cancelled = orders.filter((o) => o.status === 'cancelled')
 
@@ -165,9 +164,14 @@ export function OrdersPage() {
         </div>
       )}
 
-      {loading ? (
-        <p className="text-body text-ink-500">Ładowanie…</p>
-      ) : (
+      <AsyncBoundary
+        loading={loading}
+        error={error}
+        empty={empty}
+        onRetry={refetch}
+        emptyLabel="Brak zamówień. Utwórz nowe przyciskiem „Nowe zamówienie”."
+        loadingLabel="Ładowanie zamówień…"
+      >
         <div className="space-y-6">
           <div>
             <h2 className="font-serif text-h4 text-granat-900 mb-3">Aktywne ({active.length})</h2>
@@ -189,7 +193,7 @@ export function OrdersPage() {
             </div>
           )}
         </div>
-      )}
+      </AsyncBoundary>
     </>
   )
 }
