@@ -64,3 +64,9 @@ frontend/*.tsbuildinfo
 # Adam backend dev DB
 agent/adam_modules/migrations/adam_dev.db
 *.db
+
+# Playwright (WP-2)
+frontend/test-results/
+frontend/playwright-report/
+frontend/blob-report/
+frontend/.playwright/
