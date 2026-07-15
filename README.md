@@ -84,6 +84,9 @@ Szczegóły: [`rag/README.md`](rag/README.md).
 [`docs/PROJECT-STATUS.md`](docs/PROJECT-STATUS.md)** — mapa F1–F18 → moduły, metryki repo,
 ETAP 0–35, backlog do 100%, roadmap wdrożenia, rejestr ENV, DoD.
 
+🛠️ **Plan wykonalności w sandboxie: [`docs/SANDBOX-WORKPLAN.md`](docs/SANDBOX-WORKPLAN.md)** —
+co da się zrobić tu (WP-1…WP-6), symulacja postępu **78% → ~84–88%**, sufit sandboxu, kolejność.
+
 Pełna roadmapa z krytyczną analizą: **[`docs/ROADMAP.md`](docs/ROADMAP.md)**.
 Praktyczna checklista wdrożeniowa: **[`docs/DEPLOY-CHECKLIST.md`](docs/DEPLOY-CHECKLIST.md)**.
 
