@@ -80,6 +80,10 @@ Szczegóły: [`rag/README.md`](rag/README.md).
 
 ## 🗺️ Roadmapa i status
 
+📊 **Ultra-szczegółowy status projektu + instrukcja dla developera:
+[`docs/PROJECT-STATUS.md`](docs/PROJECT-STATUS.md)** — mapa F1–F18 → moduły, metryki repo,
+ETAP 0–35, backlog do 100%, roadmap wdrożenia, rejestr ENV, DoD.
+
 Pełna roadmapa z krytyczną analizą: **[`docs/ROADMAP.md`](docs/ROADMAP.md)**.
 Praktyczna checklista wdrożeniowa: **[`docs/DEPLOY-CHECKLIST.md`](docs/DEPLOY-CHECKLIST.md)**.
 
